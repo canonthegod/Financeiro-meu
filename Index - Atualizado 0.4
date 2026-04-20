@@ -592,34 +592,7 @@ input:focus, select:focus {
 .dia-val{font-family:'Sora',sans-serif;font-weight:800;font-size:.95rem;flex-shrink:0;margin-left:auto;}
 .dia-total{display:flex;align-items:center;justify-content:space-between;padding:.75rem .875rem;margin:.5rem 0 0;border-top:1px solid var(--div);background:var(--surf2);border-radius:0 0 10px 10px;}
 .dia-vazio{text-align:center;color:var(--faint);font-size:.82rem;padding:1.5rem;}
-@media(max-width:600px){.dia-desc{font-size:.82rem;}.dia-val{font-size:.88rem;}.dia-item{padding:.5rem .625rem;}
-}
-
-.topbar {
-  position: absolute;
-  top: 12px;
-  right: 16px;
-  z-index: 10;
-}
-
-.theme-toggle {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
-  background: var(--surf2);
-  border: 1px solid var(--div);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  cursor: pointer;
-  transition: all .25s ease;
-  box-shadow: var(--shad);
-}
-
-.theme-toggle:hover {
-  transform: scale(1.1);
-}
+@media(max-width:600px){.dia-desc{font-size:.82rem;}.dia-val{font-size:.88rem;}.dia-item{padding:.5rem .625rem;}}
 
 </style>
 </head>
@@ -713,7 +686,7 @@ input:focus, select:focus {
     <div class="kpis">
       <div class="kpi g"><div class="kpi-l">Receitas</div><div class="kpi-v g" id="k-r">R$ 0,00</div><div class="kpi-s">entradas no mês</div></div>
       <div class="kpi r"><div class="kpi-l">Despesas</div><div class="kpi-v r" id="k-d">R$ 0,00</div><div class="kpi-s">saídas no mês</div></div>
-      <div class="kpi g"><div class="kpi-l">Saldo do Mês</div><div class="kpi-v g" id="k-s">R$ 0,00</div><div class="kpi-s">resultado mensal</div></div>
+      <div class="kpi b"><div class="kpi-l">Saldo do Mês</div><div class="kpi-v b" id="k-s">R$ 0,00</div><div class="kpi-s">resultado mensal</div></div>
       <div class="kpi w"><div class="kpi-l">Saldo Total</div><div class="kpi-v w" id="k-t">R$ 0,00</div><div class="kpi-s">soma das carteiras</div></div>
     </div>
     <div class="ch2">
@@ -1339,28 +1312,8 @@ function changeMonth(d) {
   renderOrcControls();
 }
 
-function toggleTheme() {
-  const html = document.documentElement;
-  const isDark = html.getAttribute('data-theme') === 'dark';
-
-  const newTheme = isDark ? 'light' : 'dark';
-  html.setAttribute('data-theme', newTheme);
-
-  localStorage.setItem('theme', newTheme);
-
-  const icon = document.querySelector('#themeToggle .icon');
-
-  if (!icon) return;
-
-  icon.style.transform = 'rotate(180deg) scale(0.5)';
-  icon.style.opacity = '0';
-
-  setTimeout(() => {
-    icon.textContent = isDark ? '🌙' : '☀️';
-    icon.style.transform = 'rotate(0deg) scale(1)';
-    icon.style.opacity = '1';
-  }, 150);
-}function setTipo(t){
+function toggleTheme(){var h=document.documentElement;var n=h.getAttribute("data-theme")=="dark"?"light":"dark";h.setAttribute("data-theme",n);setTimeout(render,80);}
+function setTipo(t){
   tipoAtual=t;
   document.getElementById("btnE").className=t=="e"?"oe":"";
   document.getElementById("btnS").className=t=="s"?"os":"";
@@ -1435,16 +1388,9 @@ function delConta(id){
   render();
 
   if(currentUser && db){
-    userDoc().collection("contas").doc(String(id))
+    db.collection("users").doc(currentUser.uid).collection("contas").doc(String(id))
       .delete()
-      .then(function(){
-        setSyncStatus("ok");
-      })
-      .catch(function(e){
-        console.error("Erro ao deletar conta:", e);
-        setSyncStatus("error");
-        alert("Erro ao remover conta: " + e.message);
-      });
+      .catch(function(e){ console.error(e); });
   }
 }
 function editSaldo(id){
@@ -1678,135 +1624,125 @@ function delLanc(id){
 }
 
 // ── AGENDA ──
-// agM/agY controlam o mês exibido na agenda (0-based igual cM)
-var agM=null, agY=null;
-
 function renderAgenda(m,y){
-  // m é 0-based (0=Jan … 11=Dez), igual a cM
-  if(m===undefined||m===null){m=cM;}
-  if(y===undefined||y===null){y=cY;}
-
-  var h1=document.getElementById("agH1");
-  if(h1) h1.textContent="Agenda \u2014 "+MF[m]+" "+y;
-
+  if(m===undefined){m=cM;}
+  if(y===undefined){y=cY;}
+  document.getElementById("agH1").textContent="Agenda \u2014 "+MF[m]+" "+y;
   var grid=document.getElementById("agContent");
   if(!grid)return;
 
+  // Collect all items for this month
   var items=[];
-  var hoje=new Date();
 
-  // 1. Recorrentes (fixos) — aparecem em todo mês
+  // 1. Normal recorrentes (fixos)
   lancamentos.forEach(function(l){
     if(l.rec&&(l.t==="e"||l.t==="s")){
       var day=l.dt?parseInt(l.dt.slice(8,10)):1;
-      items.push({day:day,desc:l.desc,v:l.v,t:l.t,cat:l.cat||'Outros',tipo:'fixo',id:l.id,conta:l.conta});
+      items.push({day:day,desc:l.desc,v:l.v,t:l.t,cat:l.cat,tipo:'fixo',id:l.id,conta:l.conta});
     }
   });
 
-  // 2. Parcelas e lançamentos normais do mês (getLM usa cM 0-based)
+  // 2. Compromissos do mes
+  var hoje=new Date();
+  lancamentos.forEach(function(l){
+    if(l.t==='compromisso'){
+      var dt=new Date(l.dt);
+      if(dt.getMonth()===m-1&&dt.getFullYear()===y){
+        var day=parseInt(l.dt.slice(8,10));
+        items.push({day:day,desc:l.desc,v:l.v,t:'s',cat:l.cat,tipo:'compromisso',id:l.id,conta:l.conta,paid:l.paid});
+      }
+    }
+    // 3. Debitos automaticos - repeat monthly
+    if(l.t==='debito'){
+      var day=l.debDia||parseInt(l.dt.slice(8,10));
+      items.push({day:day,desc:l.desc,v:l.v,t:'s',cat:l.cat,tipo:'debito',id:l.id,conta:l.conta,paid:l.paid});
+    }
+  });
+
+  // 4. Parcelas deste mes
   var ls=getLM(m,y);
   ls.forEach(function(l){
     if(l.parc&&l.t==="s"){
       var day=l.dt?parseInt(l.dt.slice(8,10)):1;
-      items.push({day:day,desc:l.desc,v:l.v,t:'s',cat:l.cat||'Outros',tipo:'parcela',id:l.id,conta:l.conta,pn:l.pn,pt:l.pt});
-    } else if(l.tipoLanc==="debito"){
-      var day=l.dt?parseInt(l.dt.slice(8,10)):1;
-      items.push({day:day,desc:l.desc,v:l.v,t:'s',cat:l.cat||'Outros',tipo:'debito',id:l.id,conta:l.conta});
-    } else if(!l.rec&&!l.parc){
-      // lançamento normal do mês
-      var day=l.dt?parseInt(l.dt.slice(8,10)):1;
-      items.push({day:day,desc:l.desc,v:l.v,t:l.t,cat:l.cat||'Outros',tipo:'normal',id:l.id,conta:l.conta});
+      items.push({day:day,desc:l.desc,v:l.v,t:'s',cat:l.cat,tipo:'parcela',id:l.id,conta:l.conta,pn:l.pn,pt:l.pt});
     }
   });
 
-  // Remove duplicatas (recorrentes que já aparecem como lançamento no mês)
-  var seen={};
-  items=items.filter(function(it){
-    var k=it.id+'_'+it.tipo;
-    if(seen[k])return false;
-    seen[k]=true;
-    return true;
-  });
-
   if(!items.length){
-    grid.innerHTML='<p style="color:var(--muted);padding:2rem;text-align:center;">Nenhum compromisso neste mês.</p>';
+    grid.innerHTML='<p style="color:var(--muted);padding:2rem;text-align:center;">Nenhum item neste m\u00eas.</p>';
     return;
   }
 
   items.sort(function(a,b){return a.day-b.day;});
 
+  // Group by day
   var byDay={};
   items.forEach(function(it){
     if(!byDay[it.day])byDay[it.day]=[];
     byDay[it.day].push(it);
   });
 
-  // todayDay só se o mês exibido for o mês atual
-  var todayDay=(m===hoje.getMonth()&&y===hoje.getFullYear())?hoje.getDate():0;
+  var todayDay=(m===hoje.getMonth()+1&&y===hoje.getFullYear())?hoje.getDate():0;
   var h='';
   var daysNums=Object.keys(byDay).map(Number).sort(function(a,b){return a-b;});
-
-  // Totais do mês para o rodapé
-  var totalE=items.filter(function(i){return i.t==='e';}).reduce(function(s,i){return s+i.v;},0);
-  var totalS=items.filter(function(i){return i.t==='s';}).reduce(function(s,i){return s+i.v;},0);
 
   daysNums.forEach(function(day){
     var isPast=todayDay>0&&day<todayDay;
     var isToday=day===todayDay;
     h+='<div style="margin-bottom:.875rem;">';
+    // Day header
     h+='<div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:'+(isToday?'var(--p)':'var(--muted)')+';margin-bottom:.35rem;display:flex;align-items:center;gap:.4rem;">';
     h+='<span style="background:'+(isToday?'var(--p)':'var(--div)')+';color:'+(isToday?'#fff':'var(--muted)')+';border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:.7rem;">'+day+'</span>';
-    // new Date(y, m, day) — m é 0-based, correto
-    h+=(isToday?'Hoje \u2014 ':'')+(isPast?'⏰ ':'')+['Dom','Seg','Ter','Qua','Qui','Sex','S\u00e1b'][new Date(y,m,day).getDay()];
+    h+=(isToday?'Hoje \u2014 ':'')+(isPast?'':'')+['Dom','Seg','Ter','Qua','Qui','Sex','S\u00e1b'][new Date(y,m-1,day).getDay()];
     h+='</div>';
 
     byDay[day].forEach(function(it){
       var catCor=getCatCor(it.cat)||'#607D8B';
       var catIco=getCatIcon(it.cat)||'M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z';
-      var tipoTag='';
-      if(it.tipo==='parcela'){
-        var ps=it.pn&&it.pt?' ('+it.pn+'/'+it.pt+')':'';
-        tipoTag='<span style="font-size:.63rem;background:#8b5cf622;color:#8b5cf6;border-radius:4px;padding:1px 6px;font-weight:700;">🟣 Parcela'+ps+'</span>';
+      var tipoTag='';var tipoColor='var(--muted)';var tipoBtn='';
+      if(it.tipo==='compromisso'&&!it.paid){
+        tipoTag='<span style="font-size:.64rem;background:#f59e0b22;color:#f59e0b;border-radius:6px;padding:1px 6px;font-weight:600;">🟡 Compromisso</span>';
+        tipoColor='#f59e0b';
+        tipoBtn='<button onclick="pagarCompromisso(\''+it.id+'\')" style="font-size:.72rem;padding:.2rem .55rem;border-radius:8px;background:#22c55e22;color:#16a34a;border:1px solid #22c55e44;cursor:pointer;font-weight:600;">✅ Pagar</button>'+
+                 ' <button onclick="adiarCompromisso(\''+it.id+'\')" style="font-size:.72rem;padding:.2rem .55rem;border-radius:8px;background:var(--wlight);color:var(--muted);border:1px solid var(--div);cursor:pointer;">⏭ Adiar</button>';
+      } else if(it.tipo==='compromisso'&&it.paid){
+        tipoTag='<span style="font-size:.64rem;background:#22c55e22;color:#16a34a;border-radius:6px;padding:1px 6px;font-weight:600;">✅ Pago</span>';
+        tipoColor='#16a34a';
       } else if(it.tipo==='debito'){
-        tipoTag='<span style="font-size:.63rem;background:#ef444422;color:#ef4444;border-radius:4px;padding:1px 6px;font-weight:700;">🔴 Débito auto</span>';
+        tipoTag='<span style="font-size:.64rem;background:#ef444422;color:#ef4444;border-radius:6px;padding:1px 6px;font-weight:600;">🔴 D\u00e9bito auto</span>';
+        tipoColor='#ef4444';
+      } else if(it.tipo==='parcela'){
+        var parc=it.pn&&it.pt?' ('+it.pn+'/'+it.pt+')':'';
+        tipoTag='<span style="font-size:.64rem;background:#8b5cf622;color:#8b5cf6;border-radius:6px;padding:1px 6px;font-weight:600;">🟣 Parcela'+parc+'</span>';
       } else if(it.tipo==='fixo'){
-        tipoTag='<span style="font-size:.63rem;background:var(--div);color:var(--muted);border-radius:4px;padding:1px 6px;font-weight:700;">'+(it.t==='e'?'🟢':'⚪')+' Fixo</span>';
-      } else {
-        tipoTag='<span style="font-size:.63rem;background:var(--div);color:var(--muted);border-radius:4px;padding:1px 6px;font-weight:700;">💳 Normal</span>';
+        tipoTag='<span style="font-size:.64rem;background:var(--div);color:var(--muted);border-radius:6px;padding:1px 6px;font-weight:600;">'+(it.t==='e'?'\uD83D\uDFE2':'⚪')+' Fixo</span>';
       }
       var valorColor=it.t==='e'?'#22c55e':'#ef4444';
       var sinal=it.t==='e'?'+':'-';
-      var borda=it.tipo==='debito'?'#ef444444':'var(--div)';
-
-      h+='<div style="background:var(--surf);border:1px solid '+borda+';border-radius:12px;padding:.6rem .875rem;margin-bottom:.35rem;display:flex;align-items:center;gap:.7rem;">';
+      h+='<div style="background:var(--surf);border:1px solid '+(it.tipo==='compromisso'&&!it.paid?'#f59e0b44':it.tipo==='debito'?'#ef444444':'var(--div)')+';border-radius:12px;padding:.6rem .875rem;margin-bottom:.35rem;display:flex;align-items:center;gap:.7rem;">';
+      // Category icon circle
       h+='<div style="width:38px;height:38px;border-radius:50%;background:'+catCor+'22;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:'+catCor+';">';
-      h+='<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2"><path d="'+catIco+'"></path></svg>';
+      h+='<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="'+catIco+'"></path></svg>';
       h+='</div>';
+      // Content
       h+='<div style="flex:1;min-width:0;">';
-      h+='<div style="font-weight:600;font-size:.88rem;color:var(--txt);margin-bottom:.15rem;">'+it.desc+'</div>';
-      h+='<div style="display:flex;gap:.3rem;flex-wrap:wrap;">'+tipoTag+'</div>';
+      h+='<div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;">';
+      h+='<span style="font-weight:600;font-size:.88rem;color:var(--txt);">'+it.desc+'</span>';
+      h+=tipoTag;
       h+='</div>';
-      h+='<div style="font-size:.95rem;font-weight:800;color:'+valorColor+';flex-shrink:0;">'+sinal+fmt(it.v)+'</div>';
+      if(tipoBtn){h+='<div style="display:flex;gap:.35rem;margin-top:.4rem;">'+tipoBtn+'</div>';}
+      h+='</div>';
+      // Value
+      h+='<div style="font-size:.95rem;font-weight:700;color:'+valorColor+';flex-shrink:0;">'+sinal+fmt(it.v)+'</div>';
       h+='</div>';
     });
     h+='</div>';
   });
 
-  // Rodapé resumo
-  var saldo=totalE-totalS;
-  h+='<div style="margin-top:.5rem;padding:.875rem;background:var(--surf2);border-radius:12px;border:1px solid var(--div);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;">';
-  h+='<span style="font-size:.78rem;font-weight:700;color:var(--muted);">Resumo do mês</span>';
-  h+='<div style="display:flex;gap:.75rem;align-items:center;">';
-  h+='<span style="font-size:.8rem;color:#22c55e;font-weight:700;">+'+fmt(totalE)+'</span>';
-  h+='<span style="font-size:.8rem;color:#ef4444;font-weight:700;">−'+fmt(totalS)+'</span>';
-  h+='<span style="font-size:.88rem;font-weight:800;padding:.2rem .625rem;border-radius:8px;background:'+(saldo>=0?'#22c55e22':'#ef444422')+';color:'+(saldo>=0?'#22c55e':'#ef4444')+';">'+(saldo>=0?'+':'')+fmt(saldo)+'</span>';
-  h+='</div></div>';
-
   grid.innerHTML=h;
 }
 
 function agendaNav(dir){
-  // inicializa com o mês atual se ainda não navegou
   if(agM===null){agM=cM;agY=cY;}
   agM+=dir;
   if(agM<0){agM=11;agY--;}
@@ -2000,7 +1936,7 @@ function renderHist(){
   var t=document.getElementById("histTitulo");if(t)t.textContent="Histórico — "+MN[m]+" "+y;
   var tc=document.getElementById("histTituloCard");if(tc)tc.textContent=MN[m]+" "+y;
   var kpis=document.getElementById("histKpis");
-  if(kpis){kpis.innerHTML='<div class="kpi g"><div class="kpi-l">Receitas</div><div class="kpi-v g">'+fmt(cm.rec)+'</div><div class="kpi-s">entradas do mês</div></div><div class="kpi r"><div class="kpi-l">Despesas</div><div class="kpi-v r">'+fmt(cm.dep)+'</div><div class="kpi-s">saídas do mês</div></div><div class="kpi '+(cm.sal>=0?"g":"r")+'"><div class="kpi-l">Saldo</div><div class="kpi-v '+(cm.sal>=0?"g":"r")+'">'+fmt(cm.sal)+'</div><div class="kpi-s">resultado do mês</div></div>';}
+  if(kpis){kpis.innerHTML='<div class="kpi g"><div class="kpi-l">Receitas</div><div class="kpi-v g">'+fmt(cm.rec)+'</div><div class="kpi-s">entradas do mês</div></div><div class="kpi r"><div class="kpi-l">Despesas</div><div class="kpi-v r">'+fmt(cm.dep)+'</div><div class="kpi-s">saídas do mês</div></div><div class="kpi b"><div class="kpi-l">Saldo</div><div class="kpi-v '+(cm.sal>=0?"g":"r")+'">'+fmt(cm.sal)+'</div><div class="kpi-s">resultado do mês</div></div>';}
 
   // ── ORÇAMENTO DO MÊS NO HISTÓRICO ──
   var orcHistEl = document.getElementById('histOrc');
@@ -2022,18 +1958,17 @@ function renderHist(){
     cats.forEach(function(cat, i){
       var lim = renda * (limites[i] / 100);
       var gasto = gastos[cat] || 0;
-      var perc = lim > 0 ? (gasto / lim) * 100 : 0;
-      var barPerc = Math.min(perc, 100);
-      var cor = orcGetCor(perc);
-      var st = orcGetStatus(perc);
+      var perc = lim > 0 ? Math.min(100, (gasto / lim) * 100) : 0;
+      var status = perc > 100 ? '🔴 Estouro' : perc >= 80 ? '🟡 Atenção' : '🟢 Ok';
+      var cor = perc > 100 ? '#e53935' : perc >= 80 ? '#f59e0b' : '#437a22';
       orcH += '<div class="orc-item">'
-        + '<div class="orc-label"><span>'+ORC_EMOJI_L[cat]+' '+cat+'</span>'
-        + '<span style="color:'+st.cor+';font-weight:700;">'+barPerc.toFixed(0)+'%</span></div>'
-        + '<div class="orc-bar"><div style="width:'+barPerc+'%;height:100%;background:'+cor+';border-radius:5px;transition:width .4s;"></div></div>'
+        + '<div class="orc-label"><span>'+ORC_EMOJI_L[cat]+' '+cat+'</span><span style="color:'+cor+';">'+perc.toFixed(0)+'%</span></div>'
+        + '<div class="orc-bar"><div style="width:'+perc+'%;height:100%;background:'+cor+';border-radius:5px;transition:width .4s;"></div></div>'
         + '<div style="display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);margin-top:4px;">'
         + '<span>'+fmt(gasto)+' / '+fmt(lim)+'</span>'
-        + '<span style="color:'+st.cor+';font-weight:600;">'+st.ico+' '+st.txt+'</span>'
-        + '</div></div>';
+        + '<span>'+status+'</span>'
+        + '</div>'
+        + '</div>';
     });
     orcH += '</div>';
     orcHistEl.innerHTML = '<div class="ctit" style="margin-top:.75rem;margin-bottom:.375rem;">Orçamento do mês</div>' + orcH;
@@ -2135,11 +2070,8 @@ if(mlm) mlm.textContent = document.getElementById('mLbl').textContent;
   animN(document.getElementById("k-d"),cm.dep);
   animN(document.getElementById("k-s"),cm.sal);
   animN(document.getElementById("k-t"),saldoTotal());
-  // Saldo do mês: verde se positivo, vermelho se negativo (padrão igual ao histórico)
-  document.getElementById("k-s").className="kpi-v "+(cm.sal>=0?"g":"r");
-  renderTbls();renderCharts();renderProj();renderContas();
-  renderAgenda(agM!==null?agM:cM, agY!==null?agY:cY);
-  refreshContaSelect();
+  document.getElementById("k-s").className="kpi-v "+(cm.sal>=0?"b":"r");
+  renderTbls();renderCharts();renderProj();renderContas();renderAgenda();refreshContaSelect();
   renderGastoDia();
 }
 function fillCategorySelect(selectId){
@@ -2437,49 +2369,69 @@ function renderOrcControls(){
     grid.parentNode.insertBefore(div, grid);
     renderOrcControls();
   }
-function orcGetCor(perc){
-  // Verde 0-70%, gradiente verde→amarelo 71-90%, vermelho 91%+
-  if(perc <= 70) return '#22c55e';
-  if(perc <= 90){ var t=(perc-70)/20; return 'hsl('+(120-t*80)+',85%,42%)'; }
-  return '#e53935';
-}
-function orcGetStatus(perc){
-  if(perc <= 70) return {ico:'🟢', txt:'Ok', cor:'#22c55e'};
-  if(perc <= 90) return {ico:'🟡', txt:'Atenção', cor:'#d97706'};
-  if(perc <= 100) return {ico:'🔴', txt:'Alerta', cor:'#e53935'};
-  return {ico:'🔴', txt:'Estouro +'+(perc-100).toFixed(0)+'%', cor:'#e53935'};
-}
 function renderOrc() {
   const grid = document.getElementById('orcGrid');
   if (!grid) return;
 
   const dados = getOrcReal();
   const preset = getOrcPreset();
-  const cats = ['Essenciais','Lazer','Reserva','Dia a dia'];
 
-  grid.innerHTML = cats.map(function(nome, index){
-    var info = dados[nome] || {limite:0, gasto:0};
-    var perc = info.limite > 0 ? (info.gasto / info.limite) * 100 : 0;
-    var barPerc = Math.min(perc, 100);
-    var emoji = ORC_EMOJI[nome] || '📊';
-    var modeloPct = preset[index];
-    var cor = orcGetCor(perc);
-    var st = orcGetStatus(perc);
+  grid.innerHTML = Object.entries(dados).map(([nome, info], index) => {
 
-    return '<div class="orc-item">'
-      + '<div class="orc-label">'
-      +   '<span>'+emoji+' '+nome+' — '+modeloPct+'%</span>'
-      +   '<span style="color:'+st.cor+';font-weight:700;">'+barPerc.toFixed(0)+'%</span>'
-      + '</div>'
-      + '<div class="orc-bar"><div style="'
-      +   'width:'+barPerc+'%;height:100%;background:'+cor+';'
-      +   'border-radius:6px;transition:width .5s ease;'
-      + '"></div></div>'
-      + '<div style="display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted);margin-top:5px;">'
-      +   '<span>R$ '+info.gasto.toFixed(2)+' / R$ '+info.limite.toFixed(2)+'</span>'
-      +   '<span style="color:'+st.cor+';font-weight:600;">'+st.ico+' '+st.txt+'</span>'
-      + '</div>'
-      + '</div>';
+    const perc = info.limite > 0
+      ? (info.gasto / info.limite) * 100
+      : 0;
+
+    const excesso = perc > 100 ? perc - 100 : 0;
+
+    const status =
+      perc > 100
+        ? `🔴 +${excesso.toFixed(0)}%`
+        : perc >= 80
+          ? "🟡 Atenção"
+          : "🟢 Ok";
+
+    const emoji = ORC_EMOJI[nome] || "📊";
+    const modeloPorcentagem = preset[index];
+
+    // 🎨 BARRA COM TRANSIÇÃO SUAVE
+    let corBarra;
+
+    if (perc < 50) {
+      corBarra = `hsl(120, 60%, ${45 + (perc * 0.3)}%)`; // verde suave
+    }
+    else if (perc < 80) {
+      corBarra = `hsl(${120 - ((perc - 50) * 2.2)}, 80%, 50%)`; // verde → amarelo
+    }
+    else {
+      corBarra = `hsl(${40 - ((perc - 80) * 0.8)}, 90%, 50%)`; // amarelo → vermelho
+    }
+
+    return `
+      <div class="orc-item">
+
+        <div class="orc-label">
+          <span>${emoji} ${nome} - ${modeloPorcentagem}%</span>
+          <span>${Math.min(perc, 100).toFixed(0)}%</span>
+        </div>
+
+        <div class="orc-bar">
+          <div style="
+            width:${Math.min(perc,100)}%;
+            height:100%;
+            background:${corBarra};
+            transition:width 0.4s ease;
+            border-radius:6px;
+          "></div>
+        </div>
+
+        <div style="margin-top:6px;font-size:.75rem;color:var(--muted);display:flex;justify-content:space-between;">
+          <span>R$ ${info.gasto.toFixed(2)} / R$ ${info.limite.toFixed(2)}</span>
+          <span>${status}</span>
+        </div>
+
+      </div>
+    `;
   }).join('');
 }
 function getRendaOrcamento(){
