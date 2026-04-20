@@ -1435,9 +1435,16 @@ function delConta(id){
   render();
 
   if(currentUser && db){
-    db.collection("users").doc(currentUser.uid).collection("contas").doc(String(id))
+    userDoc().collection("contas").doc(String(id))
       .delete()
-      .catch(function(e){ console.error(e); });
+      .then(function(){
+        setSyncStatus("ok");
+      })
+      .catch(function(e){
+        console.error("Erro ao deletar conta:", e);
+        setSyncStatus("error");
+        alert("Erro ao remover conta: " + e.message);
+      });
   }
 }
 function editSaldo(id){
