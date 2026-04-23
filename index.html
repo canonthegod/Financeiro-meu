@@ -593,6 +593,39 @@ input:focus, select:focus {
 .dia-total{display:flex;align-items:center;justify-content:space-between;padding:.75rem .875rem;margin:.5rem 0 0;border-top:1px solid var(--div);background:var(--surf2);border-radius:0 0 10px 10px;}
 .dia-vazio{text-align:center;color:var(--faint);font-size:.82rem;padding:1.5rem;}
 @media(max-width:600px){.dia-desc{font-size:.82rem;}.dia-val{font-size:.88rem;}.dia-item{padding:.5rem .625rem;}}
+@media(max-width:600px){#histTabela .tw{overflow-x:auto;-webkit-overflow-scrolling:touch;}#histTabela table{min-width:480px;}}
+/* ── BOTTOM SHEET CONFIRM ── */
+.bs-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;display:flex;align-items:flex-end;justify-content:center;animation:bsIn .18s ease;}
+@keyframes bsIn{from{opacity:0}to{opacity:1}}
+.bs-sheet{background:var(--surf);border-radius:1.25rem 1.25rem 0 0;width:100%;max-width:480px;padding:1.5rem 1.25rem 2rem;box-shadow:0 -4px 32px rgba(0,0,0,.18);animation:bsUp .22s cubic-bezier(.4,0,.2,1);}
+@keyframes bsUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.bs-handle{width:40px;height:4px;background:var(--div);border-radius:2px;margin:0 auto 1.25rem;}
+.bs-title{font-family:'Sora',sans-serif;font-weight:700;font-size:1rem;margin-bottom:.35rem;}
+.bs-sub{font-size:.82rem;color:var(--muted);margin-bottom:1.25rem;line-height:1.4;}
+.bs-actions{display:flex;flex-direction:column;gap:.6rem;}
+.bs-btn{padding:.75rem;border-radius:.75rem;font-size:.9rem;font-weight:600;border:none;cursor:pointer;transition:opacity .15s;width:100%;}
+.bs-btn:active{opacity:.75;}
+.bs-btn.danger{background:var(--rlight);color:var(--red);}
+.bs-btn.cancel{background:var(--surf2);color:var(--muted);}
+/* ── HIST RANKING ── */
+.rank-list{display:flex;flex-direction:column;gap:.5rem;margin-top:.5rem;}
+.rank-item{display:flex;align-items:center;gap:.75rem;}
+.rank-num{width:22px;height:22px;border-radius:50%;background:var(--surf2);font-size:.7rem;font-weight:700;color:var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.rank-num.top{background:var(--p);color:#fff;}
+.rank-bar-wrap{flex:1;min-width:0;}
+.rank-bar-label{display:flex;justify-content:space-between;font-size:.75rem;margin-bottom:.2rem;}
+.rank-bar-label span:first-child{font-weight:600;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%;}
+.rank-bar-label span:last-child{color:var(--muted);}
+.rank-bar-track{height:6px;background:var(--surf2);border-radius:3px;overflow:hidden;}
+.rank-bar-fill{height:100%;border-radius:3px;transition:width .5s;}
+.conta-evolucao{display:flex;flex-direction:column;gap:.625rem;margin-top:.5rem;}
+.conta-ev-row{background:var(--surf2);border-radius:.75rem;padding:.75rem 1rem;display:flex;align-items:center;gap:.75rem;}
+.conta-ev-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.conta-ev-info{flex:1;min-width:0;}
+.conta-ev-nome{font-size:.82rem;font-weight:600;}
+.conta-ev-subs{display:flex;gap:1rem;margin-top:.2rem;font-size:.72rem;color:var(--muted);}
+.conta-ev-saldo{font-size:.88rem;font-weight:700;text-align:right;}
+
 
 </style>
 </head>
@@ -1037,8 +1070,26 @@ input:focus, select:focus {
     <div class="card" id="histDiaCard" style="display:none;margin-bottom:1rem;">
       <div id="histDiaContent"></div>
     </div>
+    <!-- Ranking do mês -->
+    <div class="card" style="margin-bottom:1rem;" id="histRankingCard">
+      <div class="ctit">📊 Resumo do mês</div>
+      <div id="histRanking"></div>
+    </div>
     <div class="card">
       <div class="ctit">Lançamentos do mês</div>
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.75rem;">
+        <select id="histFiltConta" onchange="renderHist()" style="flex:1;min-width:120px;font-size:.78rem;padding:.35rem .6rem;border-radius:.5rem;border:1px solid var(--border);background:var(--surf2);color:var(--txt);">
+          <option value="">Todas as contas</option>
+        </select>
+        <select id="histFiltCat" onchange="renderHist()" style="flex:1;min-width:140px;font-size:.78rem;padding:.35rem .6rem;border-radius:.5rem;border:1px solid var(--border);background:var(--surf2);color:var(--txt);">
+          <option value="">Todas as categorias</option>
+        </select>
+        <select id="histFiltTipo" onchange="renderHist()" style="flex:1;min-width:120px;font-size:.78rem;padding:.35rem .6rem;border-radius:.5rem;border:1px solid var(--border);background:var(--surf2);color:var(--txt);">
+          <option value="">Entrada e Saída</option>
+          <option value="e">Só Entradas</option>
+          <option value="s">Só Saídas</option>
+        </select>
+      </div>
       <div id="histTabela"></div>
     </div>
   </div>
@@ -1657,13 +1708,34 @@ function addLanc(){
   render();
 }
 
+function bsClose(e){
+  if(e&&e.target!==document.getElementById("bsOverlay"))return;
+  document.getElementById("bsOverlay").style.display="none";
+}
+function bsShow(title,sub,onConfirm){
+  document.getElementById("bsTitle").textContent=title;
+  document.getElementById("bsSub").textContent=sub;
+  var btn=document.getElementById("bsConfirm");
+  btn.onclick=function(){document.getElementById("bsOverlay").style.display="none";onConfirm();};
+  document.getElementById("bsOverlay").style.display="flex";
+}
 function delLanc(id){
-  if(!confirm("Excluir este lançamento?")) return;
-  if(currentUser && db){
-    db.collection("users").doc(currentUser.uid).collection("lancamentos").doc(String(id)).delete().catch(function(e){console.error(e);});
+  var l=lancamentos.find(function(x){return String(x.id)===String(id);});
+  var desc=l?l.desc:"este lançamento";
+  var doDelete=function(){
+    if(currentUser&&db){
+      db.collection("users").doc(currentUser.uid).collection("lancamentos").doc(String(id)).delete().catch(function(e){console.error(e);});
+    }
+    lancamentos=lancamentos.filter(function(l){return String(l.id)!=String(id);});
+    render();
+  };
+  // Mobile: usa bottom sheet; Desktop: confirm nativo
+  if(window.innerWidth<=768){
+    bsShow("Excluir lançamento?","\""+desc+"\" será removido permanentemente.",doDelete);
+  } else {
+    if(!confirm("Excluir este lançamento?"))return;
+    doDelete();
   }
-  lancamentos=lancamentos.filter(function(l){return String(l.id)!=String(id);});
-  render();
 }
 
 // ── AGENDA ──
@@ -2107,43 +2179,220 @@ function renderHist(){
     orcHistEl.innerHTML = '<div class="ctit" style="margin-top:.75rem;margin-bottom:.375rem;">Orçamento do mês</div>' + orcH;
   }
 
-  var ls=getLM(m,y);
+  // ── RANKING DO MÊS ──
+  var lsAll=getLM(m,y); // lista completa sem filtros extras
+  renderRanking(m, y, lsAll, cm);
+
+  var ls=lsAll;
+  var tabela=document.getElementById("histTabela");
+
   // Popula select de dias
   var diaEl = document.getElementById('histDia');
   if(diaEl){
     var diaSel = parseInt(diaEl.value)||0;
-    var diasExist = [...new Set(ls.map(l=>parseInt(l.dt.slice(8,10))))].sort((a,b)=>a-b);
+    var diasExist = [...new Set(lsAll.map(l=>parseInt(l.dt.slice(8,10))))].sort((a,b)=>a-b);
     diaEl.innerHTML = '<option value="0">Todos os dias</option>' +
       diasExist.map(d=>`<option value="${d}" ${d===diaSel?'selected':''}>${d < 10 ? '0'+d : d}</option>`).join('');
-    // filtra se um dia foi selecionado
-    if(diaSel > 0){
-      ls = ls.filter(l => parseInt(l.dt.slice(8,10)) === diaSel);
-    }
+    if(diaSel > 0) ls = ls.filter(l => parseInt(l.dt.slice(8,10)) === diaSel);
   }
+
+  // Popula e aplica filtros de conta / categoria / tipo
+  var fcEl=document.getElementById('histFiltConta');
+  var fkEl=document.getElementById('histFiltCat');
+  var ftEl=document.getElementById('histFiltTipo');
+  var fcSel='', fkSel='', ftSel='';
+  if(fcEl){ fcSel=fcEl.value; }
+  if(fkEl){ fkSel=fkEl.value; }
+  if(ftEl){ ftSel=ftEl.value; }
+
+  // Re-popula os selects preservando a seleção atual
+  if(fcEl){
+    var contasNoMes=[...new Set(lsAll.map(function(l){return l.conta;}).filter(Boolean))];
+    fcEl.innerHTML='<option value="">Todas as contas</option>'+contasNoMes.map(function(cid){
+      var c=contas.find(function(x){return x.id===cid;});
+      return '<option value="'+cid+'"'+(cid===fcSel?' selected':'')+'>'+( c?c.nome:cid )+'</option>';
+    }).join('');
+    fcEl.value=fcSel;
+  }
+  if(fkEl){
+    var catsNoMes=[...new Set(lsAll.map(function(l){return l.cat;}).filter(Boolean))].sort();
+    fkEl.innerHTML='<option value="">Todas as categorias</option>'+catsNoMes.map(function(cat){
+      return '<option value="'+cat+'"'+(cat===fkSel?' selected':'')+'>'+cat+'</option>';
+    }).join('');
+    fkEl.value=fkSel;
+  }
+
+  // Aplica filtros
+  if(fcSel) ls=ls.filter(function(l){return l.conta===fcSel;});
+  if(fkSel) ls=ls.filter(function(l){return l.cat===fkSel;});
+  if(ftSel) ls=ls.filter(function(l){return l.t===ftSel;});
+
   // Chama o card de detalhes do dia
   var diaFiltrado = diaEl ? parseInt(diaEl.value)||0 : 0;
-  renderHistDia(getLM(m,y), diaFiltrado);
+  renderHistDia(lsAll, diaFiltrado);
 
-  var tabela=document.getElementById("histTabela");
   if(!tabela) return;
-  if(!ls.length){tabela.innerHTML='<p style="color:var(--muted);padding:1rem;">Nenhum lançamento neste mês.</p>';return;}
-  function cNomeHist(id){var c=contas.find(function(x){return x.id==id;});if(!c)return'<span style="color:var(--faint);">—</span>';return'<span style="display:inline-flex;align-items:center;gap:.25rem;"><span style="width:7px;height:7px;border-radius:50%;background:'+c.cor+';flex-shrink:0;"></span>'+c.nome+'</span>';}
-  var h='<div class="tw"><table><thead><tr><th>Data</th><th>Descrição</th><th>Cat.</th><th>Conta</th><th>Tipo</th><th>Valor</th></tr></thead><tbody>';
-  ls.sort(function(a,b){return a.dt>b.dt?1:-1;}).forEach(function(l){
-    h+='<tr>';
-    h+='<td>'+fmtDt(l.dt)+'</td>';
-    h+='<td>'+l.desc+(l.rec?'<span style="font-size:.58rem;color:var(--faint);margin-left:3px;">↺</span>':"")+(l.parc?'<span style="font-size:.58rem;color:var(--warn);margin-left:3px;">✂</span>':"")+'</td>';
-    h+='<td><span class="cc">'+l.cat+'</span></td>';
-    h+='<td>'+cNomeHist(l.conta)+'</td>';
-    h+='<td><span class="bdg '+(l.t=="e"?"e":"s")+'">'+(l.t=="e"?"Entrada":"Saída")+'</span></td>';
-    h+='<td class="'+(l.t=="e"?"ap":"an")+'">'+(l.t=="e"?"+":"−")+fmt(l.v)+'</td>';
-    h+='</tr>';
-  });
-  h+='</tbody></table></div>';
-  tabela.innerHTML=h;
+  
+  if(!ls.length){
+    tabela.innerHTML='<p style="color:var(--muted);padding:1rem;">Nenhum lançamento encontrado.</p>';
+  } else {
+    function cNomeHist(id){var c=contas.find(function(x){return x.id==id;});if(!c)return'<span style="color:var(--faint);">—</span>';return'<span style="display:inline-flex;align-items:center;gap:.25rem;"><span style="width:7px;height:7px;border-radius:50%;background:'+c.cor+';flex-shrink:0;"></span>'+c.nome+'</span>';}
+    var h='<div class="tw"><table><thead><tr><th>Data</th><th>Descrição</th><th>Cat.</th><th>Conta</th><th>Tipo</th><th>Valor</th></tr></thead><tbody>';
+    ls.sort(function(a,b){return a.dt>b.dt?1:-1;}).forEach(function(l){
+      h+='<tr>';
+      h+='<td>'+fmtDt(l.dt)+'</td>';
+      h+='<td>'+l.desc+(l.rec?'<span style="font-size:.58rem;color:var(--faint);margin-left:3px;">↺</span>':"")+(l.parc?'<span style="font-size:.58rem;color:var(--warn);margin-left:3px;">✂</span>':"")+'</td>';
+      h+='<td><span class="cc">'+l.cat+'</span></td>';
+      h+='<td>'+cNomeHist(l.conta)+'</td>';
+      h+='<td><span class="bdg '+(l.t=="e"?"e":"s")+'">'+(l.t=="e"?"Entrada":"Saída")+'</span></td>';
+      h+='<td class="'+(l.t=="e"?"ap":"an")+'">'+(l.t=="e"?"+":"−")+fmt(l.v)+'</td>';
+      h+='</tr>';
+    });
+    h+='</tbody></table></div>';
+    var totEnt=ls.filter(function(l){return l.t==="e";}).reduce(function(s,l){return s+l.v;},0);
+    var totSai=ls.filter(function(l){return l.t==="s";}).reduce(function(s,l){return s+l.v;},0);
+    h+='<div style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:flex-end;padding:.625rem .25rem 0;font-size:.76rem;color:var(--muted);">';
+    h+='<span>'+ls.length+' lançamento'+(ls.length!==1?'s':'')+'</span>';
+    if(totEnt>0)h+='<span style="color:var(--green);">↑ Entradas: '+fmt(totEnt)+'</span>';
+    if(totSai>0)h+='<span style="color:var(--red);">↓ Saídas: '+fmt(totSai)+'</span>';
+    h+='</div>';
+    tabela.innerHTML=h;
+  }
 }
 
 function calcDataMeta(m){var nd=new Date(cY,cM+m,1);return MN[nd.getMonth()]+" "+nd.getFullYear();}
+
+function renderRanking(m, y, ls, cm){
+  var el=document.getElementById("histRanking");
+  if(!el)return;
+
+  // ── Evolução das contas ──
+  // Saldo inicial = saldo total da conta até o último dia do mês anterior
+  var prevM=m===0?11:m-1, prevY=m===0?y-1:y;
+  var prevKey=prevY+"-"+("0"+(prevM+1)).slice(-2);
+  var curKey=y+"-"+("0"+(m+1)).slice(-2);
+
+  var contaH='';
+  if(contas.length){
+    contaH+='<div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.5rem;">🏦 Contas — início vs fim do mês</div>';
+    contaH+='<div class="conta-evolucao">';
+    contas.forEach(function(c){
+      // Saldo acumulado até fim do mês anterior
+      var siAte=lancamentos.filter(function(l){return l.conta===c.id&&l.dt<curKey;});
+      var siEnt=siAte.filter(function(l){return l.t==="e";}).reduce(function(s,l){return s+l.v;},0);
+      var siSai=siAte.filter(function(l){return l.t==="s";}).reduce(function(s,l){return s+l.v;},0);
+      var saldoInicio=(c.si||0)+siEnt-siSai;
+
+      // Movimento no mês
+      var doMes=ls.filter(function(l){return l.conta===c.id;});
+      var entMes=doMes.filter(function(l){return l.t==="e";}).reduce(function(s,l){return s+l.v;},0);
+      var saiMes=doMes.filter(function(l){return l.t==="s";}).reduce(function(s,l){return s+l.v;},0);
+      var saldoFim=saldoInicio+entMes-saiMes;
+
+      // Só saldo fim considerando o mês corrente
+      var mesAtivo=(m===cM&&y===cY);
+      var diff=saldoFim-saldoInicio;
+      var diffCor=diff>=0?'var(--green)':'var(--red)';
+      var diffSinal=diff>=0?'+':'';
+
+      contaH+='<div class="conta-ev-row">';
+      contaH+='<div class="conta-ev-dot" style="background:'+c.cor+';"></div>';
+      contaH+='<div class="conta-ev-info">';
+      contaH+='<div class="conta-ev-nome">'+c.nome+'</div>';
+      contaH+='<div class="conta-ev-subs">';
+      contaH+='<span title="Entradas no mês" style="color:var(--green);">↑ Entrou: '+fmt(entMes)+'</span>';
+      contaH+='<span title="Saídas no mês" style="color:var(--red);">↓ Saiu: '+fmt(saiMes)+'</span>';
+      contaH+='</div>';
+      contaH+='<div style="font-size:.72rem;color:var(--muted);margin-top:.3rem;">'+fmt(saldoInicio)+' → '+fmt(saldoFim)+'<span style="margin-left:.4rem;font-weight:700;color:'+diffCor+';">'+(diff>=0?'(+':' (')+fmt(Math.abs(diff))+' no mês)</span></div>';
+      contaH+='</div>';
+      contaH+='<div class="conta-ev-saldo">';
+      contaH+='<div style="font-size:.65rem;color:var(--muted);font-weight:400;margin-bottom:.1rem;">saldo final</div>';
+      contaH+='<div style="color:'+(saldoFim>=0?'var(--txt)':'var(--red)')+';font-size:.95rem;font-weight:700;">'+fmt(saldoFim)+'</div>';
+      contaH+='</div></div>';
+    });
+    contaH+='</div>';
+  }
+
+  // ── Ranking categorias (saídas) ──
+  var catGastos={};
+  ls.filter(function(l){return l.t==="s";}).forEach(function(l){
+    catGastos[l.cat]=(catGastos[l.cat]||0)+l.v;
+  });
+  var catSort=Object.keys(catGastos).sort(function(a,b){return catGastos[b]-catGastos[a];});
+  var totalSaidas=cm.dep||1;
+
+  var rankCatH='';
+  if(catSort.length){
+    var totalSaidasReal=Object.values(catGastos).reduce(function(s,v){return s+v;},0);
+    rankCatH+='<div style="display:flex;align-items:center;justify-content:space-between;margin:1rem 0 .5rem;">'
+      +'<span style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;">📉 Ranking de gastos por categoria</span>'
+      +'<span style="font-size:.78rem;font-weight:700;color:var(--red);">Total: '+fmt(totalSaidasReal)+'</span>'
+      +'</div>';
+    rankCatH+='<div class="rank-list">';
+    catSort.forEach(function(cat,i){
+      var v=catGastos[cat];
+      var pct=Math.round(v/totalSaidas*100);
+      var cor=i===0?'var(--red)':i===1?'var(--warn)':'var(--p)';
+      rankCatH+='<div class="rank-item">';
+      rankCatH+='<div class="rank-num'+(i<3?' top':'')+'" style="'+(i<3?'background:'+cor+';':'')+'">'+( i<3?['🥇','🥈','🥉'][i]:(i+1) )+'</div>';
+      rankCatH+='<div class="rank-bar-wrap">';
+      rankCatH+='<div class="rank-bar-label"><span>'+(EMOJIS[cat]||'📌')+' '+cat+'</span><span>'+fmt(v)+' · '+pct+'%</span></div>';
+      rankCatH+='<div class="rank-bar-track"><div class="rank-bar-fill" style="width:'+pct+'%;background:'+cor+';"></div></div>';
+      rankCatH+='</div></div>';
+    });
+    rankCatH+='</div>';
+  }
+
+  // ── Ranking contas mais movimentadas ──
+  var contaMov={};
+  ls.forEach(function(l){
+    if(!l.conta)return;
+    if(!contaMov[l.conta])contaMov[l.conta]={ent:0,sai:0};
+    if(l.t==="e")contaMov[l.conta].ent+=l.v;
+    if(l.t==="s")contaMov[l.conta].sai+=l.v;
+  });
+  var contaSort=Object.keys(contaMov).sort(function(a,b){
+    return (contaMov[b].ent+contaMov[b].sai)-(contaMov[a].ent+contaMov[a].sai);
+  });
+  var maxMov=contaSort.length?contaMov[contaSort[0]].ent+contaMov[contaSort[0]].sai:1;
+
+  var rankContaH='';
+  if(contaSort.length>1){
+    var totalEntGeral=contaSort.reduce(function(s,cid){return s+contaMov[cid].ent;},0);
+    var totalSaiGeral=contaSort.reduce(function(s,cid){return s+contaMov[cid].sai;},0);
+    var diffGeral=totalEntGeral-totalSaiGeral;
+    rankContaH+='<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.35rem;margin:1rem 0 .5rem;">'
+      +'<span style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;">🔄 Ranking de movimentação por banco</span>'
+      +'<span style="font-size:.75rem;color:var(--muted);">'
+      +'<span style="color:var(--green);">↑ '+fmt(totalEntGeral)+'</span>'
+      +' &nbsp;·&nbsp; '
+      +'<span style="color:var(--red);">↓ '+fmt(totalSaiGeral)+'</span>'
+      +' &nbsp;·&nbsp; '
+      +'Saldo <strong style="color:'+(diffGeral>=0?'var(--green)':'var(--red)')+';">'+( diffGeral>=0?'+':'')+fmt(diffGeral)+'</strong>'
+      +'</span>'
+      +'</div>';
+    rankContaH+='<div class="rank-list">';
+    contaSort.forEach(function(cid,i){
+      var c=contas.find(function(x){return x.id===cid;});
+      var nome=c?c.nome:cid;
+      var cor=c?c.cor:'var(--p)';
+      var mov=contaMov[cid];
+      var total=mov.ent+mov.sai;
+      var pct=Math.round(total/maxMov*100);
+      rankContaH+='<div class="rank-item">';
+      rankContaH+='<div class="rank-num'+(i<3?' top':'')+'" style="'+(i<3?'background:'+cor+';color:#fff;':'')+'">'+( i<3?['🥇','🥈','🥉'][i]:(i+1) )+'</div>';
+      rankContaH+='<div class="rank-bar-wrap">';
+      rankContaH+='<div class="rank-bar-label"><span>'+nome+'</span><span style="display:flex;gap:.5rem;"><span style="color:var(--green);">↑'+fmt(mov.ent)+'</span> <span style="color:var(--red);">↓'+fmt(mov.sai)+'</span></span></div>';
+      rankContaH+='<div class="rank-bar-track"><div class="rank-bar-fill" style="width:'+pct+'%;background:'+cor+';"></div></div>';
+      rankContaH+='</div></div>';
+    });
+    rankContaH+='</div>';
+  }
+
+  el.innerHTML=contaH+rankCatH+rankContaH;
+  var card=document.getElementById("histRankingCard");
+  if(card) card.style.display=(contaH||rankCatH||rankContaH)?'':'none';
+}
 function selCen(i){cenSel=i;calcR();}
 // ── TABELAS ──
 function renderTbls(){
@@ -2696,7 +2945,6 @@ function setMes(m, y) {
   // 🔥 RECARREGA TUDO DO MÊS
   render();
   renderOrcamento(); // <- ESSENCIAL
-  renderHist(); // se quiser histórico junto
 }
 
 // ── GASTOS DO DIA (DASHBOARD) ──
@@ -2805,5 +3053,17 @@ if(_c) banco = _c.nome;
   });
 
   </script>
+  <!-- Bottom Sheet Confirm -->
+  <div id="bsOverlay" class="bs-overlay" style="display:none;" onclick="bsClose(event)">
+    <div class="bs-sheet" onclick="event.stopPropagation()">
+      <div class="bs-handle"></div>
+      <div class="bs-title" id="bsTitle">Excluir lançamento?</div>
+      <div class="bs-sub" id="bsSub">Esta ação não pode ser desfeita.</div>
+      <div class="bs-actions">
+        <button class="bs-btn danger" id="bsConfirm">🗑 Excluir</button>
+        <button class="bs-btn cancel" onclick="bsClose()">Cancelar</button>
+      </div>
+    </div>
+  </div>
   </body>
   </html>
