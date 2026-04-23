@@ -1579,21 +1579,65 @@ if(ctxC&&contas.length>0){
             font:{size:11},
             padding:12,
             generateLabels:function(chart){
+              var total=rawData.reduce(function(s,v){return s+v;},0);
               return chart.data.labels.map(function(l,i){
+                var meta=chart.getDatasetMeta(0);
+                var hidden=meta.data[i]&&meta.data[i].hidden;
+                var pct=total>0?Math.round(rawData[i]/total*100):0;
                 return{
-                  text:l+" — "+fmt(rawData[i]),
-                  fillStyle:chart.data.datasets[0].backgroundColor[i],
+                  text:l+" — "+fmt(rawData[i])+" ("+pct+"%)",
+                  fillStyle:hidden?"transparent":chart.data.datasets[0].backgroundColor[i],
                   strokeStyle:chart.data.datasets[0].backgroundColor[i],
-                  hidden:false,
-                  index:i
+                  fontColor:hidden?gc("--faint"):gc("--txt"),
+                  hidden:hidden,
+                  lineWidth:hidden?0:1,
+                  index:i,
+                  textDecoration:hidden?"line-through":""
                 };
               });
             }
+          },
+          onClick:function(e,legendItem,legend){
+            var index=legendItem.index;
+            var meta=legend.chart.getDatasetMeta(0);
+            meta.data[index].hidden=!meta.data[index].hidden;
+            legend.chart.update();
           }
         },
-        tooltip:{callbacks:{label:function(c){return c.label+": "+fmt(rawData[c.dataIndex]);}}}
+        tooltip:{callbacks:{label:function(c){
+          var total=rawData.reduce(function(s,v){return s+v;},0);
+          var pct=total>0?Math.round(rawData[c.dataIndex]/total*100):0;
+          return c.label+": "+fmt(rawData[c.dataIndex])+" ("+pct+"%)";
+        }}}
       }
-    }
+    },
+    plugins:[{
+      id:"sliceLabels",
+      afterDraw:function(chart){
+        var ctx2=chart.ctx;
+        var total=rawData.reduce(function(s,v){return s+v;},0);
+        if(!total)return;
+        var meta=chart.getDatasetMeta(0);
+        meta.data.forEach(function(arc,i){
+          if(arc.hidden)return;
+          var pct=Math.round(rawData[i]/total*100);
+          if(pct<5)return; // não mostra % em fatias muito pequenas
+          var angle=(arc.startAngle+arc.endAngle)/2;
+          var r=(arc.outerRadius+arc.innerRadius)/2;
+          var x=arc.x+Math.cos(angle)*r;
+          var y=arc.y+Math.sin(angle)*r;
+          ctx2.save();
+          ctx2.font="bold 11px Inter,sans-serif";
+          ctx2.fillStyle="#fff";
+          ctx2.textAlign="center";
+          ctx2.textBaseline="middle";
+          ctx2.shadowColor="rgba(0,0,0,.4)";
+          ctx2.shadowBlur=3;
+          ctx2.fillText(pct+"%",x,y);
+          ctx2.restore();
+        });
+      }
+    }]
   });
 }
 }
@@ -2409,8 +2453,68 @@ function renderCharts(){try{
   var cats={};ls.forEach(function(l){cats[l.cat]=(cats[l.cat]||0)+l.v;});
   var cL=Object.keys(cats),cD=Object.values(cats),cC=cL.map(function(c){return CATS[c]||"#999";});
   if(CH.pie)CH.pie.destroy();
-  CH.pie=new Chart(document.getElementById("cPie").getContext("2d"),{type:"doughnut",data:{labels:cL,datasets:[{data:cD.length?cD:[1],backgroundColor:cD.length?cC:["#eee"],borderWidth:3,borderColor:gc("--surf"),hoverOffset:8}]},options:{responsive:true,maintainAspectRatio:false,cutout:"68%",plugins:{legend:{position:"right",labels:{font:{size:9.5},color:gc("--muted"),boxWidth:9,padding:6}},tooltip:{callbacks:{label:function(c){return cD.length?c.label+": "+fmt(c.raw):"";}}}}
-  }});
+  CH.pie=new Chart(document.getElementById("cPie").getContext("2d"),{
+    type:"doughnut",
+    data:{labels:cL,datasets:[{data:cD.length?cD:[1],backgroundColor:cD.length?cC:["#eee"],borderWidth:3,borderColor:gc("--surf"),hoverOffset:8}]},
+    options:{
+      responsive:true,maintainAspectRatio:false,cutout:"68%",
+      plugins:{
+        legend:{
+          position:"right",
+          labels:{font:{size:9.5},color:gc("--txt"),boxWidth:9,padding:6,
+            generateLabels:function(chart){
+              var total=cD.reduce(function(s,v){return s+v;},0);
+              return chart.data.labels.map(function(l,i){
+                var meta=chart.getDatasetMeta(0);
+                var hidden=meta.data[i]&&meta.data[i].hidden;
+                var pct=total>0?Math.round(cD[i]/total*100):0;
+                return{text:l+" "+pct+"%",fillStyle:hidden?"transparent":cC[i],strokeStyle:cC[i],fontColor:hidden?gc("--faint"):gc("--txt"),hidden:hidden,lineWidth:hidden?0:1,index:i,textDecoration:hidden?"line-through":""};
+              });
+            }
+          },
+          onClick:function(e,legendItem,legend){
+            var index=legendItem.index;
+            var meta=legend.chart.getDatasetMeta(0);
+            meta.data[index].hidden=!meta.data[index].hidden;
+            legend.chart.update();
+          }
+        },
+        tooltip:{callbacks:{label:function(c){
+          if(!cD.length)return"";
+          var total=cD.reduce(function(s,v){return s+v;},0);
+          var pct=total>0?Math.round(c.raw/total*100):0;
+          return c.label+": "+fmt(c.raw)+" ("+pct+"%)";
+        }}}
+      }
+    },
+    plugins:[{
+      id:"pieSliceLabels",
+      afterDraw:function(chart){
+        var ctx2=chart.ctx;
+        var total=cD.reduce(function(s,v){return s+v;},0);
+        if(!total||!cD.length)return;
+        var meta=chart.getDatasetMeta(0);
+        meta.data.forEach(function(arc,i){
+          if(arc.hidden)return;
+          var pct=Math.round(cD[i]/total*100);
+          if(pct<6)return;
+          var angle=(arc.startAngle+arc.endAngle)/2;
+          var r=(arc.outerRadius+arc.innerRadius)/2;
+          var x=arc.x+Math.cos(angle)*r;
+          var y=arc.y+Math.sin(angle)*r;
+          ctx2.save();
+          ctx2.font="bold 10px Inter,sans-serif";
+          ctx2.fillStyle="#fff";
+          ctx2.textAlign="center";
+          ctx2.textBaseline="middle";
+          ctx2.shadowColor="rgba(0,0,0,.5)";
+          ctx2.shadowBlur=3;
+          ctx2.fillText(pct+"%",x,y);
+          ctx2.restore();
+        });
+      }
+    }]
+  });
   var bL=[],bR=[],bD=[];
   for(var i=5;i>=0;i--){var bm=cM-i,by=cY;if(bm<0){bm+=12;by--;}var cm=calcMes(bm,by);bL.push(MN[bm]);bR.push(cm.rec);bD.push(cm.dep);}
   if(CH.bar)CH.bar.destroy();
