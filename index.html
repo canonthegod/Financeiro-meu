@@ -221,8 +221,9 @@ input:focus,select:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(1,105,1
   .phdr{padding:1rem .875rem .75rem;}
   .kpis{grid-template-columns:repeat(2,1fr);}
   .ch2{grid-template-columns:1fr;}
-  .pt-row,.pt-head{grid-template-columns:52px 1fr 85px 85px;}
+  .pt-row,.pt-head{grid-template-columns:54px 1fr 88px;}
   .pt-d,.pt-head span:last-child{display:none;}
+  .pt-row > div:nth-child(4),.pt-head > span:nth-child(4){display:none;}
   .pt-mes{font-size:.68rem;}
   .pt-v{font-size:.78rem;}
   .gcols{grid-template-columns:1fr;}
@@ -238,10 +239,10 @@ input:focus,select:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(1,105,1
   .contas-grid{grid-template-columns:1fr 1fr;}
   .cenarios{grid-template-columns:1fr;}
   .agenda-header{grid-template-columns:1fr;}
-  .pt-row,.pt-head{grid-template-columns:48px 1fr 80px !important;}
-  .pt-head span:nth-child(3),.pt-v:first-of-type{display:none;}
-  .pt-row{padding:.35rem .375rem;}
+  .pt-row,.pt-head{grid-template-columns:44px 1fr 78px !important;}
+  .pt-row{padding:.35rem .5rem;}
   .pt-mes{font-size:.64rem;}
+  .pt-v{font-size:.72rem;}
 }
 ::-webkit-scrollbar{width:4px;height:4px;}::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px;}
 
@@ -1040,6 +1041,7 @@ input[type=text], input[type=number], input[type=date], select {
   border-radius: 10px !important;
 }
 </style>
+<script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
 </head>
 <body>
 <!-- AUTH SCREEN -->
@@ -1830,7 +1832,7 @@ function changeMonth(d) {
   renderOrcControls();
 }
 
-function toggleTheme(){var h=document.documentElement;var n=h.getAttribute("data-theme")=="dark"?"light":"dark";h.setAttribute("data-theme",n);setTimeout(render,80);}
+function toggleTheme(){var h=document.documentElement;var n=h.getAttribute("data-theme")=="dark"?"light":"dark";h.setAttribute("data-theme",n);localStorage.setItem('theme',n);setTimeout(render,80);}
 function setTipo(t){
   tipoAtual=t;
   document.getElementById("btnE").className=t=="e"?"oe":"";
@@ -2433,8 +2435,11 @@ function delLanc(id){
 
   // Excluir apenas este
   var doDeleteSo=function(){
+    _deletedIds.add(String(id));
     if(currentUser&&db){
-      db.collection('users').doc(currentUser.uid).collection('lancamentos').doc(String(id)).delete().catch(function(e){console.error(e);});
+      db.collection('users').doc(currentUser.uid).collection('lancamentos').doc(String(id)).delete()
+        .then(function(){setTimeout(function(){_deletedIds.delete(String(id));},5000);})
+        .catch(function(e){_deletedIds.delete(String(id));console.error(e);});
     }
     lancamentos=lancamentos.filter(function(x){return String(x.id)!==String(id);});
     render();
@@ -2444,15 +2449,18 @@ function delLanc(id){
   var doDeleteTodos=function(){
     var dtBase=l.dt||'';
     var toRemove=lancamentos.filter(function(x){
-      return (String(x.id)===String(id)) || 
+      return (String(x.id)===String(id)) ||
              (x.rec&&x.desc===l.desc&&x.v===l.v&&x.cat===l.cat&&x.dt>=dtBase);
     });
-    toRemove.forEach(function(x){
+    var removeIds=toRemove.map(function(x){return String(x.id);});
+    removeIds.forEach(function(did){
+      _deletedIds.add(did);
       if(currentUser&&db){
-        db.collection('users').doc(currentUser.uid).collection('lancamentos').doc(String(x.id)).delete().catch(function(e){console.error(e);});
+        db.collection('users').doc(currentUser.uid).collection('lancamentos').doc(did).delete()
+          .then(function(){setTimeout(function(){_deletedIds.delete(did);},5000);})
+          .catch(function(e){_deletedIds.delete(did);console.error(e);});
       }
     });
-    var removeIds=toRemove.map(function(x){return String(x.id);});
     lancamentos=lancamentos.filter(function(x){return removeIds.indexOf(String(x.id))===-1;});
     render();
   };
