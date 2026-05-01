@@ -757,8 +757,8 @@ input:focus, select:focus {
 .s-bot { border-top: 1px solid rgba(255,255,255,.07) !important; }
 #mLbl { color: rgba(255,255,255,.65) !important; }
 #mLblMobile { color: var(--txt) !important; }
-.icb { color: rgba(255,255,255,.42) !important; }
-.icb:hover { background: rgba(255,255,255,.1) !important; color: #fff !important; }
+.side .icb { color: rgba(255,255,255,.42) !important; }
+.side .icb:hover { background: rgba(255,255,255,.1) !important; color: #fff !important; }
 
 #syncLbl { color: rgba(255,255,255,.36) !important; }
 
@@ -904,6 +904,141 @@ th {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(0,0,0,.15); border-radius: 99px; }
 [data-theme="dark"] ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); }
+
+/* ============================================================
+   BOTÕES & NAV — REDESIGN PREMIUM v4
+   ============================================================ */
+
+/* ── SIDEBAR NAV ITEMS — mais refinados ── */
+.ni {
+  font-size: .84rem !important;
+  padding: .5rem .7rem !important;
+  gap: .55rem !important;
+  border-radius: 10px !important;
+  margin: 1px 6px !important;
+  letter-spacing: -.01em !important;
+}
+.ni svg {
+  width: 15px !important;
+  height: 15px !important;
+  flex-shrink: 0;
+}
+.ni.on {
+  background: rgba(255,255,255,.14) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08) !important;
+}
+.nlbl {
+  font-size: .6rem !important;
+  padding: .625rem .7rem .2rem !important;
+  letter-spacing: .1em !important;
+}
+
+/* ── TOGGLE ENTRADA / SAÍDA — moderno ── */
+.ttog {
+  border-radius: 16px !important;
+  padding: 4px !important;
+  gap: 4px !important;
+  background: var(--surf2) !important;
+  border: 1.5px solid var(--div) !important;
+  height: 48px !important;
+  margin-bottom: .75rem !important;
+}
+.ttog button {
+  border-radius: 12px !important;
+  font-size: .875rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -.01em !important;
+  height: 100% !important;
+  transition: all .2s cubic-bezier(.34,1.2,.64,1) !important;
+}
+.ttog button.oe {
+  background: linear-gradient(135deg, #0d9298, #0c7e84) !important;
+  color: #fff !important;
+  box-shadow: 0 3px 12px rgba(13,146,152,.35) !important;
+}
+.ttog button.os {
+  background: linear-gradient(135deg, #e53935, #c62828) !important;
+  color: #fff !important;
+  box-shadow: 0 3px 12px rgba(229,57,53,.3) !important;
+}
+.ttog button:not(.oe):not(.os) {
+  color: var(--muted) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* ── BOTÃO PRIMÁRIO — mais impacto ── */
+.btn.bp {
+  background: linear-gradient(135deg, #0d9298 0%, #0b7a80 100%) !important;
+  border-radius: 12px !important;
+  font-size: .88rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -.01em !important;
+  box-shadow: 0 3px 12px rgba(13,146,152,.3), 0 1px 3px rgba(13,146,152,.2) !important;
+  transition: all .2s ease !important;
+  padding: .5rem 1.25rem !important;
+}
+.btn.bp:hover {
+  filter: brightness(1.1) !important;
+  box-shadow: 0 5px 18px rgba(13,146,152,.4), 0 2px 6px rgba(13,146,152,.2) !important;
+  transform: translateY(-1px) !important;
+}
+.btn.bp:active { transform: translateY(0) !important; }
+
+/* ── BOTÃO SECUNDÁRIO ── */
+.btn.bg {
+  background: var(--surf2) !important;
+  border: 1.5px solid var(--div) !important;
+  border-radius: 12px !important;
+  color: var(--txt) !important;
+  font-weight: 600 !important;
+  font-size: .85rem !important;
+  transition: all .15s ease !important;
+}
+.btn.bg:hover {
+  background: var(--div) !important;
+  border-color: var(--muted) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* ── BOTÃO EXCLUIR ── */
+.btn.bd {
+  background: transparent !important;
+  border: 1.5px solid rgba(229,57,53,.25) !important;
+  color: #e53935 !important;
+  border-radius: 10px !important;
+  font-weight: 600 !important;
+  transition: all .15s ease !important;
+}
+.btn.bd:hover {
+  background: #fef2f2 !important;
+  border-color: #e53935 !important;
+  transform: translateY(-1px) !important;
+}
+[data-theme="dark"] .btn.bd:hover { background: #2a1515 !important; }
+
+/* ── INPUTS — mais limpos ── */
+input[type=text], input[type=number], input[type=date], select {
+  border-radius: 12px !important;
+  height: 40px !important;
+  padding: 0 .75rem !important;
+  font-size: .85rem !important;
+}
+
+/* ── CARD TITLES — mais refinados ── */
+.ctit {
+  font-size: .7rem !important;
+  letter-spacing: .08em !important;
+  font-weight: 700 !important;
+  padding: 1rem 1.125rem .625rem !important;
+}
+
+/* ── LOGO ICON — emoji com gradiente atrás ── */
+.logo-ic {
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 10px !important;
+}
 </style>
 </head>
 <body>
@@ -1402,6 +1537,7 @@ th {
   <button class="mb" onclick="nav('contas')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Contas</button>
   <button class="mb" onclick="nav('lanc')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Lançar</button>
   <button class="mb" onclick="nav('agenda')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Agenda</button>
+  <button class="mb" onclick="nav('proj')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span>Projeção</span></button>
   <button class="mb" onclick="nav('hist')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span>Histórico</span></button>
 <button class="mb" onclick="nav('reserva')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Reserva</button>
 </nav>
@@ -1473,20 +1609,20 @@ auth.onAuthStateChanged(function(user){
         display: flex;
         align-items: center;
         gap: .5rem;
-        padding: .5rem .75rem;
-        border-bottom: 1px solid var(--div);
-        background: var(--surf2);
+        padding: .625rem .875rem;
+        border-bottom: 1px solid rgba(255,255,255,.08);
+        background: rgba(0,0,0,.18);
       `;
       sidebarInfo.innerHTML =
         (user.photoURL
-          ? '<img src="'+user.photoURL+'" style="width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0;">'
-          : '<div style="width:32px;height:32px;border-radius:50%;background:var(--p);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.9rem;flex-shrink:0;">'+(user.displayName||'U')[0].toUpperCase()+'</div>'
+          ? '<img src="'+user.photoURL+'" style="width:34px;height:34px;border-radius:50%;object-fit:cover;flex-shrink:0;outline:2px solid rgba(255,255,255,.22);outline-offset:1px;">'
+          : '<div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#0d9298,#14c4cb);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:.9rem;flex-shrink:0;">'+(user.displayName||'U')[0].toUpperCase()+'</div>'
         )
         + '<div style="flex:1;min-width:0;">'
-        +   '<div style="font-size:.78rem;font-weight:700;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+(user.displayName||'Usuário')+'</div>'
-        +   '<div style="font-size:.65rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+(user.email||'')+'</div>'
+        +   '<div style="font-size:.78rem;font-weight:700;color:rgba(255,255,255,.88);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+(user.displayName||'Usuário')+'</div>'
+        +   '<div style="font-size:.62rem;color:rgba(255,255,255,.38);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+(user.email||'')+'</div>'
         + '</div>'
-        + '<button onclick="logout()" title="Sair" style="flex-shrink:0;background:none;border:none;cursor:pointer;color:var(--muted);padding:.2rem;border-radius:.375rem;font-size:.75rem;font-weight:700;color:var(--red);" onmouseover="this.style.background=\'var(--rlight)\'" onmouseout="this.style.background=\'none\'">Sair</button>';
+        + '<button onclick="logout()" title="Sair" style="flex-shrink:0;background:none;border:none;cursor:pointer;padding:.2rem .45rem;border-radius:.5rem;font-size:.68rem;font-weight:700;color:rgba(255,255,255,.38);transition:all .15s;" onmouseover="this.style.background=\'rgba(255,255,255,.1)\';this.style.color=\'#f87171\'" onmouseout="this.style.background=\'none\';this.style.color=\'rgba(255,255,255,.38)\'">Sair</button>';
     }
 
     var sairBtn=document.getElementById("sairBtnSidebar");
