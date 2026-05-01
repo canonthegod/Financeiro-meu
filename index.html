@@ -221,8 +221,10 @@ input:focus,select:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(1,105,1
   .phdr{padding:1rem .875rem .75rem;}
   .kpis{grid-template-columns:repeat(2,1fr);}
   .ch2{grid-template-columns:1fr;}
-  .pt-row,.pt-head{grid-template-columns:65px 1fr 90px 90px;}
+  .pt-row,.pt-head{grid-template-columns:52px 1fr 85px 85px;}
   .pt-d,.pt-head span:last-child{display:none;}
+  .pt-mes{font-size:.68rem;}
+  .pt-v{font-size:.78rem;}
   .gcols{grid-template-columns:1fr;}
   .res-grid2{grid-template-columns:1fr;}
   .resgrid{grid-template-columns:repeat(2,1fr);}
@@ -231,7 +233,16 @@ input:focus,select:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(1,105,1
   #mobileTopBar { display: flex !important; }
   .main { padding-top: 5.5rem; }
 }
-@media(max-width:480px){.resgrid{grid-template-columns:1fr 1fr;}.contas-grid{grid-template-columns:1fr 1fr;}.cenarios{grid-template-columns:1fr;}.agenda-header{grid-template-columns:1fr;}}
+@media(max-width:480px){
+  .resgrid{grid-template-columns:1fr 1fr;}
+  .contas-grid{grid-template-columns:1fr 1fr;}
+  .cenarios{grid-template-columns:1fr;}
+  .agenda-header{grid-template-columns:1fr;}
+  .pt-row,.pt-head{grid-template-columns:48px 1fr 80px !important;}
+  .pt-head span:nth-child(3),.pt-v:first-of-type{display:none;}
+  .pt-row{padding:.35rem .375rem;}
+  .pt-mes{font-size:.64rem;}
+}
 ::-webkit-scrollbar{width:4px;height:4px;}::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px;}
 
 /* AUTH SCREEN */
@@ -681,6 +692,218 @@ input:focus, select:focus {
   border-radius:9px!important;cursor:pointer!important;
   animation: pulseRed 1.6s ease infinite!important;
 }
+
+/* ============================================================
+   PREMIUM FINANCE AESTHETIC — nível 3
+   ============================================================ */
+
+/* ── SIDEBAR ESCURA (estilo Wise / Revolut) ── */
+.side {
+  background: linear-gradient(175deg, #0c3c41 0%, #07252a 60%, #051a1e 100%) !important;
+  border-right: none !important;
+  box-shadow: 4px 0 32px rgba(0,0,0,.22) !important;
+}
+[data-theme="dark"] .side {
+  background: linear-gradient(175deg, #081e21 0%, #040f12 100%) !important;
+}
+
+.s-logo {
+  border-bottom: 1px solid rgba(255,255,255,.07) !important;
+  padding-bottom: 1rem !important;
+}
+.logo-nm { color: #f0fdfe !important; }
+.logo-sb { color: rgba(255,255,255,.42) !important; }
+.logo-ic {
+  background: linear-gradient(135deg, #0d9298 0%, #14c4cb 100%) !important;
+  box-shadow: 0 4px 16px rgba(13,146,152,.45) !important;
+}
+
+.nlbl { color: rgba(255,255,255,.28) !important; }
+
+.ni {
+  color: rgba(255,255,255,.52) !important;
+  position: relative !important;
+  border-radius: 8px !important;
+  margin: 1px 4px !important;
+}
+.ni:hover {
+  background: rgba(255,255,255,.08) !important;
+  color: rgba(255,255,255,.92) !important;
+}
+.ni.on {
+  background: rgba(255,255,255,.13) !important;
+  color: #fff !important;
+  font-weight: 700 !important;
+}
+.ni.on::after {
+  content: '';
+  position: absolute;
+  left: 0; top: 50%;
+  transform: translateY(-50%);
+  width: 3px; height: 55%;
+  background: #5adde3;
+  border-radius: 0 3px 3px 0;
+}
+.ni svg { opacity: .55; transition: opacity .15s; }
+.ni.on svg, .ni:hover svg { opacity: 1 !important; }
+
+#liveClock {
+  border-bottom: 1px solid rgba(255,255,255,.06) !important;
+  color: rgba(255,255,255,.32) !important;
+}
+#clockDate { color: rgba(255,255,255,.32) !important; }
+#clockTime { color: #5adde3 !important; }
+
+.s-bot { border-top: 1px solid rgba(255,255,255,.07) !important; }
+#mLbl { color: rgba(255,255,255,.65) !important; }
+#mLblMobile { color: var(--txt) !important; }
+.icb { color: rgba(255,255,255,.42) !important; }
+.icb:hover { background: rgba(255,255,255,.1) !important; color: #fff !important; }
+
+#syncLbl { color: rgba(255,255,255,.36) !important; }
+
+.btn-logout { color: rgba(255,255,255,.44) !important; }
+.btn-logout:hover {
+  background: rgba(255,255,255,.09) !important;
+  color: #f87171 !important;
+}
+
+#userInfoSidebar {
+  border-bottom: 1px solid rgba(255,255,255,.07) !important;
+}
+.user-name { color: rgba(255,255,255,.8) !important; }
+.user-avatar {
+  outline: 2px solid rgba(255,255,255,.18);
+  outline-offset: 1px;
+}
+
+/* ── KPI CARDS COM GRADIENTE ── */
+.kpi {
+  border-radius: 16px !important;
+  padding: 1.25rem 1.125rem !important;
+  transition: transform .22s ease, box-shadow .22s ease !important;
+}
+.kpi:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 28px rgba(0,0,0,.12) !important;
+}
+.kpi::before { display: none !important; }
+
+.kpi.g {
+  background: linear-gradient(145deg, #f0fdf4 0%, #dcfce7 100%) !important;
+  border: 1px solid rgba(34,197,94,.22) !important;
+}
+.kpi.r {
+  background: linear-gradient(145deg, #fff1f2 0%, #fde8ea 100%) !important;
+  border: 1px solid rgba(239,68,68,.22) !important;
+}
+.kpi.b {
+  background: linear-gradient(145deg, #f0fdfe 0%, #ccfbf1 100%) !important;
+  border: 1px solid rgba(13,146,152,.22) !important;
+}
+.kpi.w {
+  background: linear-gradient(145deg, #fffbeb 0%, #fef3c7 100%) !important;
+  border: 1px solid rgba(245,158,11,.22) !important;
+}
+
+[data-theme="dark"] .kpi.g {
+  background: linear-gradient(145deg, #052e16 0%, #14532d 100%) !important;
+  border-color: rgba(34,197,94,.14) !important;
+}
+[data-theme="dark"] .kpi.r {
+  background: linear-gradient(145deg, #1c0505 0%, #450a0a 100%) !important;
+  border-color: rgba(239,68,68,.14) !important;
+}
+[data-theme="dark"] .kpi.b {
+  background: linear-gradient(145deg, #012526 0%, #013636 100%) !important;
+  border-color: rgba(13,146,152,.14) !important;
+}
+[data-theme="dark"] .kpi.w {
+  background: linear-gradient(145deg, #1c1005 0%, #3d2900 100%) !important;
+  border-color: rgba(245,158,11,.14) !important;
+}
+
+.kpi-v { font-size: 1.45rem !important; letter-spacing: -.025em !important; }
+.kpi-s { font-size: .67rem !important; margin-top: .45rem !important; }
+
+/* ── PAGE HEADER REFINADO ── */
+.phdr {
+  position: relative !important;
+  overflow: hidden !important;
+  border-bottom: none !important;
+  box-shadow: 0 1px 0 var(--div), 0 2px 12px rgba(0,0,0,.04) !important;
+}
+.phdr::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, var(--p) 40%, #4fd9e0 60%, transparent 100%);
+  opacity: .4;
+}
+.phdr h1 {
+  font-size: 1.3rem !important;
+  font-weight: 800 !important;
+  letter-spacing: -.03em !important;
+}
+
+/* ── CARDS GERAIS ── */
+.card {
+  border-radius: 16px !important;
+  transition: transform .2s ease, box-shadow .2s ease !important;
+}
+.card:hover { transform: translateY(-1px) !important; }
+
+/* ── AUTH SCREEN PREMIUM ── */
+.auth-screen {
+  background: linear-gradient(135deg, #0c3c41 0%, #071e23 55%, #040c0f 100%) !important;
+}
+.auth-card {
+  border-radius: 22px !important;
+  border: 1px solid rgba(255,255,255,.07) !important;
+  box-shadow:
+    0 32px 80px rgba(0,0,0,.35),
+    0 0 0 1px rgba(255,255,255,.04),
+    inset 0 1px 0 rgba(255,255,255,.06) !important;
+}
+.auth-title { letter-spacing: -.03em !important; font-size: 1.5rem !important; }
+.auth-logo {
+  font-size: 2.8rem !important;
+  filter: drop-shadow(0 4px 14px rgba(13,146,152,.35)) !important;
+}
+[data-theme="light"] .auth-card { background: #ffffff !important; }
+[data-theme="dark"] .auth-card { background: #1a1d24 !important; }
+
+/* ── BADGES ── */
+.bdg { border-radius: 8px !important; font-weight: 700 !important; }
+
+/* ── TABELAS ── */
+thead { background: var(--surf2) !important; }
+th {
+  font-size: .68rem !important;
+  font-weight: 700 !important;
+  letter-spacing: .06em !important;
+}
+
+/* ── CONTAS CARDS ── */
+.cc-card {
+  transition: transform .2s ease, box-shadow .2s ease !important;
+}
+.cc-card:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,.1) !important;
+}
+
+/* ── BARRA LATERAL DO NÍ ATIVO ── */
+@media(min-width:961px) {
+  .ni { overflow: hidden; }
+}
+
+/* ── SCROLLBAR AINDA MAIS FINA ── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,.15); border-radius: 99px; }
+[data-theme="dark"] ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); }
 </style>
 </head>
 <body>
@@ -2221,15 +2444,31 @@ function aplicarEditScope(escopo){
   var p=_editPayload;
 
   if(escopo==='mes'){
-    // Cria lançamento avulso com os novos dados para este mês (não recorrente)
-    var nl={
-      id:String(Date.now()+Math.random()),
-      desc:p.desc, v:p.v, cat:p.cat, t:l.t,
-      dt:p.dt, conta:p.conta, rec:false,
-      origemRecId:String(l.id)
-    };
-    lancamentos.push(nl);
-    saveLanc(nl);
+    // Verifica se já existe um avulso para este mês gerado de edição anterior
+    var mesAlvo=p.dt.slice(0,7); // ex: "2026-04"
+    var avulsoExistente=lancamentos.find(function(x){
+      return String(x.origemRecId)===String(l.id)&&x.dt.startsWith(mesAlvo)&&!x.rec;
+    });
+
+    if(avulsoExistente){
+      // EDITA o avulso existente em vez de criar outro
+      avulsoExistente.desc=p.desc;
+      avulsoExistente.v=p.v;
+      avulsoExistente.cat=p.cat;
+      avulsoExistente.conta=p.conta;
+      avulsoExistente.dt=p.dt;
+      saveLanc(avulsoExistente);
+    } else {
+      // Cria avulso novo para este mês (primeira edição)
+      var nl={
+        id:String(Date.now()+Math.random()),
+        desc:p.desc, v:p.v, cat:p.cat, t:l.t,
+        dt:p.dt, conta:p.conta, rec:false,
+        origemRecId:String(l.id)
+      };
+      lancamentos.push(nl);
+      saveLanc(nl);
+    }
   } else {
     // Altera o original — aplica pra todos os futuros
     l.desc=p.desc; l.v=p.v; l.cat=p.cat; l.conta=p.conta;
@@ -2243,11 +2482,17 @@ function aplicarEditScope(escopo){
 
 // ===== ADIANTAR RECEBIMENTO / PAGAMENTO =====
 function adiantarRecebimento(id){
-  // Marca entrada recorrente como recebida hoje
   var hoje=new Date().toISOString().slice(0,10);
+  var mesHoje=hoje.slice(0,7); // "2026-05"
   var l=lancamentos.find(function(x){return String(x.id)===String(id);});
   if(!l)return;
-  // Cria um lançamento avulso de entrada para hoje com base no recorrente
+
+  // Verifica se já existe um avulso para não duplicar
+  var jaExiste=lancamentos.some(function(x){
+    return String(x.origemRecId)===String(id)&&x.dt.startsWith(mesHoje);
+  });
+  if(jaExiste)return;
+
   var nl={
     id:String(Date.now()+Math.random()),
     desc:l.desc+' (adiantado)',
@@ -2257,14 +2502,26 @@ function adiantarRecebimento(id){
   };
   lancamentos.push(nl);
   saveLanc(nl);
+
+  // Guarda o mês em que foi adiantado — não marca paid global
+  if(!l.paidMeses) l.paidMeses=[];
+  if(l.paidMeses.indexOf(mesHoje)===-1) l.paidMeses.push(mesHoje);
+  saveLanc(l);
+
   render();
 }
 
 function adiantarPagamento(id){
-  // Marca saída recorrente como paga hoje
   var hoje=new Date().toISOString().slice(0,10);
+  var mesHoje=hoje.slice(0,7);
   var l=lancamentos.find(function(x){return String(x.id)===String(id);});
   if(!l)return;
+
+  var jaExiste=lancamentos.some(function(x){
+    return String(x.origemRecId)===String(id)&&x.dt.startsWith(mesHoje);
+  });
+  if(jaExiste)return;
+
   var nl={
     id:String(Date.now()+Math.random()),
     desc:l.desc+' (adiantado)',
@@ -2274,6 +2531,11 @@ function adiantarPagamento(id){
   };
   lancamentos.push(nl);
   saveLanc(nl);
+
+  if(!l.paidMeses) l.paidMeses=[];
+  if(l.paidMeses.indexOf(mesHoje)===-1) l.paidMeses.push(mesHoje);
+  saveLanc(l);
+
   render();
 }
 
@@ -2380,7 +2642,15 @@ function renderAgenda(m,y){
         return;
       }
 
-      items.push({day:day,desc:l.desc,v:l.v,t:l.t,cat:l.cat,tipo:'fixo',id:l.id,conta:l.conta,diaFixoTipo:l.diaFixoTipo,diaFixoNum:l.diaFixoNum});
+      var mesDaAgenda = y + '-' + ('0'+(m+1)).slice(-2);
+var jaAdiantado = (l.paidMeses && l.paidMeses.indexOf(mesDaAgenda) !== -1)
+  || lancamentos.some(function(x){
+       return String(x.origemRecId)===String(l.id) && x.dt.startsWith(mesDaAgenda);
+     });
+
+if(!jaAdiantado){
+  items.push({day:day,desc:l.desc,v:l.v,t:l.t,cat:l.cat,tipo:'fixo',id:l.id,conta:l.conta,diaFixoTipo:l.diaFixoTipo,diaFixoNum:l.diaFixoNum});
+}
     }
   });
 
