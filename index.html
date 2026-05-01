@@ -4267,7 +4267,7 @@ function renderOrcControls(){
       <div style="font-size:.8rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);">Orçamento do Mês</div>
       ${!editing
         ? `<button onclick="document.getElementById('orcPresetWrap').setAttribute('data-editing','true');renderOrcControls();" style="font-size:.75rem;padding:.2rem .6rem;background:none;color:var(--p);border:1px solid var(--p);border-radius:7px;cursor:pointer;">✏ Editar</button>`
-        : `<button onclick="document.getElementById('orcPresetWrap').setAttribute('data-editing','false');renderOrcControls();renderOrc();" style="font-size:.75rem;padding:.2rem .6rem;background:var(--p);color:#fff;border:none;border-radius:7px;cursor:pointer;">✓ Concluir</button>`
+        : `<button onclick="document.getElementById('orcPresetWrap').setAttribute('data-editing','false');renderOrcControls();renderOrc();" style="font-size:.75rem;padding:.2rem .6rem;background:var(--green);color:#fff;border:none;border-radius:7px;cursor:pointer;">✓ Concluir</button>`
       }
     </div>
 
@@ -4290,7 +4290,7 @@ function renderOrcControls(){
           <input type="number" id="orcManual" placeholder="Digite sua renda" style="width:100%;padding:.5rem;" value="${ORC_MANUAL||''}">
         ` : `
           <div style="padding:.75rem;border-radius:10px;border:1px solid var(--div);background:var(--surf2);color:var(--txt);font-weight:700;">
-            Receita atual: R$ ${getRendaOrcamento().toFixed(2)}
+            Recebido até hoje: R$ ${getRendaOrcamento().toFixed(2)}
           </div>
         `}
       </div>
@@ -4361,9 +4361,9 @@ function renderOrc(){
 }
 function getRendaOrcamento(){
   if (typeof ORC_BASE !== 'undefined' && ORC_BASE === 'manual') return ORC_MANUAL||0;
-  // Calcula direto dos lançamentos — não depende do DOM
+  var hoje = new Date().toISOString().slice(0,10);
   return lancamentos
-    .filter(function(l){return l.t==='e' && l.dt && l.dt.startsWith(cY+'-'+('0'+(cM+1)).slice(-2));})
+    .filter(function(l){return l.t==='e' && l.dt && l.dt.startsWith(cY+'-'+('0'+(cM+1)).slice(-2)) && l.dt<=hoje;})
     .reduce(function(s,l){return s+l.v;},0);
 }
 function getGastosPorCategoria(){
