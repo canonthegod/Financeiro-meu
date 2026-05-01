@@ -1040,6 +1040,253 @@ input[type=text], input[type=number], input[type=date], select {
   height: 38px !important;
   border-radius: 10px !important;
 }
+
+/* ============================================================
+   REDESIGN CLEAN — branco puro / preto puro
+   Detalhes semânticos: positivo = verde | negativo = vermelho
+   ============================================================ */
+
+/* ─── VARIÁVEIS — modo claro ─── */
+:root {
+  --bg: #f4f6f8;
+  --surf: #ffffff;
+  --surf2: #f1f5f9;
+  --surf3: #e2e8f0;
+  --border: rgba(0,0,0,.08);
+  --div: rgba(0,0,0,.06);
+  --txt: #0f172a;
+  --muted: #64748b;
+  --faint: #94a3b8;
+  --p: #0f172a;
+  --ph: #1e293b;
+  --plight: #f1f5f9;
+  --green: #16a34a;
+  --glight: #dcfce7;
+  --red: #dc2626;
+  --rlight: #fee2e2;
+  --warn: #d97706;
+  --wlight: #fef3c7;
+  --purple: #7c3aed;
+  --sh: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.05);
+  --shad: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.05);
+  --shad-hover: 0 2px 8px rgba(0,0,0,.1), 0 8px 24px rgba(0,0,0,.08);
+  --accent-g: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  --rad: 16px;
+}
+
+/* ─── VARIÁVEIS — modo escuro ─── */
+[data-theme="dark"] {
+  --bg: #000000;
+  --surf: #0d0d0d;
+  --surf2: #161616;
+  --surf3: #222222;
+  --border: rgba(255,255,255,.08);
+  --div: rgba(255,255,255,.05);
+  --txt: #f8fafc;
+  --muted: #94a3b8;
+  --faint: #475569;
+  --p: #f8fafc;
+  --ph: #ffffff;
+  --plight: #1a1a1a;
+  --green: #22c55e;
+  --glight: #052e16;
+  --red: #f87171;
+  --rlight: #3a0a0a;
+  --warn: #fbbf24;
+  --wlight: #3a1f00;
+  --sh: 0 1px 4px rgba(0,0,0,.5), 0 4px 16px rgba(0,0,0,.4);
+  --shad: 0 1px 4px rgba(0,0,0,.5), 0 4px 16px rgba(0,0,0,.4);
+  --shad-hover: 0 2px 8px rgba(0,0,0,.6), 0 8px 24px rgba(0,0,0,.4);
+  --accent-g: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+}
+
+/* ─── SIDEBAR — limpa, sem gradiente ─── */
+.side {
+  background: var(--surf) !important;
+  border-right: 1px solid var(--border) !important;
+  box-shadow: none !important;
+}
+[data-theme="dark"] .side {
+  background: #0a0a0a !important;
+  border-right: 1px solid rgba(255,255,255,.06) !important;
+}
+.logo-nm { color: var(--txt) !important; }
+.logo-sb { color: var(--muted) !important; }
+.logo-ic {
+  background: var(--surf3) !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+.nlbl { color: var(--faint) !important; }
+.ni { color: var(--muted) !important; background: transparent !important; }
+.ni:hover { background: var(--surf2) !important; color: var(--txt) !important; }
+.ni.on {
+  background: var(--surf2) !important;
+  color: var(--txt) !important;
+  font-weight: 700 !important;
+  box-shadow: none !important;
+}
+.ni.on::after { display: none !important; }
+.ni svg { opacity: .5 !important; }
+.ni.on svg, .ni:hover svg { opacity: 1 !important; }
+#liveClock { color: var(--muted) !important; border-bottom: 1px solid var(--div) !important; }
+#clockTime { color: var(--txt) !important; }
+#clockDate { color: var(--muted) !important; }
+.s-bot { border-top: 1px solid var(--div) !important; }
+#mLbl { color: var(--txt) !important; }
+#syncLbl { color: var(--muted) !important; }
+.side .icb { color: var(--muted) !important; }
+.side .icb:hover { background: var(--surf2) !important; color: var(--txt) !important; }
+#userInfoSidebar { border-bottom: 1px solid var(--div) !important; }
+.user-name { color: var(--txt) !important; }
+.btn-logout { color: var(--red) !important; }
+.btn-logout:hover { background: var(--rlight) !important; color: var(--red) !important; }
+
+/* ─── AUTH — tela limpa, sem gradiente escuro ─── */
+.auth-screen { background: var(--bg) !important; }
+.auth-card {
+  background: var(--surf) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: 0 4px 24px rgba(0,0,0,.06), 0 1px 3px rgba(0,0,0,.04) !important;
+}
+.auth-logo {
+  background: var(--surf2) !important;
+  box-shadow: none !important;
+  filter: none !important;
+  border-radius: 50% !important;
+}
+
+/* ─── BOTÃO PRIMÁRIO — neutro escuro/claro ─── */
+.btn.bp {
+  background: var(--txt) !important;
+  color: var(--surf) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,.18) !important;
+}
+.btn.bp:hover {
+  filter: brightness(1.2) !important;
+  box-shadow: 0 3px 10px rgba(0,0,0,.22) !important;
+  transform: translateY(-1px) !important;
+}
+.btn.bp:active { transform: translateY(0) !important; filter: brightness(1) !important; }
+
+/* ─── TOGGLE ENTRADA / SAÍDA — setas modernas ─── */
+.ttog {
+  background: var(--surf2) !important;
+  border: 1.5px solid var(--border) !important;
+  border-radius: 14px !important;
+  padding: 4px !important;
+  gap: 4px !important;
+  height: 48px !important;
+}
+.ttog button { border-radius: 10px !important; font-size: .88rem !important; }
+.ttog button.oe {
+  background: linear-gradient(135deg, #16a34a, #15803d) !important;
+  color: #fff !important;
+  box-shadow: 0 2px 10px rgba(22,163,74,.35) !important;
+}
+.ttog button.os {
+  background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
+  color: #fff !important;
+  box-shadow: 0 2px 10px rgba(220,38,38,.3) !important;
+}
+.ttog button:not(.oe):not(.os) {
+  background: transparent !important;
+  color: var(--muted) !important;
+  box-shadow: none !important;
+}
+
+/* ─── INPUTS — foco neutro cinza ─── */
+input:focus, select:focus {
+  border-color: var(--muted) !important;
+  box-shadow: 0 0 0 3px rgba(100,116,139,.12) !important;
+}
+
+/* ─── KPI CARDS — cores semânticas ─── */
+.kpi::before { display: none !important; }
+.kpi.g {
+  background: linear-gradient(145deg, #f0fdf4 0%, #dcfce7 100%) !important;
+  border: 1px solid rgba(22,163,74,.18) !important;
+}
+.kpi.r {
+  background: linear-gradient(145deg, #fff1f2 0%, #fee2e2 100%) !important;
+  border: 1px solid rgba(220,38,38,.18) !important;
+}
+.kpi.b {
+  background: linear-gradient(145deg, #f8fafc 0%, #f1f5f9 100%) !important;
+  border: 1px solid rgba(15,23,42,.08) !important;
+}
+.kpi.w {
+  background: linear-gradient(145deg, #fffbeb 0%, #fef3c7 100%) !important;
+  border: 1px solid rgba(217,119,6,.18) !important;
+}
+[data-theme="dark"] .kpi.g {
+  background: linear-gradient(145deg, #052e16, #14532d) !important;
+  border-color: rgba(34,197,94,.15) !important;
+}
+[data-theme="dark"] .kpi.r {
+  background: linear-gradient(145deg, #200a0a, #450a0a) !important;
+  border-color: rgba(248,113,113,.15) !important;
+}
+[data-theme="dark"] .kpi.b {
+  background: linear-gradient(145deg, #111, #1a1a1a) !important;
+  border-color: rgba(248,250,252,.08) !important;
+}
+[data-theme="dark"] .kpi.w {
+  background: linear-gradient(145deg, #1c1000, #3a1f00) !important;
+  border-color: rgba(251,191,36,.15) !important;
+}
+.kpi-v.g { color: #16a34a !important; }
+.kpi-v.r { color: #dc2626 !important; }
+.kpi-v.b { color: var(--txt) !important; }
+.kpi-v.w { color: #d97706 !important; }
+[data-theme="dark"] .kpi-v.g { color: #22c55e !important; }
+[data-theme="dark"] .kpi-v.r { color: #f87171 !important; }
+[data-theme="dark"] .kpi-v.w { color: #fbbf24 !important; }
+
+/* ─── PAGE HEADER — sem linha colorida ─── */
+.phdr::after { display: none !important; }
+.phdr { box-shadow: 0 1px 0 var(--div) !important; background: var(--surf) !important; }
+
+/* ─── CONTAS ─── */
+.cc-sl.pos { color: var(--green) !important; }
+.cc-add {
+  background: var(--surf2) !important;
+  border-color: var(--faint) !important;
+  color: var(--txt) !important;
+}
+.cc-add:hover {
+  background: var(--txt) !important;
+  color: var(--surf) !important;
+  border-color: var(--txt) !important;
+}
+
+/* ─── RESERVA — barra verde ─── */
+.pfill { background: linear-gradient(90deg, #16a34a, #22c55e) !important; }
+.res-fill { background: linear-gradient(90deg, #16a34a, #22c55e) !important; }
+
+/* ─── CENÁRIOS ─── */
+.cen.sel { background: var(--surf) !important; border-color: var(--txt) !important; }
+.cen-val { color: var(--green) !important; }
+
+/* ─── GUIA ─── */
+.guide-tit { color: var(--txt) !important; }
+.tip { background: var(--surf2) !important; }
+.tip p strong { color: var(--txt) !important; }
+
+/* ─── PROJEÇÃO — linha atual ─── */
+.pt-row.atual { background: var(--surf2) !important; border-color: var(--txt) !important; }
+
+/* ─── RANKING ─── */
+.rank-num.top { background: var(--txt) !important; color: var(--surf) !important; }
+
+/* ─── MOBILE ─── */
+.mb.on { color: var(--txt) !important; }
+#mLblMobile { color: var(--txt) !important; }
+#clockTimeMobile { color: var(--txt) !important; }
+
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar-thumb { background: var(--surf3) !important; }
+::-webkit-scrollbar-thumb:hover { background: var(--faint) !important; }
 </style>
 <script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
 </head>
@@ -1192,8 +1439,8 @@ input[type=text], input[type=number], input[type=date], select {
     <div class="card">
       <div class="ctit">Novo Lançamento</div>
       <div class="ttog">
-        <button id="btnE" class="oe" onclick="setTipo('e')">+ Entrada</button>
-        <button id="btnS" onclick="setTipo('s')">− Saída</button>
+        <button id="btnE" class="oe" onclick="setTipo('e')">↑ Entrada</button>
+        <button id="btnS" onclick="setTipo('s')">↓ Saída</button>
       </div>
 
       <!-- GRID RESPONSIVO -->
