@@ -221,9 +221,6 @@ input:focus,select:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(1,105,1
   .phdr{padding:1rem .875rem .75rem;}
   .kpis{grid-template-columns:repeat(2,1fr);}
   .ch2{grid-template-columns:1fr;}
-  .pt-row,.pt-head{grid-template-columns:54px 1fr 88px;}
-  .pt-d,.pt-head span:last-child{display:none;}
-  .pt-row > div:nth-child(4),.pt-head > span:nth-child(4){display:none;}
   .pt-mes{font-size:.68rem;}
   .pt-v{font-size:.78rem;}
   .gcols{grid-template-columns:1fr;}
@@ -239,7 +236,6 @@ input:focus,select:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(1,105,1
   .contas-grid{grid-template-columns:1fr 1fr;}
   .cenarios{grid-template-columns:1fr;}
   .agenda-header{grid-template-columns:1fr;}
-  .pt-row,.pt-head{grid-template-columns:44px 1fr 78px !important;}
   .pt-row{padding:.35rem .5rem;}
   .pt-mes{font-size:.64rem;}
   .pt-v{font-size:.72rem;}
@@ -965,7 +961,7 @@ th {
   color: #fff !important;
   box-shadow: 0 3px 12px rgba(229,57,53,.3) !important;
 }
-.ttog button:not(.oe):not(.os) {
+.ttog button:not(.oe):not(.os):not(.ot) {
   color: var(--muted) !important;
   background: transparent !important;
   box-shadow: none !important;
@@ -1192,7 +1188,7 @@ input[type=text], input[type=number], input[type=date], select {
   color: #fff !important;
   box-shadow: 0 2px 10px rgba(220,38,38,.3) !important;
 }
-.ttog button:not(.oe):not(.os) {
+.ttog button:not(.oe):not(.os):not(.ot) {
   background: transparent !important;
   color: var(--muted) !important;
   box-shadow: none !important;
@@ -1290,6 +1286,38 @@ input:focus, select:focus {
 /* ─── SCROLLBAR ─── */
 ::-webkit-scrollbar-thumb { background: var(--surf3) !important; }
 ::-webkit-scrollbar-thumb:hover { background: var(--faint) !important; }
+
+/* Transferência toggle — azul ativo */
+.ttog button.ot {
+  background: linear-gradient(135deg, #1a73e8, #1557b0) !important;
+  color: #fff !important;
+  box-shadow: 0 2px 10px rgba(26,115,232,.35) !important;
+  opacity: 1 !important;
+}
+[data-theme="dark"] .ttog button.ot { color: #fff !important; }
+
+/* Opacidade: ativo = 1, inativo = 0.6 */
+.ttog button { opacity: 0.6; }
+.ttog button.oe,
+.ttog button.os,
+.ttog button.ot { opacity: 1 !important; }
+
+/* Separador entre botões */
+.ttog button + button { border-left: 1px solid rgba(0,0,0,.08) !important; }
+[data-theme="dark"] .ttog button + button { border-left: 1px solid rgba(255,255,255,.07) !important; }
+
+/* Separador de grupo em contas */
+.contas-grupo-label {
+  font-size: .62rem;
+  font-weight: 700;
+  color: var(--faint);
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  padding: .5rem 0 .25rem;
+  margin-top: .5rem;
+  border-top: 1px solid var(--div);
+}
+.contas-grupo-label:first-child { border-top: none; margin-top: 0; }
 </style>
 <script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
 </head>
@@ -1384,7 +1412,7 @@ input:focus, select:focus {
       <div class="kpi g"><div class="kpi-l">Receitas</div><div class="kpi-v g" id="k-r">R$ 0,00</div><div class="kpi-s">entradas no mês</div></div>
       <div class="kpi r"><div class="kpi-l">Despesas</div><div class="kpi-v r" id="k-d">R$ 0,00</div><div class="kpi-s">saídas no mês</div></div>
       <div class="kpi g" id="k-s-card"><div class="kpi-l">Saldo do Mês</div><div class="kpi-v g" id="k-s">R$ 0,00</div><div class="kpi-s">resultado mensal</div></div>
-      <div class="kpi w"><div class="kpi-l">Saldo Total</div><div class="kpi-v w" id="k-t">R$ 0,00</div><div class="kpi-s">soma das carteiras</div></div>
+      <div class="kpi w"><div class="kpi-l">Patrimônio</div><div class="kpi-v w" id="k-t">R$ 0,00</div><div class="kpi-s">contas + investimentos</div></div>
     </div>
     <div class="ch2">
       <div class="card"><div class="ctit">Gastos por Categoria</div><div class="chw"><canvas id="cPie"></canvas></div></div>
@@ -1411,16 +1439,57 @@ input:focus, select:focus {
   <div class="pcnt">
     <div class="card">
       <div class="ctit">Minhas Contas <button class="btn bg bsm" onclick="toggleContaForm()">+ Nova Conta</button></div>
+
+<!-- Cards resumo -->
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1rem;">
+  <div style="background:var(--surf2);border:1px solid var(--border);border-left:3px solid var(--p);border-radius:.75rem;padding:.875rem 1rem;">
+    <div style="font-size:.65rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.3rem;">Saldo Contas</div>
+    <div id="resumoSaldoConsumo" style="font-family:'Sora',sans-serif;font-size:1.3rem;font-weight:800;color:var(--txt);">R$ 0,00</div>
+    <div style="font-size:.63rem;color:var(--faint);margin-top:.2rem;">corrente + outros</div>
+  </div>
+  <div style="background:var(--surf2);border:1px solid var(--border);border-left:3px solid #22c55e;border-radius:.75rem;padding:.875rem 1rem;">
+    <div style="font-size:.65rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.3rem;">Investimentos</div>
+    <div id="resumoSaldoInvest" style="font-family:'Sora',sans-serif;font-size:1.3rem;font-weight:800;color:#22c55e;">R$ 0,00</div>
+    <div style="font-size:.63rem;color:var(--faint);margin-top:.2rem;">reserva + invest.</div>
+  </div>
+</div>
+
+<!-- Filtro de bancos -->
+<div style="margin-bottom:.75rem;">
+  <div style="font-size:.65rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.375rem;">Filtrar contas</div>
+  <div id="filtroBancosWrap" style="display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.5rem;"></div>
+  <div id="filtroSelecionados" style="font-size:.85rem;font-weight:700;color:var(--txt);"></div>
+</div>
+
       <div class="contas-grid" id="contasGrid"></div>
       <div id="contaForm" style="display:none;margin-top:.75rem;">
         <div class="fg" style="margin-bottom:.75rem;"><label style="display:block;margin-bottom:.4rem;">Banco</label><div id="bancoSelector" style="display:flex;flex-wrap:wrap;gap:.4rem;"></div></div>
           <div class="fgrid" style="grid-template-columns:2fr 1fr 1fr auto;align-items:end;">
           <div class="fg"><label>Nome</label><input type="text" id="cNome" placeholder="Ex: Nubank, Caixa, Carteira…"></div>
           <div class="fg"><label>Tipo</label>
-            <select id="cTipo">
-              <option value="corrente">Conta Corrente</option><option value="poupanca">Poupança</option>
-              <option value="carteira">Carteira Física</option><option value="invest">Investimento</option><option value="outro">Outro</option>
-            </select>
+            <select id="cTipo" onchange="toggleSubtipoInvest()">
+  <option value="corrente">Conta Corrente</option>
+  <option value="poupanca">Poupança</option>
+  <option value="carteira">Carteira Física</option>
+  <option value="invest">Investimento</option>
+  <option value="reserva">Reserva de Emergência</option>
+  <option value="outro">Outro</option>
+</select>
+<!-- Subtipo aparece só quando tipo = invest -->
+<div id="subtipoInvestWrap" style="display:none;margin-top:.5rem;">
+  <label>Tipo de investimento</label>
+  <select id="cSubtipo" onchange="toggleSubtipoOutro()">
+    <option value="tesouro">Tesouro Direto</option>
+    <option value="cdb">CDB</option>
+    <option value="lci_lca">LCI / LCA</option>
+    <option value="acoes">Ações</option>
+    <option value="fundos">Fundos</option>
+    <option value="cripto">Criptomoedas</option>
+    <option value="previdencia">Previdência</option>
+    <option value="outro">Outro</option>
+  </select>
+  <input type="text" id="cSubtipoOutro" placeholder="Qual investimento? Ex: ETF, FII..." style="display:none;margin-top:.375rem;">
+</div>
           </div>
           <div class="fg"><label>Saldo Inicial</label><input type="number" id="cSaldo" placeholder="0,00" step="0.01"></div>
           <div style="display:flex;gap:.375rem;align-items:flex-end;">
@@ -1444,14 +1513,30 @@ input:focus, select:focus {
       <div class="ttog">
         <button id="btnE" class="oe" onclick="setTipo('e')">↑ Entrada</button>
         <button id="btnS" onclick="setTipo('s')">↓ Saída</button>
+        <button id="btnT" onclick="setTipo('t')">⇄ Transferência</button>
       </div>
+
+<!-- Campos de transferência (aparecem só quando tipo = 't') -->
+<div id="transferenciaWrap" style="display:none;margin-bottom:.75rem;">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.5rem;">
+    <div class="fg">
+      <label>De (conta origem)</label>
+      <select id="iTransfDe"><option value="">— selecione —</option></select>
+    </div>
+    <div class="fg">
+      <label>Para (conta destino)</label>
+      <select id="iTransfPara"><option value="">— selecione —</option></select>
+    </div>
+  </div>
+  <div id="transferenciaPreview" style="background:var(--glight);border:1px solid var(--green);border-radius:.5rem;padding:.5rem .75rem;font-size:.75rem;color:var(--green);display:none;"></div>
+</div>
 
       <!-- GRID RESPONSIVO -->
       <div id="lancGrid">
   <div class="fg"><label>Descrição</label><input type="text" id="iDesc" placeholder="Ex: Salário, Aluguel, Parcela carro…"></div>
   <div class="fg"><label>Valor (R$)</label><input type="number" id="iVal" placeholder="0,00" step="0.01" oninput="updateParcInfo()"></div>
-  <div class="fg"><label>Categoria</label><select id="iCat"></select></div>
-  <div class="fg"><label>Conta</label><select id="iConta"><option value="">— nenhuma —</option></select></div>
+  <div class="fg" id="fgCat"><label>Categoria</label><select id="iCat"></select></div>
+  <div class="fg" id="fgConta"><label>Conta</label><select id="iConta"><option value="">— nenhuma —</option></select></div>
   <div class="fg"><label>Data</label><input type="date" id="iDt" style="width:100%;"></div>
   <div class="fg">
     <label style="visibility:hidden;">.</label>
@@ -1459,7 +1544,7 @@ input:focus, select:focus {
   </div>
 </div>
 
-      <div style="margin-top:.625rem;">
+      <div id="lancCamposExtra" style="margin-top:.625rem;">
         <!-- Tipo de lançamento -->
         <div id="tipoLancWrap" class="fg" style="margin-bottom:.6rem;">
           <label style="font-size:.78rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;">Tipo</label>
@@ -1554,8 +1639,12 @@ input:focus, select:focus {
   <div class="pcnt">
     <div class="card">
       <div class="ctit">Linha do tempo <small>* = projetado (recorrentes + parcelas + média variável)</small></div>
-      <div class="pt-head"><span>Mês</span><span>Barra</span><span>Saldo/mês</span><span>Acumulado</span><span>Variação</span></div>
-      <div id="projTL"></div>
+      <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
+        <div style="min-width:620px;">
+          <div class="pt-head"><span>Mês</span><span>Barra</span><span>Saldo/mês</span><span>Acumulado</span><span>Variação</span></div>
+          <div id="projTL"></div>
+        </div>
+      </div>
     </div>
     <div class="card"><div class="ctit">Evolução do saldo acumulado</div><div class="chw" style="height:220px;"><canvas id="cProj"></canvas></div></div>
     <div class="simbox">
@@ -1618,64 +1707,101 @@ input:focus, select:focus {
 
 <!-- RESERVA -->
 <section class="page" id="p-reserva">
-  <div class="phdr"><h1>Reserva de Emergência</h1><p>Sua proteção financeira</p></div>
+  <div class="phdr"><h1>Reserva & Patrimônio</h1><p>Metas, reserva e independência financeira</p></div>
   <div class="pcnt">
+
+    <!-- SEÇÃO 1: METAS -->
     <div class="card">
-      <div class="ctit">Configure sua meta</div>
-      <!-- Toggle modo meta -->
-      <div class="ttog" style="margin-bottom:.75rem;">
-        <button id="btnMetaAuto" class="oe" onclick="setMetaMode('auto')">📐 Calcular automaticamente</button>
-        <button id="btnMetaManual" onclick="setMetaMode('manual')">✏️ Definir manualmente</button>
-      </div>
-      <div class="res-grid2" id="resAutoInputs">
-        <div class="fg"><label>Gasto mensal médio (R$)</label><input type="number" id="rG" placeholder="Ex: 3000" oninput="calcR()"></div>
-        <div class="fg"><label>Meses de proteção</label>
-          <select id="rM" onchange="calcR()">
-            <option value="3">3 meses — mínimo</option>
-            <option value="6" selected>6 meses — recomendado</option>
-            <option value="12">12 meses — ideal</option>
-          </select>
+      <div class="ctit">Minhas Metas <button class="btn bg bsm" onclick="toggleMetaForm()">+ Nova Meta</button></div>
+
+      <!-- Form nova meta (oculto por padrão) -->
+      <div id="metaForm" style="display:none;margin-bottom:1rem;padding:.875rem;background:var(--surf2);border-radius:.75rem;border:1px solid var(--border);">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.5rem;">
+          <div class="fg"><label>Nome da meta</label><input type="text" id="metaNome" placeholder="Ex: Video game, Viagem..."></div>
+          <div class="fg"><label>Valor alvo (R$)</label><input type="number" id="metaValor" placeholder="5000" step="0.01"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.5rem;">
+          <div class="fg"><label>Aporte mensal (R$)</label><input type="number" id="metaAporte" placeholder="300" step="0.01" oninput="calcPreviewMeta()"></div>
+          <div class="fg"><label>Conta vinculada</label>
+            <select id="metaConta">
+              <option value="">— nenhuma —</option>
+            </select>
+          </div>
+        </div>
+        <div id="metaPreview" style="font-size:.75rem;color:var(--p);padding:.35rem .6rem;background:var(--plight);border-radius:8px;margin-bottom:.5rem;display:none;"></div>
+        <div style="display:flex;gap:.375rem;">
+          <button class="btn bp" onclick="addMeta()">Salvar meta</button>
+          <button class="btn bg" onclick="toggleMetaForm()">Cancelar</button>
         </div>
       </div>
-      <div id="resManualInputs" style="display:none;">
-        <div class="fg"><label>Meta personalizada (R$)</label><input type="number" id="rMetaManual" placeholder="Ex: 20000" oninput="calcR()"></div>
-      </div>
-      <div class="res-grid2" style="margin-top:.625rem;">
-        <div class="fg"><label>Já tenho guardado (R$)</label><input type="number" id="rA" placeholder="0" oninput="calcR()"></div>
-        <div class="fg">
-          <label>Quanto poupar por mês (R$) <span id="rApSugLbl" style="font-weight:400;color:var(--p);font-size:.7rem;text-transform:none;letter-spacing:0;"></span></label>
-          <input type="number" id="rAp" placeholder="ou escolha uma sugestão abaixo" oninput="calcR()">
+
+      <!-- Lista de metas -->
+      <div id="metasLista"></div>
+    </div>
+
+    <!-- SEÇÃO 2: INDEPENDÊNCIA FINANCEIRA -->
+    <div class="card">
+      <div class="ctit">Independência Financeira</div>
+
+      <!-- Configuração -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1rem;">
+        <div>
+          <div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.375rem;">Quanto quer gastar por mês?</div>
+          <div class="ttog" style="margin-bottom:.375rem;">
+            <button id="btnGastosAuto" class="oe" onclick="setGastosMode('auto')">Automático</button>
+            <button id="btnGastosManual" onclick="setGastosMode('manual')">Manual</button>
+          </div>
+          <div id="gastosAutoInfo" style="font-size:.75rem;color:var(--muted);padding:.35rem .6rem;background:var(--surf2);border-radius:8px;"></div>
+          <input type="number" id="gastosManualVal" placeholder="Ex: 3000" style="display:none;margin-top:.375rem;" oninput="calcIndep()">
+        </div>
+        <div>
+          <div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.375rem;">Taxa de rendimento ao ano (%)</div>
+          <input type="number" id="taxaRendimento" value="6" step="0.1" oninput="calcIndep()" style="margin-bottom:.375rem;">
+          <div style="font-size:.68rem;color:var(--faint);">CDB/Tesouro conservador ≈ 6% a.a.</div>
         </div>
       </div>
-      <!-- Sugestões inteligentes -->
-      <div id="resSugestoes" style="display:none;margin-top:.75rem;">
-        <div class="ctit" style="margin-bottom:.375rem;">💡 Sugestões baseadas na sua renda <small id="rendaMediaLbl"></small></div>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;" id="sugGrid"></div>
+
+      <!-- Resultado -->
+      <div id="indepResultado" style="display:none;">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:.875rem;">
+          <div style="background:var(--surf2);border-radius:.75rem;border:1px solid var(--border);padding:.625rem;">
+            <div style="font-size:.63rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.2rem;">Patrimônio necessário</div>
+            <div id="indepMeta" style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;">—</div>
+            <div style="font-size:.63rem;color:var(--faint);margin-top:.2rem;">regra dos 4%</div>
+          </div>
+          <div style="background:var(--surf2);border-radius:.75rem;border:1px solid var(--border);padding:.625rem;">
+            <div style="font-size:.63rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.2rem;">Patrimônio atual</div>
+            <div id="indepAtual" style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;">—</div>
+          </div>
+          <div style="background:var(--surf2);border-radius:.75rem;border:1px solid var(--border);padding:.625rem;">
+            <div style="font-size:.63rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.2rem;">Gera hoje</div>
+            <div id="indepGeraHoje" style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:var(--green);">—</div>
+            <div style="font-size:.63rem;color:var(--faint);margin-top:.2rem;">renda passiva atual</div>
+          </div>
+        </div>
+
+        <!-- Barra de progresso -->
+        <div style="margin-bottom:.375rem;display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);">
+          <span>Progresso rumo à independência</span>
+          <span id="indepPct" style="font-weight:700;color:var(--txt);">0%</span>
+        </div>
+        <div style="height:14px;background:var(--surf3);border-radius:9999px;overflow:hidden;margin-bottom:.875rem;">
+          <div id="indepBarra" style="height:100%;border-radius:9999px;background:linear-gradient(90deg,var(--p),var(--green));transition:width .6s ease;width:0%;"></div>
+        </div>
+
+        <!-- Estimativa -->
+        <div id="indepEstimativa" style="background:var(--surf2);border-radius:.75rem;padding:.875rem 1rem;margin-bottom:.75rem;font-size:.82rem;"></div>
+
+        <!-- O que gera na meta -->
+        <div id="indepMetaBox" style="background:var(--glight);border:1px solid var(--green);border-radius:.75rem;padding:.875rem 1rem;font-size:.82rem;color:var(--green);"></div>
+      </div>
+
+      <!-- Estado vazio -->
+      <div id="indepVazio" style="text-align:center;color:var(--faint);font-size:.8rem;padding:1.5rem;">
+        Configure os gastos mensais acima para ver sua projeção de independência financeira.
       </div>
     </div>
-    <div class="card" id="rCard" style="display:none;">
-      <div class="ctit">Progresso da Reserva</div>
-      <div class="pbar"><div class="pfill" id="pFill" style="width:0%;"></div></div>
-      <div class="plbl"><span id="pPct">0%</span><span id="pMeta"></span></div>
-      <div class="resgrid">
-        <div class="rss"><div class="rssl">Meta total</div><div class="rssv" id="rsMeta">—</div></div>
-        <div class="rss"><div class="rssl">Já guardado</div><div class="rssv" id="rsAt">—</div></div>
-        <div class="rss"><div class="rssl">Falta guardar</div><div class="rssv" id="rsFa" style="color:var(--red);">—</div></div>
-        <div class="rss"><div class="rssl">Meses para concluir</div><div class="rssv" id="rsMes">—</div></div>
-      </div>
-      <div style="margin-top:.875rem;">
-        <div class="ctit" style="margin-bottom:.5rem;">Sub-metas</div>
-        <div class="etapas" id="etapas"></div>
-      </div>
-      <div style="margin-top:.875rem;">
-        <div class="ctit" style="margin-bottom:.5rem;">Comparar cenários de aporte <small>clique para selecionar</small></div>
-        <div class="cenarios" id="cenarios"></div>
-      </div>
-      <div style="margin-top:.875rem;">
-        <div class="ctit" style="margin-bottom:.5rem;">Projeção até a meta</div>
-        <div style="height:200px;"><canvas id="cReserva"></canvas></div>
-      </div>
-    </div>
+
   </div>
 </section>
 <!-- COMO USAR -->
@@ -1969,7 +2095,7 @@ function deleteContaRemote(id){
 var MN=["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
 var MF=["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
 var CATS={"Essenciais":"#01696f","Alimentação":"#437a22","Transporte":"#d97706","Saúde":"#c0392b","Lazer":"#7a39bb","Educação":"#006494","Renda":"#4f98a3","Reserva":"#6daa45","Outros":"#6b6a67"};
-var TIPOS_CONTA={"corrente":"Conta Corrente","poupanca":"Poupança","carteira":"Carteira Física","invest":"Investimento","outro":"Outro"};
+var TIPOS_CONTA={"corrente":"Conta Corrente","poupanca":"Poupança","carteira":"Carteira Física","invest":"Investimento","reserva":"Reserva","outro":"Outro"};
 var BANCOS=[
   {id:'',nome:'Carteira/Outro',cor:'#607D8B',logo:'<svg viewBox=\"0 0 40 40\" width=\"32\" height=\"32\"><rect width=\"40\" height=\"40\" rx=\"10\" fill=\"#607D8B\"/><rect x=\"7\" y=\"13\" width=\"26\" height=\"16\" rx=\"3\" fill=\"none\" stroke=\"white\" stroke-width=\"2\"/><rect x=\"7\" y=\"18\" width=\"26\" height=\"4\" fill=\"white\" opacity=\".5\"/><circle cx=\"27\" cy=\"28\" r=\"3\" fill=\"white\"/></svg>'},
   {id:'nubank',nome:'Nubank',cor:'#820AD1',logo:'<img src=\"data:image/png;base64,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\" width=\"32\" height=\"32\" style=\"border-radius:20px;display:block;\">'},
@@ -2035,12 +2161,50 @@ function fmt(v){return "R$ "+Math.abs(v).toLocaleString("pt-BR",{minimumFraction
 function fmtDt(s){if(!s)return"";var p=s.split("-");return p[2]+"/"+p[1]+"/"+p[0];}
 function gc(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
 function _temAdiantadoMes(l,k){return(l.paidMeses&&l.paidMeses.indexOf(k)!==-1)||lancamentos.some(function(x){return String(x.origemRecId)===String(l.id)&&x.dt.startsWith(k);});}
-function getLM(m,y){var k=y+"-"+("0"+(m+1)).slice(-2);var hoje=new Date().toISOString().slice(0,10);var mesAtual=(y===new Date().getFullYear()&&m===new Date().getMonth());return lancamentos.filter(function(l){if(!l.dt.startsWith(k)||l.t==="agenda")return false;if(mesAtual&&l.dt>hoje)return false;if(l.rec&&_temAdiantadoMes(l,k))return false;return true;});}
+function getLM(m,y){var k=y+"-"+("0"+(m+1)).slice(-2);var hoje=new Date().toISOString().slice(0,10);var mesAtual=(y===new Date().getFullYear()&&m===new Date().getMonth());return lancamentos.filter(function(l){
+  if(!l.dt.startsWith(k))return false;
+  if(l.t==="agenda")return false;
+  if(l.t==="transf_e"||l.t==="transf_s")return false; // transferências não entram no orçamento
+  if(mesAtual&&l.dt>hoje)return false;
+  if(l.rec&&_temAdiantadoMes(l,k))return false;
+  return true;
+});}
 function getAgendaLM(m,y){var k=y+"-"+("0"+(m+1)).slice(-2);return lancamentos.filter(function(l){return l.dt.startsWith(k)&&l.t==="agenda";});}
 function calcMes(m,y){var ls=getLM(m,y);var rec=ls.filter(function(l){return l.t=="e";}).reduce(function(s,l){return s+l.v;},0);var dep=ls.filter(function(l){return l.t=="s";}).reduce(function(s,l){return s+l.v;},0);return{rec:rec,dep:dep,sal:rec-dep,cnt:ls.length};}
 function addMeses(dt,n){var p=dt.split("-");var y=parseInt(p[0]),m=parseInt(p[1])-1,d=parseInt(p[2]);var nd=new Date(y,m+n,1);return nd.getFullYear()+"-"+("0"+(nd.getMonth()+1)).slice(-2)+"-"+("0"+Math.min(d,28)).slice(-2);}
-function saldoConta(id){var c=contas.find(function(x){return x.id==id;});if(!c)return 0;var hoje=new Date().toISOString().slice(0,10);function _naoRep(l){if(!l.rec)return true;var mk=l.dt.slice(0,7);return!((l.paidMeses&&l.paidMeses.indexOf(mk)!==-1)||lancamentos.some(function(x){return String(x.origemRecId)===String(l.id)&&x.dt.startsWith(mk)&&x.dt<=hoje;}));}var ent=lancamentos.filter(function(l){return l.t=="e"&&l.conta==id&&l.dt<=hoje&&_naoRep(l);}).reduce(function(s,l){return s+l.v;},0);var sai=lancamentos.filter(function(l){return l.t=="s"&&l.conta==id&&l.dt<=hoje&&_naoRep(l);}).reduce(function(s,l){return s+l.v;},0);return c.si+ent-sai;}
-function saldoTotal(){var hoje=new Date().toISOString().slice(0,10);if(contas.length==0){var r=lancamentos.filter(function(l){return l.t=="e"&&l.dt<=hoje;}).reduce(function(s,l){return s+l.v;},0);var d=lancamentos.filter(function(l){return l.t=="s"&&l.dt<=hoje;}).reduce(function(s,l){return s+l.v;},0);return r-d;}return contas.reduce(function(s,c){return s+saldoConta(c.id);},0);}
+function saldoConta(id){var c=contas.find(function(x){return x.id==id;});if(!c)return 0;var hoje=new Date().toISOString().slice(0,10);function _naoRep(l){if(!l.rec)return true;var mk=l.dt.slice(0,7);return!((l.paidMeses&&l.paidMeses.indexOf(mk)!==-1)||lancamentos.some(function(x){return String(x.origemRecId)===String(l.id)&&x.dt.startsWith(mk)&&x.dt<=hoje;}));}var ent=lancamentos.filter(function(l){return l.t=="e"&&l.conta==id&&l.dt<=hoje&&_naoRep(l);}).reduce(function(s,l){return s+l.v;},0);var sai=lancamentos.filter(function(l){return l.t=="s"&&l.conta==id&&l.dt<=hoje&&_naoRep(l);}).reduce(function(s,l){return s+l.v;},0);
+// Entradas de transferência (transf_e)
+var entTransf=lancamentos.filter(function(l){
+  return l.t=="transf_e"&&l.conta==id&&l.dt<=hoje;
+}).reduce(function(s,l){return s+l.v;},0);
+// Saídas de transferência (transf_s)
+var saiTransf=lancamentos.filter(function(l){
+  return l.t=="transf_s"&&l.conta==id&&l.dt<=hoje;
+}).reduce(function(s,l){return s+l.v;},0);
+return c.si+ent-sai+entTransf-saiTransf;}
+function saldoTotal(){
+  var hoje=new Date().toISOString().slice(0,10);
+  if(contas.length==0){
+    var r=lancamentos.filter(function(l){return l.t=="e"&&l.dt<=hoje;}).reduce(function(s,l){return s+l.v;},0);
+    var d=lancamentos.filter(function(l){return l.t=="s"&&l.dt<=hoje;}).reduce(function(s,l){return s+l.v;},0);
+    return r-d;
+  }
+  // Soma TODAS as contas (consumo + reserva + investimento)
+  return contas.reduce(function(s,c){return s+saldoConta(c.id);},0);
+}
+
+function saldoConsumo(){
+  // Só contas de consumo (corrente, poupanca, carteira, outro)
+  var tiposConsumo=["corrente","poupanca","carteira","outro"];
+  return contas.filter(function(c){return tiposConsumo.indexOf(c.tipo)!==-1;})
+    .reduce(function(s,c){return s+saldoConta(c.id);},0);
+}
+
+function saldoInvestimentos(){
+  // Só contas de investimento e reserva
+  return contas.filter(function(c){return c.tipo==="invest"||c.tipo==="reserva";})
+    .reduce(function(s,c){return s+saldoConta(c.id);},0);
+}
 
 function seedDemo(){
   contas=[{id:"c1",nome:"Nubank",tipo:"corrente",si:1200,cor:"#7a39bb"},{id:"c2",nome:"Caixa",tipo:"corrente",si:800,cor:"#006494"},{id:"c3",nome:"Carteira",tipo:"carteira",si:150,cor:"#d97706"}];
@@ -2059,7 +2223,15 @@ function nav(v){
   if(pg)pg.classList.add("on");
   document.querySelectorAll("[onclick=\"nav('"+v+"')\"]").forEach(function(b){b.classList.add("on");});
   try{render();}catch(err){console.warn("render error:",err);}
-  if(v=="reserva")setTimeout(function(){try{calcR();}catch(e){}},100);
+  if(v=="reserva"){
+    setTimeout(function(){
+      try{
+        renderMetas();
+        setGastosMode('auto');
+        calcIndep();
+      }catch(e){console.warn(e);}
+    },100);
+  }
   if(v=="hist"){
     var hm=document.getElementById("histMes");var hy=document.getElementById("histAno");
     if(hm)hm.value=cM;if(hy)hy.value=cY;
@@ -2088,16 +2260,56 @@ function setTipo(t){
   tipoAtual=t;
   document.getElementById("btnE").className=t=="e"?"oe":"";
   document.getElementById("btnS").className=t=="s"?"os":"";
-  // Tipo selector: only for saída
-  var tipoWrap=document.getElementById("tipoLancWrap");
-  if(tipoWrap)tipoWrap.style.display=t=="e"?"none":"block";
+  var btnT=document.getElementById("btnT");
+  if(btnT) btnT.className=t=="t"?"ot":"";
+
+  var isTransf=(t==="t");
+
+  // Mostra/esconde campos de transferência (De/Para)
+  var tWrap=document.getElementById("transferenciaWrap");
+  if(tWrap) tWrap.style.display=isTransf?"block":"none";
+
+  // Oculta Categoria e Conta no lancGrid quando for transferência
+  var fgCat=document.getElementById("fgCat");
+  var fgConta=document.getElementById("fgConta");
+  if(fgCat) fgCat.style.display=isTransf?"none":"";
+  if(fgConta) fgConta.style.display=isTransf?"none":"";
+
+  // Oculta todo o bloco extra (tipo, parcela, recorrente, parcInfo) quando for transferência
+  var extras=document.getElementById("lancCamposExtra");
+  if(extras) extras.style.display=isTransf?"none":"block";
+  document.getElementById("parcInfo").className="parc-info";
+
+  // Quando não é transferência, controla tipoLancWrap normalmente
+  if(!isTransf){
+    var tipoWrap=document.getElementById("tipoLancWrap");
+    if(tipoWrap) tipoWrap.style.display=t=="e"?"none":"block";
+  }
+
+  // Popula selects de transferência
+  if(isTransf){
+    var opts='<option value="">— selecione —</option>'+contas.map(function(c){
+      return '<option value="'+c.id+'">'+c.nome+' ('+fmt(saldoConta(c.id))+')</option>';
+    }).join('');
+    document.getElementById('iTransfDe').innerHTML=opts;
+    document.getElementById('iTransfPara').innerHTML=opts;
+    ['iTransfDe','iTransfPara'].forEach(function(id){
+      document.getElementById(id).onchange=atualizarPreviewTransf;
+    });
+    // Atualiza preview quando o valor muda
+    var iVal=document.getElementById('iVal');
+    if(iVal) iVal.oninput=function(){updateParcInfo();atualizarPreviewTransf();};
+  } else {
+    var iVal2=document.getElementById('iVal');
+    if(iVal2) iVal2.oninput=updateParcInfo;
+  }
+
   if(t=="e"){
     var tl=document.getElementById("iTipoLanc");
     if(tl){tl.value="normal";toggleTipoFields();}
     document.getElementById("iParcelas").value="1";
   }
-  document.getElementById("parcInfo").className="parc-info";
-  updateParcInfo();
+  if(!isTransf) updateParcInfo();
 }
 function updateParcInfo(){
   var v=parseFloat(document.getElementById("iVal").value)||0;
@@ -2161,25 +2373,70 @@ function selectBanco(id){
   }
 }
 
+function toggleSubtipoInvest(){
+  var tipo=document.getElementById('cTipo').value;
+  var wrap=document.getElementById('subtipoInvestWrap');
+  if(wrap) wrap.style.display=(tipo==='invest')?'block':'none';
+}
+
+function toggleSubtipoOutro(){
+  var sub=document.getElementById('cSubtipo').value;
+  var outro=document.getElementById('cSubtipoOutro');
+  if(outro) outro.style.display=(sub==='outro')?'block':'none';
+}
+
+function toggleFiltroConta(id){
+  if(!window._contasFiltro) window._contasFiltro={};
+  window._contasFiltro[id]=!window._contasFiltro[id];
+  renderContas();
+}
+
 function toggleContaForm(){var f=document.getElementById("contaForm");f.style.display=f.style.display=="none"?"block":"none";if(f.style.display=="block"){buildCorPicker();buildBancoSelector();contas.forEach(function(x){var xid=x.id.replace(/[^a-zA-Z0-9]/g,"_");var xp=document.getElementById("editpanel_"+xid);if(xp)xp.style.display="none";});}}
 function addConta(){
   var nome=document.getElementById("cNome").value.trim();
   var tipo=document.getElementById("cTipo").value;
   var si=parseFloat(document.getElementById("cSaldo").value)||0;
   if(!nome){alert("Informe o nome!");return;}
-  var nc={id:"c"+Date.now(),nome:nome,tipo:tipo,si:si,cor:selectedBancoId?getBanco(selectedBancoId).cor:corSel,banco:selectedBancoId||""};
+  var subtipo=document.getElementById('cSubtipo')?document.getElementById('cSubtipo').value:'';
+  var subtipoOutro=document.getElementById('cSubtipoOutro')?document.getElementById('cSubtipoOutro').value:'';
+  var nc={
+    id:"c"+Date.now(),
+    nome:nome,
+    tipo:tipo,
+    subtipo:tipo==='invest'?(subtipo==='outro'?subtipoOutro:subtipo):'',
+    si:si,
+    cor:selectedBancoId?getBanco(selectedBancoId).cor:corSel,
+    banco:selectedBancoId||""
+  };
   contas.push(nc);
   saveConta(nc);
   document.getElementById("cNome").value="";document.getElementById("cSaldo").value="";
   document.getElementById("contaForm").style.display="none";
   refreshContaSelect();renderContas();
 }
+var _bsDelContaId = null;
+
 function delConta(id){
+  var conta = contas.find(function(c){ return String(c.id) === String(id); });
+  if(!conta) return;
+  _bsDelContaId = id;
+  document.getElementById('bsDelContaSub').textContent =
+    'A conta "' + conta.nome + '" será removida permanentemente. Os lançamentos vinculados a ela não serão apagados.';
+  document.getElementById('bsDelContaOverlay').style.display = 'flex';
+}
+
+function bsDelContaClose(){
+  document.getElementById('bsDelContaOverlay').style.display = 'none';
+  _bsDelContaId = null;
+}
+
+function bsDelContaConfirmar(){
+  var id = _bsDelContaId;
+  bsDelContaClose();
   contas = contas.filter(function(c){ return String(c.id) !== String(id); });
   refreshContaSelect();
   renderContas();
   render();
-
   if(currentUser && db){
     db.collection("users").doc(currentUser.uid).collection("contas").doc(String(id))
       .delete()
@@ -2210,6 +2467,43 @@ function refreshContaSelect(){var sel=document.getElementById("iConta");var val=
 function renderContas(){
   var g=document.getElementById("contasGrid");
   if(!g)return;
+
+  // Atualiza cards de resumo
+  var resumoC=document.getElementById('resumoSaldoConsumo');
+  var resumoI=document.getElementById('resumoSaldoInvest');
+  if(resumoC) resumoC.textContent=fmt(saldoConsumo());
+  if(resumoI) resumoI.textContent=fmt(saldoInvestimentos());
+
+  // Filtro de bancos
+  var fbW=document.getElementById('filtroBancosWrap');
+  var fbS=document.getElementById('filtroSelecionados');
+  if(fbW && contas.length){
+    if(!window._contasFiltro) window._contasFiltro={};
+    // Inicializa seleção (tudo selecionado por padrão)
+    contas.forEach(function(c){
+      if(window._contasFiltro[c.id]===undefined) window._contasFiltro[c.id]=true;
+    });
+    var fh='';
+    contas.forEach(function(c){
+      var sel=window._contasFiltro[c.id];
+      fh+='<button onclick="toggleFiltroConta(\''+c.id+'\')" style="'
+        +'padding:.25rem .625rem;border-radius:9999px;font-size:.72rem;font-weight:600;cursor:pointer;border:1px solid '+(sel?c.cor:'var(--border)')+';background:'+(sel?c.cor+'22':'var(--surf2)')+';color:'+(sel?c.cor:'var(--muted)')+';">'
+        +c.nome+'</button>';
+    });
+    fbW.innerHTML=fh;
+    // Saldo selecionados
+    var totalSel=contas.filter(function(c){return window._contasFiltro[c.id];}).reduce(function(s,c){return s+saldoConta(c.id);},0);
+    var qtdSel=contas.filter(function(c){return window._contasFiltro[c.id];}).length;
+    if(fbS) fbS.textContent='💳 Selecionadas ('+qtdSel+') — '+fmt(totalSel);
+  }
+
+  // Separação visual por tipo
+  var gruposTipos=[
+    {key:['corrente','poupanca','carteira','outro'], label:'💳 Contas de consumo'},
+    {key:['reserva'], label:'🛡️ Reserva'},
+    {key:['invest'], label:'📈 Investimentos'},
+  ];
+
   var h="";
   contas.forEach(function(c){
     var sl=saldoConta(c.id);
@@ -2539,7 +2833,62 @@ function getDiaFixoConfig(){
   return{tipo:tipo,diaNum:num,dtCal:dtCal};
 }
 
+function atualizarPreviewTransf(){
+  var deId=document.getElementById('iTransfDe').value;
+  var paraId=document.getElementById('iTransfPara').value;
+  var v=parseFloat(document.getElementById('iVal').value)||0;
+  var prev=document.getElementById('transferenciaPreview');
+  if(!prev)return;
+  if(!deId||!paraId||!v){prev.style.display='none';return;}
+  var cDe=contas.find(function(c){return c.id===deId;});
+  var cPara=contas.find(function(c){return c.id===paraId;});
+  if(!cDe||!cPara){prev.style.display='none';return;}
+  var sldDe=saldoConta(deId);
+  var sldPara=saldoConta(paraId);
+  prev.style.display='block';
+  prev.innerHTML=
+    '<strong>'+cDe.nome+':</strong> '+fmt(sldDe)+' → '+fmt(sldDe-v)+
+    ' &nbsp;·&nbsp; '+
+    '<strong>'+cPara.nome+':</strong> '+fmt(sldPara)+' → '+fmt(sldPara+v)+
+    ' &nbsp;·&nbsp; Patrimônio: sem alteração ✅';
+}
+
+function addTransferencia(){
+  var deId=document.getElementById('iTransfDe').value;
+  var paraId=document.getElementById('iTransfPara').value;
+  var v=parseFloat(document.getElementById('iVal').value)||0;
+  var dt=document.getElementById('iDt').value;
+  var desc=document.getElementById('iDesc').value.trim()||'Transferência';
+  if(!deId||!paraId||!v||!dt){alert('Preencha todos os campos!');return;}
+  if(deId===paraId){alert('Conta de origem e destino não podem ser iguais!');return;}
+  var gid='transf_'+Date.now();
+  var lSaida={
+    id:String(Date.now()+Math.random()),
+    desc:desc,v:v,cat:'Transferência',t:'transf_s',
+    dt:dt,rec:false,conta:deId,grupoTransfId:gid,
+    contaDestino:paraId
+  };
+  var lEntrada={
+    id:String(Date.now()+Math.random()+1),
+    desc:desc,v:v,cat:'Transferência',t:'transf_e',
+    dt:dt,rec:false,conta:paraId,grupoTransfId:gid,
+    contaOrigem:deId
+  };
+  lancamentos.push(lSaida);
+  lancamentos.push(lEntrada);
+  saveLanc(lSaida);
+  saveLanc(lEntrada);
+  document.getElementById('iDesc').value='';
+  document.getElementById('iVal').value='';
+  document.getElementById('iTransfDe').value='';
+  document.getElementById('iTransfPara').value='';
+  document.getElementById('transferenciaPreview').style.display='none';
+  render();
+}
+
 function addLanc(){
+  // Se for transferência, delega para addTransferencia()
+  if(tipoAtual==='t'){addTransferencia();return;}
   var desc=document.getElementById("iDesc").value.trim();
   var v=parseFloat(document.getElementById("iVal").value);
   var cat=document.getElementById("iCat").value;
@@ -3471,131 +3820,311 @@ function simular(){
   document.getElementById('simRes').className='simres on';
 }
 
-// ── RESERVA ──
-var chRes=null, metaMode="auto", cenSel=0;
+// ── RESERVA & METAS ──
+var gastosMode = 'auto';
+var metas = []; // array de metas do usuário
+
+// Carrega/salva metas no localStorage por enquanto
+function loadMetas(){
+  try{ metas=JSON.parse(localStorage.getItem('metas_v1')||'[]'); }catch(e){ metas=[]; }
+}
+function saveMetas(){
+  localStorage.setItem('metas_v1', JSON.stringify(metas));
+}
+loadMetas();
+
+function toggleMetaForm(){
+  var f=document.getElementById('metaForm');
+  if(!f)return;
+  f.style.display=f.style.display==='none'?'block':'none';
+  if(f.style.display==='block'){
+    // Popula select de contas
+    var sel=document.getElementById('metaConta');
+    if(sel){
+      sel.innerHTML='<option value="">— nenhuma —</option>'+
+        contas.map(function(c){return '<option value="'+c.id+'">'+c.nome+'</option>';}).join('');
+    }
+  }
+}
+
+function calcPreviewMeta(){
+  var valor=parseFloat(document.getElementById('metaValor').value)||0;
+  var aporte=parseFloat(document.getElementById('metaAporte').value)||0;
+  var prev=document.getElementById('metaPreview');
+  if(!prev)return;
+  if(valor>0&&aporte>0){
+    var meses=Math.ceil(valor/aporte);
+    var nd=new Date(cY,cM+meses,1);
+    var chegaEm=MN[nd.getMonth()]+' '+nd.getFullYear();
+    prev.style.display='block';
+    prev.textContent='Aportando '+fmt(aporte)+'/mês → meta em '+meses+' mês(es) — '+chegaEm;
+  } else {
+    prev.style.display='none';
+  }
+}
+
+function addMeta(){
+  var nome=document.getElementById('metaNome').value.trim();
+  var valor=parseFloat(document.getElementById('metaValor').value)||0;
+  var aporte=parseFloat(document.getElementById('metaAporte').value)||0;
+  var conta=document.getElementById('metaConta').value||'';
+  if(!nome||!valor){alert('Informe nome e valor da meta!');return;}
+  var meta={
+    id:'meta_'+Date.now(),
+    nome:nome,
+    valor:valor,
+    aporte:aporte,
+    conta:conta,
+    atual:0,
+    criado:new Date().toISOString().slice(0,10),
+    concluida:false,
+    excedente:0
+  };
+  metas.push(meta);
+  saveMetas();
+  document.getElementById('metaNome').value='';
+  document.getElementById('metaValor').value='';
+  document.getElementById('metaAporte').value='';
+  document.getElementById('metaForm').style.display='none';
+  renderMetas();
+}
+
+function aportarMeta(id){
+  var meta=metas.find(function(m){return m.id===id;});
+  if(!meta)return;
+  var val=parseFloat(prompt('Quanto deseja adicionar à meta "'+meta.nome+'"?\nAtual: '+fmt(meta.atual)+' / Meta: '+fmt(meta.valor)));
+  if(!val||val<=0)return;
+  if(!meta.concluida){
+    meta.atual+=val;
+    if(meta.atual>=meta.valor){
+      meta.concluida=true;
+      meta.excedente=meta.atual-meta.valor;
+      meta.atual=meta.valor;
+      alert('🎉 Meta "'+meta.nome+'" concluída! Parabéns!');
+    }
+  } else {
+    meta.excedente=(meta.excedente||0)+val;
+  }
+  saveMetas();
+  renderMetas();
+}
+
+var _bsUsarMetaId = null;
+
+function usarMeta(id){
+  var meta=metas.find(function(m){return m.id===id;});
+  if(!meta)return;
+  _bsUsarMetaId=id;
+
+  document.getElementById('bsUsarMetaTitulo').textContent='Usar meta: '+meta.nome;
+  document.getElementById('bsUsarMetaSub').textContent=
+    'Atual: '+fmt(meta.atual)+'  |  Meta: '+fmt(meta.valor);
+
+  var inputWrap=document.getElementById('bsUsarMetaInputWrap');
+  var msgConcluida=document.getElementById('bsUsarMetaMsgConcluida');
+  var valInput=document.getElementById('bsUsarMetaVal');
+
+  if(meta.concluida){
+    inputWrap.style.display='none';
+    msgConcluida.style.display='block';
+  } else {
+    inputWrap.style.display='block';
+    msgConcluida.style.display='none';
+    valInput.value='';
+    var erroEl=document.getElementById('bsUsarMetaErro');
+    if(erroEl) erroEl.style.display='none';
+    setTimeout(function(){valInput.focus();},300);
+  }
+
+  document.getElementById('bsUsarMetaOverlay').style.display='flex';
+}
+
+function bsUsarMetaClose(){
+  document.getElementById('bsUsarMetaOverlay').style.display='none';
+  _bsUsarMetaId=null;
+}
+
+function bsUsarMetaConfirmar(){
+  var meta=metas.find(function(m){return m.id===_bsUsarMetaId;});
+  if(!meta){bsUsarMetaClose();return;}
+
+  if(meta.concluida){
+    meta.atual=0;
+    meta.concluida=false;
+    meta.excedente=0;
+  } else {
+    var usado=parseFloat(document.getElementById('bsUsarMetaVal').value);
+    var erroEl=document.getElementById('bsUsarMetaErro');
+    if(isNaN(usado)||usado<=0){
+      if(erroEl) erroEl.style.display='block';
+      document.getElementById('bsUsarMetaVal').focus();
+      return;
+    }
+    if(erroEl) erroEl.style.display='none';
+    meta.atual=Math.max(0,meta.atual-usado);
+  }
+
+  saveMetas();
+  bsUsarMetaClose();
+  renderMetas();
+}
+
+function delMeta(id){
+  if(!confirm('Remover esta meta?'))return;
+  metas=metas.filter(function(m){return m.id!==id;});
+  saveMetas();
+  renderMetas();
+}
+
+function renderMetas(){
+  var el=document.getElementById('metasLista');
+  if(!el)return;
+  if(!metas.length){
+    el.innerHTML='<div style="text-align:center;color:var(--faint);font-size:.8rem;padding:1.5rem;">Nenhuma meta criada. Clique em "+ Nova Meta" para começar.</div>';
+    return;
+  }
+  var h='';
+  metas.forEach(function(meta){
+    var pct=meta.concluida?100:Math.min(100,Math.round((meta.atual/meta.valor)*100));
+    var cor=meta.concluida?'var(--green)':pct>=80?'var(--warn)':'var(--p)';
+    var meses=meta.aporte>0?Math.ceil(Math.max(0,meta.valor-meta.atual)/meta.aporte):null;
+    var chegaEm='';
+    if(meses&&meses>0){
+      var nd=new Date(cY,cM+meses,1);
+      chegaEm=MN[nd.getMonth()]+' '+nd.getFullYear();
+    }
+    h+='<div style="border:1px solid '+(meta.concluida?'var(--green)':'var(--border)')+';border-radius:.75rem;padding:.875rem 1rem;margin-bottom:.5rem;background:'+(meta.concluida?'var(--glight)':'var(--surf2)')+';">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;">';
+    h+='<div style="font-weight:700;font-size:.9rem;">'+(meta.concluida?'✅ ':'')+''+meta.nome+'</div>';
+    h+='<span style="font-size:.72rem;font-weight:700;padding:.1rem .5rem;border-radius:9999px;background:'+(meta.concluida?'var(--glight)':'var(--plight)')+';color:'+(meta.concluida?'var(--green)':'var(--p)')+';">'+pct+'%</span>';
+    h+='</div>';
+    h+='<div style="height:8px;background:var(--surf3);border-radius:9999px;overflow:hidden;margin-bottom:.375rem;">';
+    h+='<div style="width:'+pct+'%;height:100%;border-radius:9999px;background:'+cor+';transition:width .5s;"></div></div>';
+    h+='<div style="display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);margin-bottom:.5rem;">';
+    if(meta.concluida){
+      h+='<span style="color:var(--green);font-weight:600;">Meta atingida! '+fmt(meta.valor)+'</span>';
+      if(meta.excedente>0) h+='<span>Excedente: <strong style="color:var(--green);">'+fmt(meta.excedente)+'</strong></span>';
+    } else {
+      h+='<span>'+fmt(meta.atual)+' / '+fmt(meta.valor)+'</span>';
+      h+='<span>'+(chegaEm?'Chega em: '+chegaEm:'—')+'</span>';
+    }
+    h+='</div>';
+    h+='<div style="display:flex;gap:.375rem;flex-wrap:wrap;">';
+    h+='<button onclick="aportarMeta(\''+meta.id+'\')" style="font-size:.72rem;padding:.2rem .6rem;border-radius:8px;background:var(--plight);color:var(--p);border:1px solid var(--p);cursor:pointer;">+ Adicionar</button>';
+    if(!meta.concluida||meta.excedente>0)
+      h+='<button onclick="usarMeta(\''+meta.id+'\')" style="font-size:.72rem;padding:.2rem .6rem;border-radius:8px;background:var(--wlight);color:var(--warn);border:1px solid var(--warn);cursor:pointer;">Usar</button>';
+    h+='<button onclick="delMeta(\''+meta.id+'\')" style="font-size:.72rem;padding:.2rem .6rem;border-radius:8px;background:none;color:var(--faint);border:1px solid var(--border);cursor:pointer;margin-left:auto;">Remover</button>';
+    h+='</div></div>';
+  });
+  el.innerHTML=h;
+}
+
+// ── INDEPENDÊNCIA FINANCEIRA ──
+var gastosManualMode = false;
+
+function setGastosMode(mode){
+  gastosManualMode = (mode==='manual');
+  var btnAuto=document.getElementById('btnGastosAuto');
+  var btnManual=document.getElementById('btnGastosManual');
+  var autoInfo=document.getElementById('gastosAutoInfo');
+  var manualInput=document.getElementById('gastosManualVal');
+  if(btnAuto) btnAuto.className=!gastosManualMode?'oe':'';
+  if(btnManual) btnManual.className=gastosManualMode?'oe':'';
+  if(autoInfo) autoInfo.style.display=!gastosManualMode?'block':'none';
+  if(manualInput) manualInput.style.display=gastosManualMode?'block':'none';
+  calcIndep();
+}
+
+function getMediaGastos6Meses(){
+  var total=0,cnt=0;
+  for(var i=1;i<=6;i++){
+    var pm=cM-i,py=cY;
+    if(pm<0){pm+=12;py--;}
+    var dep=getLM(pm,py).filter(function(l){return l.t==='s';}).reduce(function(s,l){return s+l.v;},0);
+    if(dep>0){total+=dep;cnt++;}
+  }
+  return cnt>0?Math.round(total/cnt):0;
+}
+
+function calcIndep(){
+  var mediaAuto=getMediaGastos6Meses();
+  var autoInfo=document.getElementById('gastosAutoInfo');
+  if(autoInfo){
+    autoInfo.textContent='Média últimos 6 meses: '+fmt(mediaAuto)+'/mês';
+  }
+  var gastos=gastosManualMode
+    ?(parseFloat(document.getElementById('gastosManualVal').value)||0)
+    :mediaAuto;
+  var taxa=parseFloat(document.getElementById('taxaRendimento').value)||6;
+  var resultado=document.getElementById('indepResultado');
+  var vazio=document.getElementById('indepVazio');
+  if(!gastos||gastos<=0){
+    if(resultado)resultado.style.display='none';
+    if(vazio)vazio.style.display='block';
+    return;
+  }
+  if(resultado)resultado.style.display='block';
+  if(vazio)vazio.style.display='none';
+
+  // Regra dos 4%
+  var gastosAnuais=gastos*12;
+  var metaPatrimonio=Math.round(gastosAnuais/0.04);
+  var patrimonioAtual=saldoInvestimentos();
+  var pct=metaPatrimonio>0?Math.min(100,Math.round(patrimonioAtual/metaPatrimonio*100)):0;
+  var rendaMensalAtual=Math.round(patrimonioAtual*(taxa/100)/12);
+  var rendaMensalMeta=Math.round(metaPatrimonio*(taxa/100)/12);
+
+  var aporteMedio=0;
+  for(var i=1;i<=3;i++){
+    var pm2=cM-i,py2=cY;
+    if(pm2<0){pm2+=12;py2--;}
+    var cm2=calcMes(pm2,py2);
+    aporteMedio+=Math.max(0,cm2.sal);
+  }
+  aporteMedio=Math.round(aporteMedio/3);
+
+  var falta=Math.max(0,metaPatrimonio-patrimonioAtual);
+  var mesesParaMeta=aporteMedio>0?Math.ceil(falta/aporteMedio):null;
+  var chegaEm='';
+  if(mesesParaMeta&&mesesParaMeta>0&&mesesParaMeta<600){
+    var nd=new Date(cY,cM+mesesParaMeta,1);
+    chegaEm=MN[nd.getMonth()]+' '+nd.getFullYear();
+  }
+
+  document.getElementById('indepMeta').textContent=fmt(metaPatrimonio);
+  document.getElementById('indepAtual').textContent=fmt(patrimonioAtual);
+  document.getElementById('indepGeraHoje').textContent=fmt(rendaMensalAtual)+'/mês';
+  document.getElementById('indepPct').textContent=pct+'%';
+  document.getElementById('indepBarra').style.width=pct+'%';
+
+  var estEl=document.getElementById('indepEstimativa');
+  if(estEl){
+    if(pct>=100){
+      estEl.innerHTML='🎉 <strong>Independência atingida!</strong> Seu patrimônio já gera '+fmt(rendaMensalAtual)+'/mês — mais do que seus gastos de '+fmt(gastos)+'/mês.';
+      estEl.style.background='var(--glight)';estEl.style.color='var(--green)';
+    } else {
+      var txt='<div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:.375rem;">';
+      txt+='<span>Falta no patrimônio: <strong>'+fmt(falta)+'</strong></span>';
+      if(chegaEm) txt+='<span>Estimativa: <strong>'+chegaEm+'</strong></span>';
+      txt+='</div>';
+      if(aporteMedio>0) txt+='<div style="margin-top:.375rem;font-size:.75rem;color:var(--muted);">Baseado no aporte médio dos últimos 3 meses: '+fmt(aporteMedio)+'/mês</div>';
+      estEl.innerHTML=txt;
+      estEl.style.background='var(--surf2)';estEl.style.color='var(--txt)';
+    }
+  }
+
+  var metaBox=document.getElementById('indepMetaBox');
+  if(metaBox){
+    metaBox.innerHTML=
+      'Com <strong>'+fmt(metaPatrimonio)+'</strong> a <strong>'+taxa+'%</strong> ao ano: '
+      +'retira <strong>'+fmt(gastos)+'</strong>/mês e sobram <strong>'+fmt(rendaMensalMeta-gastos)+'</strong>/mês reinvestindo. Patrimônio nunca acaba. ✅';
+  }
+}
 
 function setMetaMode(m){
-  metaMode=m;
-  document.getElementById("btnMetaAuto").className=m=="auto"?"oe":"";
-  document.getElementById("btnMetaManual").className=m=="manual"?"os":"";
-  document.getElementById("resAutoInputs").style.display=m=="auto"?"grid":"none";
-  document.getElementById("resManualInputs").style.display=m=="manual"?"block":"none";
-  calcR();
+  // mantida por compatibilidade com código legado (se houver referências)
 }
 
-function calcR(){
-  var a=parseFloat(document.getElementById("rA").value)||0;
-  var ap=parseFloat(document.getElementById("rAp").value)||0;
-  var meta=0;
-
-  if(metaMode=="auto"){
-    var g=parseFloat(document.getElementById("rG").value)||0;
-    var m=parseInt(document.getElementById("rM").value)||6;
-    if(g<=0){document.getElementById("rCard").style.display="none";document.getElementById("resSugestoes").style.display="none";return;}
-    meta=g*m;
-  } else {
-    meta=parseFloat(document.getElementById("rMetaManual").value)||0;
-    if(meta<=0){document.getElementById("rCard").style.display="none";document.getElementById("resSugestoes").style.display="none";return;}
-  }
-
-  // Calcular renda média real dos últimos 3 meses
-  var rendaMedia=0,cnt=0;
-  for(var i=1;i<=3;i++){var pm=cM-i,py=cY;if(pm<0){pm+=12;py--;}var rM=getLM(pm,py).filter(function(l){return l.t=="e";}).reduce(function(s,l){return s+l.v;},0);if(rM>0){rendaMedia+=rM;cnt++;}}
-  rendaMedia=cnt>0?rendaMedia/cnt:0;
-
-  // Sugestões
-  if(rendaMedia>0){
-    document.getElementById("resSugestoes").style.display="block";
-    document.getElementById("rendaMediaLbl").textContent="(renda média: R$ "+rendaMedia.toLocaleString("pt-BR",{minimumFractionDigits:0,maximumFractionDigits:0})+"/mês)";
-    var sugs=[
-      {pct:5,lbl:"Mínimo",desc:"5% da renda",ico:"🥉",cor:"var(--muted)"},
-      {pct:10,lbl:"Recomendado",desc:"10% da renda",ico:"⭐",cor:"var(--p)"},
-      {pct:20,lbl:"Acelerado",desc:"20% da renda",ico:"🚀",cor:"var(--green)"}
-    ];
-    var sgH="";
-    sugs.forEach(function(s,i){
-      var sv=Math.round(rendaMedia*s.pct/100/10)*10;
-      var sm=sv>0?Math.ceil(Math.max(0,meta-a)/sv):null;
-      sgH+='<div class="cen" style="cursor:pointer;" onclick="aplicarSugestao('+sv+')">'
-        +'<div style="font-size:1.1rem;margin-bottom:.2rem;">'+s.ico+'</div>'
-        +'<div class="cen-lbl">'+s.lbl+'</div>'
-        +'<div class="cen-val" style="color:'+s.cor+';">R$ '+sv.toLocaleString("pt-BR")+'/mês</div>'
-        +'<div class="cen-meses">'+s.desc+'</div>'
-        +'<div class="cen-meses" style="margin-top:.2rem;font-weight:700;">'+(sm&&sm>0?sm+" meses":sm==0?"✅ Já atingiu":"—")+'</div>'
-        +'</div>';
-    });
-    document.getElementById("sugGrid").innerHTML=sgH;
-  } else {
-    document.getElementById("resSugestoes").style.display="none";
-  }
-
-  document.getElementById("rCard").style.display="block";
-  var falta=Math.max(0,meta-a), pct=Math.min(100,a/meta*100);
-  var meses=ap>0?Math.ceil(falta/ap):null;
-
-  document.getElementById("pFill").style.width=pct+"%";
-  document.getElementById("pPct").textContent=pct.toFixed(0)+"%";
-  document.getElementById("pMeta").textContent="Meta: "+fmt(meta);
-  document.getElementById("rsMeta").textContent=fmt(meta);
-  document.getElementById("rsAt").textContent=fmt(a);
-  document.getElementById("rsFa").textContent=fmt(falta);
-  document.getElementById("rsMes").textContent=meses&&meses>0?meses+" meses":(falta==0?"🎉 Concluída!":"—");
-
-  // Sub-metas (baseadas no gasto mensal se auto, ou meta/divisores se manual)
-  var g2=metaMode=="auto"?(parseFloat(document.getElementById("rG").value)||0):meta/6;
-  var subs=[{n:1,lbl:"1 mês",ico:"🥉"},{n:3,lbl:"3 meses",ico:"🥈"},{n:6,lbl:"6 meses",ico:"🥇"},{n:12,lbl:"12 meses",ico:"🏆"}];
-  var etH="";
-  subs.forEach(function(s){
-    var sv=metaMode=="auto"?g2*s.n:meta*(s.n/12);
-    var ok=a>=sv;
-    etH+='<div class="etapa'+(ok?" ok":"")+'"><div class="etapa-ico">'+(ok?"✅":s.ico)+'</div><div class="etapa-lbl">'+s.lbl+'</div><div class="etapa-val">'+fmt(sv)+'</div></div>';
-  });
-  document.getElementById("etapas").innerHTML=etH;
-
-  // Cenários comparativos
-  var cens;
-  if(rendaMedia>0){cens=[Math.round(rendaMedia*.05/10)*10||50,Math.round(rendaMedia*.10/10)*10||100,Math.round(rendaMedia*.20/10)*10||200];}
-  else if(ap>0){cens=[Math.max(50,Math.round(ap*.6/10)*10),ap,Math.round(ap*1.5/10)*10];}
-  else{cens=[200,400,800];}
-  var cenH="";
-  cens.forEach(function(c,i){
-    var mm=c>0?Math.ceil(falta/c):null;
-    cenH+='<div class="cen'+(i==cenSel?" sel":"")+(ap==c?" sel":"")+'" onclick="selCen('+i+')">'
-      +'<div class="cen-lbl">'+fmt(c)+"/mês</div>"
-      +'<div class="cen-val">'+(mm&&mm>0?"em "+mm+" meses":mm==0?"✅ Já atingiu":"-")+'</div>'
-      +'<div class="cen-meses">'+(mm&&mm>0?calcDataMeta(mm):"")+'</div>'
-      +'</div>';
-  });
-  document.getElementById("cenarios").innerHTML=cenH;
-  var apSel=ap>0?ap:cens[cenSel];
-
-  // Gráfico
-  var labels=[],vals=[];
-  var cur=a;labels.push("Hoje");vals.push(cur);
-  var maxM=Math.min(apSel>0?Math.ceil(falta/apSel)+2:24,48);
-  for(var k=1;k<=maxM;k++){
-    cur=Math.min(cur+apSel,meta);
-    var nd=new Date(cY,cM+k,1);
-    labels.push(MN[nd.getMonth()]+"/"+String(nd.getFullYear()).slice(2));
-    vals.push(cur);
-    if(cur>=meta)break;
-  }
-  if(chRes)chRes.destroy();
-  var ctx=document.getElementById("cReserva").getContext("2d");
-  chRes=new Chart(ctx,{type:"line",data:{labels:labels,datasets:[
-    {label:"Reserva acumulada",data:vals,borderColor:"#01696f",backgroundColor:"rgba(1,105,111,.08)",borderWidth:2.5,pointRadius:4,pointHoverRadius:7,pointBorderWidth:2,pointBorderColor:"#fff",fill:true,tension:.35},
-    {label:"Meta",data:Array(labels.length).fill(meta),borderColor:"#437a22",borderDash:[6,4],borderWidth:1.5,pointRadius:0,fill:false}
-  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:9.5},color:gc("--muted"),boxWidth:9}},tooltip:{callbacks:{label:function(c){return c.dataset.label+": "+fmt(c.raw);}}}},scales:{x:{ticks:{color:gc("--muted"),font:{size:9},maxRotation:45},grid:{display:false}},y:{ticks:{color:gc("--muted"),font:{size:9},callback:function(v){return "R$"+Number(v).toLocaleString("pt-BR");}},grid:{color:gc("--div")}}}}});
-}
-
-function aplicarSugestao(v){
-  document.getElementById("rAp").value=v;
-  document.getElementById("rApSugLbl").textContent="← sugerido";
-  calcR();
-  setTimeout(function(){
-    document.getElementById("rApSugLbl").textContent="";
-  },2500);
-}
 function renderHist(){
   var m=parseInt(document.getElementById("histMes").value);
   var y=parseInt(document.getElementById("histAno").value)||2026;
@@ -4662,6 +5191,48 @@ if(_c) banco = _c.nome;
       <button id="bsDelRecSo" class="bs-btn confirm" style="background:#ef444488;color:#fff;">🗑️ Excluir só este mês</button>
       <button id="bsDelRecTodos" class="bs-btn confirm" style="background:#ef4444;color:#fff;">🗑️ Excluir este e todos os futuros</button>
       <button class="bs-btn cancel" onclick="document.getElementById('bsDelRecOverlay').style.display='none'">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom Sheet Usar Meta -->
+<div id="bsUsarMetaOverlay" class="bs-overlay" style="display:none;" onclick="if(event.target===this)bsUsarMetaClose()">
+  <div class="bs-sheet" onclick="event.stopPropagation()">
+    <div class="bs-handle"></div>
+    <div class="bs-title" id="bsUsarMetaTitulo">Usar meta</div>
+    <div class="bs-sub" id="bsUsarMetaSub"></div>
+    <!-- Modo normal: input de valor -->
+    <div id="bsUsarMetaInputWrap" style="margin-bottom:1rem;">
+      <div class="fg">
+        <label>Quanto foi usado? (R$)</label>
+        <input type="number" id="bsUsarMetaVal" placeholder="Ex: 800,00" min="0" step="0.01"
+          style="font-size:1rem;padding:.55rem .75rem;"
+          onkeydown="if(event.key==='Enter')bsUsarMetaConfirmar()">
+        <span id="bsUsarMetaErro" style="display:none;font-size:.75rem;color:var(--red);margin-top:.25rem;">Informe um valor válido</span>
+      </div>
+    </div>
+    <!-- Modo concluída: só mensagem -->
+    <div id="bsUsarMetaMsgConcluida" style="display:none;margin-bottom:1rem;padding:.75rem;background:var(--wlight);border:1px solid rgba(217,119,6,.25);border-radius:.75rem;font-size:.84rem;color:var(--warn);line-height:1.5;">
+      Você utilizou esta meta. Ela voltará do zero.
+    </div>
+    <div class="bs-actions">
+      <button class="bs-btn confirm" id="bsUsarMetaBtnConfirmar"
+        style="background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;"
+        onclick="bsUsarMetaConfirmar()">✔ Confirmar</button>
+      <button class="bs-btn cancel" onclick="bsUsarMetaClose()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom Sheet Remover Conta -->
+<div id="bsDelContaOverlay" class="bs-overlay" style="display:none;" onclick="if(event.target===this)bsDelContaClose()">
+  <div class="bs-sheet" onclick="event.stopPropagation()">
+    <div class="bs-handle"></div>
+    <div class="bs-title">Remover conta?</div>
+    <div class="bs-sub" id="bsDelContaSub">Esta ação não pode ser desfeita.</div>
+    <div class="bs-actions">
+      <button class="bs-btn danger" onclick="bsDelContaConfirmar()">🗑 Remover</button>
+      <button class="bs-btn cancel" onclick="bsDelContaClose()">Cancelar</button>
     </div>
   </div>
 </div>
