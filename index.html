@@ -146,7 +146,7 @@ input:focus,select:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(1,105,1
 .cen-val{font-family:'Sora',sans-serif;font-size:1rem;font-weight:800;color:var(--p);}
 .cen-meses{font-size:.7rem;color:var(--faint);margin-top:.15rem;}
 /* AGENDA */
-.agenda-header{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem;margin-bottom:.875rem;}
+.agenda-header{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.75rem;margin-bottom:.875rem;}
 .ag-kpi{background:var(--surf2);border-radius:.75rem;border:1px solid var(--border);padding:.875rem;text-align:center;}
 .ag-kpi-l{font-size:.63rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.3rem;}
 .ag-kpi-v{font-family:'Sora',sans-serif;font-size:1.2rem;font-weight:800;font-variant-numeric:tabular-nums;}
@@ -227,7 +227,7 @@ input:focus,select:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(1,105,1
   .res-grid2{grid-template-columns:1fr;}
   .resgrid{grid-template-columns:repeat(2,1fr);}
   .cenarios{grid-template-columns:repeat(3,1fr);}
-  .agenda-header{grid-template-columns:1fr 1fr;}
+  .agenda-header{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));}
   #mobileTopBar { display: flex !important; }
   .main { padding-top: 5.5rem; }
 }
@@ -235,7 +235,7 @@ input:focus,select:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(1,105,1
   .resgrid{grid-template-columns:1fr 1fr;}
   .contas-grid{grid-template-columns:1fr 1fr;}
   .cenarios{grid-template-columns:1fr;}
-  .agenda-header{grid-template-columns:1fr;}
+  .agenda-header{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));}
   .pt-row{padding:.35rem .5rem;}
   .pt-mes{font-size:.64rem;}
   .pt-v{font-size:.72rem;}
@@ -466,7 +466,7 @@ input:focus, select:focus {
 .res-fill { border-radius: 99px; height: 100%; background: var(--accent-g); transition: width .6s cubic-bezier(.34,1.56,.64,1); }
 
 /* Agenda KPI cards */
-.agenda-header { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: .75rem; }
+.agenda-header { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important; gap: .75rem; }
 .ag-kpi { background: var(--surf); border: 1px solid var(--div); border-radius: 12px; padding: .875rem 1rem; }
 .ag-kpi .ak-lbl { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
 .ag-kpi .ak-val { font-size: 1.25rem; font-weight: 800; letter-spacing: -.02em; margin-top: .2rem; }
@@ -1287,6 +1287,14 @@ input:focus, select:focus {
 ::-webkit-scrollbar-thumb { background: var(--surf3) !important; }
 ::-webkit-scrollbar-thumb:hover { background: var(--faint) !important; }
 
+/* ─── SIMULADOR MOBILE ─── */
+@media(max-width:960px){
+  .simbox { padding: .875rem !important; }
+  #simFormGrid { grid-template-columns: 1fr 1fr !important; }
+  #simFormBtns { flex-direction: column !important; gap: .5rem !important; }
+  #simFormBtns button { width: 100% !important; padding: 0 !important; }
+}
+
 /* Transferência toggle — azul ativo */
 .ttog button.ot {
   background: linear-gradient(135deg, #1a73e8, #1557b0) !important;
@@ -1352,8 +1360,9 @@ input:focus, select:focus {
       <span id="clockTimeMobile" style="font-size:.76rem;font-weight:700;color:var(--p);font-variant-numeric:tabular-nums;"></span>
     </div>
     <button class="btn bd bsm" onclick="logout()">Sair</button>
+    <button class="icb" onclick="toggleTheme()" id="themeBtn" title="Alternar tema"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
   </div>
-  <!-- Linha 2: setas mês | modo noturno -->
+  <!-- Linha 2: setas mês -->
   <div class="mtb-row2">
     <button class="icb" onclick="changeMonth(-1)">
       <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
@@ -1362,9 +1371,6 @@ input:focus, select:focus {
     <button class="icb" onclick="changeMonth(1)">
       <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
     </button>
-    <button class="icb" onclick="toggleTheme()" style="margin-left:auto;">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-    </button>
   </div>
 </div>
 <aside class="side">
@@ -1372,7 +1378,11 @@ input:focus, select:focus {
   <div id="userInfoSidebar" style="padding:.5rem .75rem;border-bottom:1px solid var(--border);display:none;"></div>
   <div class="s-logo">
     <div class="logo-ic" style="font-size:1.3rem;line-height:1;display:flex;align-items:center;justify-content:center;background:transparent;">💵</div>
-    <div><div class="logo-nm">Meu Financeiro</div><div class="logo-sb">controle pessoal</div></div><button id="sairBtnSidebar" class="btn-logout" onclick="logout()" style="display:none;margin-left:auto;font-size:.75rem;padding:.25rem .6rem;">Sair</button>
+    <div><div class="logo-nm">Meu Financeiro</div><div class="logo-sb">controle pessoal</div></div>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:.3rem;">
+      <button id="sairBtnSidebar" class="btn-logout" onclick="logout()" style="display:none;font-size:.75rem;padding:.25rem .6rem;">Sair</button>
+      <button class="icb" onclick="toggleTheme()" id="themeBtnSidebar" title="Alternar tema" style="padding:.3rem;opacity:.65;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='.65'"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+    </div>
   </div>
   <nav class="s-nav">
     <div class="nlbl">Menu</div>
@@ -1383,7 +1393,6 @@ input:focus, select:focus {
     <button class="ni" onclick="nav('agenda')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Agenda do Mês</button>
     <button class="ni" onclick="nav('reserva')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Reserva</button>
     <button class="ni" onclick="nav('hist')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span>Histórico</span></button>
-<button class="ni" onclick="nav('guia')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Como Usar</button>
   </nav>
 
 <div id="liveClock" style="padding:.375rem .75rem;font-size:.7rem;color:var(--muted);display:flex;align-items:center;gap:.375rem;border-bottom:1px solid var(--div);">
@@ -1399,7 +1408,6 @@ input:focus, select:focus {
       <button class="icb" onclick="changeMonth(1)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></button>
     </div>
     <div style="display:flex;align-items:center;gap:.3rem;flex:1;"><span class="sync-dot" id="syncDot"></span><span id="syncLbl" style="font-size:.62rem;color:var(--muted);">—</span></div>
-    <button class="icb" onclick="toggleTheme()" id="themeBtn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
   </div>
 </aside>
 <main class="main">
@@ -1646,10 +1654,10 @@ input:focus, select:focus {
         </div>
       </div>
     </div>
-    <div class="card"><div class="ctit">Evolução do saldo acumulado</div><div class="chw" style="height:220px;"><canvas id="cProj"></canvas></div></div>
+    <div class="card"><div class="ctit">Evolução do saldo acumulado</div><div style="overflow-x:auto;-webkit-overflow-scrolling:touch;"><div style="min-width:500px;max-width:800px;height:220px;position:relative;"><canvas id="cProj"></canvas></div></div></div>
     <div class="simbox">
       <div class="simtit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Simulador "E se?" — veja como um gasto ou renda afeta sua projeção</div>
-      <div class="fgrid" style="grid-template-columns:1fr 1fr 1fr 1fr auto;align-items:end;gap:.75rem;flex-wrap:wrap;">
+      <div id="simFormGrid" class="fgrid" style="grid-template-columns:1fr 1fr 1fr 1fr auto;align-items:end;gap:.75rem;flex-wrap:wrap;">
         <div class="fg">
           <label>Tipo</label>
           <select id="simTipo" style="height:36px;">
@@ -1670,7 +1678,7 @@ input:focus, select:focus {
         </div>
         <div class="fg"><label>Juros/mês (%)</label><input type="number" id="simJ" placeholder="0 = sem juros" step="0.01" value="0" style="height:36px;"></div>
       </div>
-      <div style="margin-top:.75rem;display:flex;gap:.75rem;flex-wrap:wrap;align-items:center;">
+      <div id="simFormBtns" style="margin-top:.75rem;display:flex;gap:.75rem;flex-wrap:wrap;align-items:center;">
         <button class="btn bp" onclick="simular()" style="height:36px;padding:0 1.5rem;">▶ Simular impacto</button>
         <button class="btn" onclick="document.getElementById('simRes').innerHTML='';document.getElementById('simRes').className='simres';" style="height:36px;padding:0 1rem;background:var(--surf2);color:var(--muted);border:1px solid var(--border);">✕ Limpar</button>
       </div>
@@ -1802,54 +1810,6 @@ input:focus, select:focus {
       </div>
     </div>
 
-  </div>
-</section>
-<!-- COMO USAR -->
-<section class="page" id="p-guia">
-  <div class="phdr"><h1>📖 Como Usar</h1><p>Guia completo</p></div>
-  <div class="pcnt">
-    <div class="guide">
-      <div class="guide-tit" style="font-size:.875rem;">🚀 Primeiros passos</div>
-      <ol>
-        <li><strong>1. Crie suas contas</strong> — vá em "Carteiras / Bancos" e adicione Nubank, Caixa, carteira física etc.</li>
-        <li><strong>2. Apague os exemplos</strong> — em Lançamentos, clique ✕ nas linhas de demonstração.</li>
-        <li><strong>3. Lance seu salário</strong> — Entrada, valor, Renda, a conta que recebe, marque ↺ Recorrente.</li>
-        <li><strong>4. Lance contas fixas</strong> — aluguel, internet, luz com ↺ Recorrente e a conta que debita.</li>
-        <li><strong>5. Lance compras parceladas</strong> — use "Parcelado em X" e as parcelas caem automaticamente nos meses futuros.</li>
-        <li><strong>6. Agenda do Mês</strong> — navegue pelos meses futuros e veja o que já está comprometido antes de chegar.</li>
-      </ol>
-    </div>
-    <div class="gcols">
-      <div class="guide"><div class="guide-tit">📅 Agenda do Mês</div>
-        <ul>
-          <li>Mostra tudo que já está comprometido no mês: <strong>fixos, parcelas e entradas</strong>.</li>
-          <li><strong>Semáforo</strong> de saúde financeira: verde/amarelo/vermelho baseado no comprometimento da renda.</li>
-          <li><strong>Barra de comprometimento</strong> — visual rápido de quanto da renda já foi.</li>
-          <li>Navega pelos meses futuros com as setas ‹ › da barra lateral.</li>
-        </ul>
-        <div class="tip"><p><strong>Dica:</strong> Use a Agenda antes de tomar qualquer decisão de gasto extra. Se o mês já tá vermelho, espere o próximo.</p></div>
-      </div>
-      <div class="guide"><div class="guide-tit">🛡️ Reserva</div>
-        <ul>
-          <li>Configure meta, veja <strong>sub-metas</strong> (1, 3, 6 e 12 meses).</li>
-          <li><strong>Compare 3 cenários</strong> de aporte mensal lado a lado.</li>
-          <li>Gráfico de linha mostra <strong>quando você vai atingir a meta</strong>.</li>
-        </ul>
-      </div>
-      <div class="guide"><div class="guide-tit">➕ Lançamentos</div>
-        <ul>
-          <li><strong>Parcelado em X:</strong> distribui parcelas automaticamente nos meses futuros.</li>
-          <li><strong>↺ Recorrente:</strong> repete sem fim (salário, aluguel).</li>
-        </ul>
-        <div class="tip"><p><strong>Parcela ≠ Recorrente:</strong> Parcela tem prazo (36x moto). Recorrente não tem (salário).</p></div>
-      </div>
-      <div class="guide"><div class="guide-tit">🔎 Simulador de Impacto</div>
-        <ul>
-          <li>Informe um gasto e veja como impacta cada mês da projeção.</li>
-          <li>Exemplo: saldo Mai = R$ 2.400 → gasto R$ 500 → novo saldo R$ 1.900.</li>
-        </ul>
-      </div>
-    </div>
   </div>
 </section>
 
@@ -2391,7 +2351,7 @@ function toggleFiltroConta(id){
   renderContas();
 }
 
-function toggleContaForm(){var f=document.getElementById("contaForm");f.style.display=f.style.display=="none"?"block":"none";if(f.style.display=="block"){buildCorPicker();buildBancoSelector();contas.forEach(function(x){var xid=x.id.replace(/[^a-zA-Z0-9]/g,"_");var xp=document.getElementById("editpanel_"+xid);if(xp)xp.style.display="none";});}}
+function toggleContaForm(){var f=document.getElementById("contaForm");f.style.display=f.style.display=="none"?"block":"none";if(f.style.display=="block"){buildCorPicker();buildBancoSelector();bsEditContaClose();}}
 function addConta(){
   var nome=document.getElementById("cNome").value.trim();
   var tipo=document.getElementById("cTipo").value;
@@ -2524,30 +2484,6 @@ function renderContas(){
     h+='<div style="margin-top:.6rem;display:flex;gap:.4rem;flex-wrap:wrap;">';
     h+='<button onclick="editConta(\''+c.id+'\')" style="font-size:.75rem;padding:.2rem .6rem;background:var(--p-t);color:var(--p);border:1px solid var(--p);border-radius:7px;cursor:pointer;">✏ Editar</button>';
     h+='<button onclick="delConta(\''+c.id+'\')" style="font-size:.75rem;padding:.2rem .6rem;background:none;color:var(--muted);border:1px solid var(--div);border-radius:7px;cursor:pointer;">🗑 Remover</button>';
-    h+='</div>';
-    // Edit panel (hidden)
-    h+='<div id="editpanel_'+cid+'" style="display:none;margin-top:.75rem;border-top:1px solid var(--div);padding-top:.75rem;">';
-    h+='<div style="font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.5rem;">Editar conta</div>';
-    h+='<div style="margin-bottom:.5rem;"><label style="font-size:.78rem;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;">Nome da conta</label>';
-    h+='<input type="text" id="editnome_'+cid+'" value="'+c.nome+'" style="width:100%;padding:.4rem .6rem;border-radius:8px;border:1px solid var(--div);background:var(--surf);color:var(--txt);font-size:.85rem;"></div>';
-    // Banco
-    h+='<div style="margin-bottom:.5rem;"><label style="font-size:.78rem;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;">Banco</label>';
-    h+='<div id="editbanco_'+cid+'" style="display:flex;flex-wrap:wrap;gap:.3rem;"></div></div>';
-    // Cor personalizada
-    h+='<div style="margin-bottom:.5rem;"><label style="font-size:.78rem;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;">Cor do arco</label>';
-    h+='<div id="editcor_'+cid+'" style="display:flex;flex-wrap:wrap;gap:.4rem;"></div></div>';
-    // Saldo real atual (leitura)
-    h+='<div style="margin-bottom:.5rem;padding:.35rem .6rem;background:var(--surf2);border:1px solid var(--div);border-radius:8px;display:flex;justify-content:space-between;align-items:center;">';
-    h+='<span style="font-size:.75rem;color:var(--muted);">Saldo real atual</span>';
-    h+='<span style="font-size:.85rem;font-weight:700;color:'+(sl>=0?"var(--green)":"var(--red)")+'">'+(sl>=0?"+":"")+fmt(sl)+'</span>';
-    h+='</div>';
-    // Saldo inicial
-    h+='<div style="margin-bottom:.6rem;"><label style="font-size:.78rem;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;">Saldo inicial (R$)</label>';
-    h+='<input type="number" id="editsi_'+cid+'" value="'+c.si+'" step="0.01" style="width:140px;padding:.4rem .6rem;border-radius:8px;border:1px solid var(--div);background:var(--surf);color:var(--txt);" ></div>';
-    h+='<div style="display:flex;gap:.4rem;">';
-    h+='<button onclick="saveEditConta(\''+c.id+'\')" style="padding:.35rem .9rem;background:var(--p);color:var(--bg);border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:.85rem;">Salvar</button>';
-    h+='<button onclick="closeEditConta(\''+c.id+'\')" style="padding:.35rem .8rem;background:none;border:1px solid var(--div);border-radius:8px;cursor:pointer;color:var(--muted);font-size:.85rem;">Cancelar</button>';
-    h+='</div>';
     h+='</div>';
     h+='</div>';
   });
@@ -3606,53 +3542,49 @@ if(!jaAdiantado){
     });
   });
 
-  // ── KPIs da Agenda — usa o mesmo array `items` da lista visual ──
-  // Só saídas (t:"s" ou tipo diferente de entrada)
+  // ── KPIs da Agenda ──
+  // 1. A pagar / Pago — itens de saída da agenda (items[])
   var itensSaida=items.filter(function(x){return x.t!=='e';});
   var totalPend=itensSaida.filter(function(x){return !x.paid;}).reduce(function(s,x){return s+x.v;},0);
   var totalPago=itensSaida.filter(function(x){return x.paid;}).reduce(function(s,x){return s+x.v;},0);
   var qtdPend=itensSaida.filter(function(x){return !x.paid;}).length;
   var qtdPago=itensSaida.filter(function(x){return x.paid;}).length;
 
-  // Renda: usar o array items[] que já consolida tudo (fixos recorrentes + entradas confirmadas)
-  // Apenas itens que JÁ aparecem na lista (dia >= hoje no mês atual, ou mês futuro)
-  var isMesAtualKpi=(m===hojeM&&y===hojeA);
-  var itensRenda=items.filter(function(x){
-    if(x.t!=='e')return false;
-    if(isMesAtualKpi){
-      // No mês atual: só conta entradas do dia de hoje em diante
-      return x.day>=hojeD;
-    }
-    return true;
-  });
-  var rendaMes=itensRenda.reduce(function(s,x){return s+x.v;},0);
-  var qtdRenda=itensRenda.length;
-  // Despesas confirmadas (t:"s") — lançamentos já pagos
-  var despMes=getLM(m,y).filter(function(l){return l.t==="s"&&!l.origemAgendaId;}).reduce(function(s,l){return s+l.v;},0);
-  // Total comprometido = pendente + pago na agenda + despesas diretas
-  var totalComp=totalPago+totalPend+despMes;
-  // Sobra estimada
-  var sobraEst=rendaMes-totalComp;
+  // 2. Entradas recebidas — lançamentos confirmados do mês (getLM)
+  var lmMes=getLM(m,y);
+  var entradasRecebidas=lmMes.filter(function(l){return l.t==='e';}).reduce(function(s,l){return s+l.v;},0);
+
+  // 3. Entradas previstas — items[] com t="e" ainda não pagos (recorrentes futuros na agenda)
+  var entradasPrevistas=items.filter(function(x){return x.t==='e'&&!x.paid;}).reduce(function(s,x){return s+x.v;},0);
+
+  // 4. Comprometido — despesas já lançadas no mês + agenda pendente
+  var despesasMes=lmMes.filter(function(l){return l.t==='s';}).reduce(function(s,l){return s+l.v;},0);
+  var totalComp=despesasMes+totalPend;
+
+  // 5. Sobra/Déficit estimado
+  var totalRenda=entradasRecebidas+entradasPrevistas;
+  var sobraEst=totalRenda-totalComp;
 
   var kpiEl=document.getElementById("agKpis");
   if(kpiEl){
     kpiEl.innerHTML=
-      '<div class="ag-kpi"><div class="ag-kpi-l">⏳ A pagar</div><div class="ag-kpi-v" style="color:var(--warn);">'+fmt(totalPend)+'</div><div style="font-size:.65rem;color:var(--faint);margin-top:.2rem;">'+qtdPend+' item'+(qtdPend!==1?'s':'')+' pendente'+(qtdPend!==1?'s':'')+'</div></div>'+
-      '<div class="ag-kpi"><div class="ag-kpi-l">✅ Pago</div><div class="ag-kpi-v" style="color:var(--green);">'+fmt(totalPago)+'</div><div style="font-size:.65rem;color:var(--faint);margin-top:.2rem;">'+qtdPago+' item'+(qtdPago!==1?'s':'')+' quitado'+(qtdPago!==1?'s':'')+'</div></div>'+
+      (totalPend>0?'<div class="ag-kpi"><div class="ag-kpi-l">⏳ A Pagar</div><div class="ag-kpi-v" style="color:var(--warn);">'+fmt(totalPend)+'</div><div style="font-size:.65rem;color:var(--faint);margin-top:.2rem;">compromissos pendentes</div></div>':'')+
+      (totalPago>0?'<div class="ag-kpi"><div class="ag-kpi-l">✅ Pago</div><div class="ag-kpi-v" style="color:var(--green);">'+fmt(totalPago)+'</div><div style="font-size:.65rem;color:var(--faint);margin-top:.2rem;">compromissos quitados</div></div>':'')+
+      (entradasRecebidas>0?'<div class="ag-kpi"><div class="ag-kpi-l">💰 Entradas recebidas</div><div class="ag-kpi-v" style="color:#22c55e;">'+fmt(entradasRecebidas)+'</div><div style="font-size:.65rem;color:var(--faint);margin-top:.2rem;">já entrou no mês</div></div>':'')+
+      (entradasPrevistas>0?'<div class="ag-kpi"><div class="ag-kpi-l">📈 Entradas previstas</div><div class="ag-kpi-v" style="color:var(--muted);">'+fmt(entradasPrevistas)+'</div><div style="font-size:.65rem;color:var(--faint);margin-top:.2rem;">ainda vai entrar</div></div>':'')+
       '<div class="ag-kpi"><div class="ag-kpi-l">📊 Comprometido</div><div class="ag-kpi-v" style="color:var(--red);">'+fmt(totalComp)+'</div><div style="font-size:.65rem;color:var(--faint);margin-top:.2rem;">despesas + agenda</div></div>'+
-      '<div class="ag-kpi"><div class="ag-kpi-l">💰 Renda prevista</div><div class="ag-kpi-v" style="color:#22c55e;">'+fmt(rendaMes)+'</div><div style="font-size:.65rem;color:var(--faint);margin-top:.2rem;">'+qtdRenda+' entrada'+(qtdRenda!==1?'s':'')+' neste mês</div></div>'+
-      '<div class="ag-kpi"><div class="ag-kpi-l">'+(sobraEst>=0?'😊 Sobra estimada':'😰 Déficit estimado')+'</div><div class="ag-kpi-v" style="color:'+(sobraEst>=0?'#22c55e':'var(--red)')+';">'+fmt(Math.abs(sobraEst))+'</div><div style="font-size:.65rem;color:var(--faint);margin-top:.2rem;">renda − (despesas + agenda)</div></div>';
+      '<div class="ag-kpi"><div class="ag-kpi-l">'+(sobraEst>=0?'😊 Sobra':'😰 Déficit')+'</div><div class="ag-kpi-v" style="color:'+(sobraEst>=0?'#22c55e':'var(--red)')+';"><span style="font-size:.85rem;">'+(sobraEst>=0?'+':'-')+'</span>'+fmt(Math.abs(sobraEst))+'</div><div style="font-size:.65rem;color:var(--faint);margin-top:.2rem;">estimativa do mês</div></div>';
   }
 
   // ── Barra de comprometimento ──
-  var pct=rendaMes>0?Math.min(Math.round(totalComp/rendaMes*100),100):0;
+  var pct=totalRenda>0?Math.min(Math.round(totalComp/totalRenda*100),100):0;
   var barFill=document.getElementById("agBarraFill");
   var barLbl=document.getElementById("agBarraLbl");
   if(barFill){
     barFill.style.width=pct+"%";
     barFill.style.background=pct<60?"var(--green)":pct<85?"var(--warn)":"var(--red)";
   }
-  if(barLbl) barLbl.textContent=pct+"% da renda do mês comprometida ("+fmt(totalComp)+" de "+fmt(rendaMes)+")";
+  if(barLbl) barLbl.textContent=pct+"% da renda comprometida ("+fmt(totalComp)+" de "+fmt(totalRenda)+")";
 
   // ── Semáforo ──
   var semEl=document.getElementById("agSemaforo");
@@ -3666,9 +3598,10 @@ if(!jaAdiantado){
   // ── Saldo livre ──
   var livreEl=document.getElementById("agLivre");
   if(livreEl){
-    var livre=rendaMes-totalComp;
-    var livreCls=livre>=0?(livre/rendaMes<.15?"warn":""):"neg";
-    livreEl.innerHTML='<div class="ag-livre '+livreCls+'"><div><div class="ag-livre-l">'+(livre>=0?"💚 Sobra estimada do mês":"🔴 Deficit estimado")+'</div><div style="font-size:.72rem;margin-top:.1rem;opacity:.7;">renda − (despesas + agenda)</div></div><div class="ag-livre-v">'+(livre>=0?"+":"")+fmt(livre)+'</div></div>';
+    var livreCls=sobraEst>=0?(totalRenda>0&&sobraEst/totalRenda<.15?"warn":""):"neg";
+    var livreLabel=sobraEst>=0?'💚 Sobra estimada do mês':'🔴 Atenção: déficit estimado';
+    var livreDetalhe=sobraEst>=0?'+'+fmt(sobraEst):'−'+fmt(Math.abs(sobraEst));
+    livreEl.innerHTML='<div class="ag-livre '+livreCls+'"><div><div class="ag-livre-l">'+livreLabel+'</div><div style="font-size:.72rem;margin-top:.1rem;opacity:.7;">entradas − (despesas + agenda)</div></div><div class="ag-livre-v">'+livreDetalhe+'</div></div>';
   }
 
   // ── Badge de pendentes no menu ──
@@ -3889,11 +3822,39 @@ function addMeta(){
   renderMetas();
 }
 
+var _bsAportarMetaId = null;
+
 function aportarMeta(id){
   var meta=metas.find(function(m){return m.id===id;});
   if(!meta)return;
-  var val=parseFloat(prompt('Quanto deseja adicionar à meta "'+meta.nome+'"?\nAtual: '+fmt(meta.atual)+' / Meta: '+fmt(meta.valor)));
-  if(!val||val<=0)return;
+  _bsAportarMetaId=id;
+  document.getElementById('bsAportarMetaTitulo').textContent='Adicionar à meta: '+meta.nome;
+  document.getElementById('bsAportarMetaSub').textContent='Atual: '+fmt(meta.atual)+'  |  Meta: '+fmt(meta.valor);
+  var valInput=document.getElementById('bsAportarMetaVal');
+  var erroEl=document.getElementById('bsAportarMetaErro');
+  valInput.value='';
+  if(erroEl) erroEl.style.display='none';
+  document.getElementById('bsAportarMetaOverlay').style.display='flex';
+  setTimeout(function(){valInput.focus();},300);
+}
+
+function bsAportarMetaClose(){
+  document.getElementById('bsAportarMetaOverlay').style.display='none';
+  _bsAportarMetaId=null;
+}
+
+function bsAportarMetaConfirmar(){
+  var meta=metas.find(function(m){return m.id===_bsAportarMetaId;});
+  if(!meta){bsAportarMetaClose();return;}
+  var val=parseFloat(document.getElementById('bsAportarMetaVal').value);
+  var erroEl=document.getElementById('bsAportarMetaErro');
+  if(isNaN(val)||val<=0){
+    if(erroEl) erroEl.style.display='block';
+    document.getElementById('bsAportarMetaVal').focus();
+    return;
+  }
+  if(erroEl) erroEl.style.display='none';
+  bsAportarMetaClose();
   if(!meta.concluida){
     meta.atual+=val;
     if(meta.atual>=meta.valor){
@@ -3969,8 +3930,21 @@ function bsUsarMetaConfirmar(){
   renderMetas();
 }
 
+var _bsDelMetaId=null;
 function delMeta(id){
-  if(!confirm('Remover esta meta?'))return;
+  var m=metas.find(function(x){return x.id===id;});
+  if(!m)return;
+  _bsDelMetaId=id;
+  document.getElementById('bsDelMetaSub').textContent='A meta "'+m.nome+'" será removida permanentemente.';
+  document.getElementById('bsDelMetaOverlay').style.display='flex';
+}
+function bsDelMetaClose(){
+  document.getElementById('bsDelMetaOverlay').style.display='none';
+  _bsDelMetaId=null;
+}
+function bsDelMetaConfirmar(){
+  var id=_bsDelMetaId;
+  bsDelMetaClose();
   metas=metas.filter(function(m){return m.id!==id;});
   saveMetas();
   renderMetas();
@@ -4662,45 +4636,43 @@ function pagarParcela(id){
 var _editCorSel={};
 var _editBancoSel={};
 
+var _bsEditContaId=null;
+
 function editConta(id){
   var c=contas.find(function(x){return x.id===id;});
   if(!c)return;
-  var cid=id.replace(/[^a-zA-Z0-9]/g,"_");
-  var panel=document.getElementById("editpanel_"+cid);
-  if(!panel)return;
-  // Fecha todas as outras e fecha o form de nova conta
-  document.getElementById("contaForm").style.display="none";
-  contas.forEach(function(x){
-    var xid=x.id.replace(/[^a-zA-Z0-9]/g,"_");
-    var xp=document.getElementById("editpanel_"+xid);
-    if(xp&&x.id!==id)xp.style.display="none";
-  });
-  // Toggle: se já tá aberto, fecha
-  if(panel.style.display==="block"){panel.style.display="none";return;}
+  _bsEditContaId=id;
   _editCorSel[id]=c.cor||"#607D8B";
   _editBancoSel[id]=c.banco||"";
+  document.getElementById("contaForm").style.display="none";
+  document.getElementById('bsEditContaTitulo').textContent='Editar conta: '+c.nome;
+  document.getElementById('bsEditContaNome').value=c.nome;
   // Build banco selector
-  var bd=document.getElementById("editbanco_"+cid);
-  if(bd){
-    var bh="";
-    BANCOS.forEach(function(b){
-      var sel=b.id===_editBancoSel[id];
-      bh+='<div onclick="selectEditBanco(\''+id+'\',\''+b.id+'\')" title="'+b.nome+'" style="cursor:pointer;border-radius:10px;padding:3px;border:2px solid '+(sel?b.cor:"transparent")+';transition:border .15s;">'+b.logo+'</div>';
-    });
-    bd.innerHTML=bh;
-  }
+  var bh="";
+  BANCOS.forEach(function(b){
+    var sel=b.id===_editBancoSel[id];
+    bh+='<div onclick="selectEditBanco(\''+id+'\',\''+b.id+'\')" title="'+b.nome+'" style="cursor:pointer;border-radius:10px;padding:3px;border:2px solid '+(sel?b.cor:"transparent")+';transition:border .15s;">'+b.logo+'</div>';
+  });
+  document.getElementById('bsEditContaBanco').innerHTML=bh;
   // Build cor picker
   var CORES=["#2196F3","#F44336","#4CAF50","#FFC107","#9C27B0","#FF5722","#00BCD4","#E91E63","#795548","#607D8B","#01696f","#437a22","#006494","#f97316","#6366f1","#14b8a6","#ec4899","#a855f7"];
-  var cd=document.getElementById("editcor_"+cid);
-  if(cd){
-    var ch="";
-    CORES.forEach(function(cor){
-      var sel=cor===_editCorSel[id];
-      ch+='<div onclick="selectEditCor(\''+id+'\',\''+cor+'\')" style="width:22px;height:22px;border-radius:50%;background:'+cor+';cursor:pointer;border:2px solid '+(sel?"#fff":"transparent")+';box-shadow:'+(sel?"0 0 0 2px "+cor:"none")+';transition:all .15s;"></div>';
-    });
-    cd.innerHTML=ch;
-  }
-  panel.style.display="block";
+  var ch="";
+  CORES.forEach(function(cor){
+    var sel=cor===_editCorSel[id];
+    ch+='<div onclick="selectEditCor(\''+id+'\',\''+cor+'\')" data-cor="'+cor+'" style="width:22px;height:22px;border-radius:50%;background:'+cor+';cursor:pointer;border:2px solid '+(sel?"#fff":"transparent")+';box-shadow:'+(sel?"0 0 0 2px "+cor:"none")+';transition:all .15s;"></div>';
+  });
+  document.getElementById('bsEditContaCor').innerHTML=ch;
+  // Saldo real
+  var sl=saldoConta(id);
+  var srEl=document.getElementById('bsEditContaSaldoReal');
+  if(srEl){srEl.textContent=(sl>=0?"+":"")+fmt(sl);srEl.style.color=sl>=0?"var(--green)":"var(--red)";}
+  document.getElementById('bsEditContaSI').value=c.si||0;
+  document.getElementById('bsEditContaOverlay').style.display='flex';
+}
+
+function bsEditContaClose(){
+  document.getElementById('bsEditContaOverlay').style.display='none';
+  _bsEditContaId=null;
 }
 
 function selectEditBanco(id,bancoId){
@@ -4708,11 +4680,10 @@ function selectEditBanco(id,bancoId){
   var b=getBanco(bancoId);
   var cor=b&&b.cor?"#"+b.cor.replace("#",""):null;
   if(cor)selectEditCor(id,cor);
-  var cid=id.replace(/[^a-zA-Z0-9]/g,"_");
-  var nmEl=document.getElementById("editnome_"+cid);
+  var nmEl=document.getElementById('bsEditContaNome');
   if(nmEl&&b&&b.nome)nmEl.value=b.nome;
   // Update banco selector highlights
-  var bd=document.getElementById("editbanco_"+cid);
+  var bd=document.getElementById('bsEditContaBanco');
   if(bd){
     bd.querySelectorAll("div").forEach(function(el,i){
       var bid=BANCOS[i]?BANCOS[i].id:"";
@@ -4722,6 +4693,7 @@ function selectEditBanco(id,bancoId){
     });
   }
   // Update logo on card in real time
+  var cid=id.replace(/[^a-zA-Z0-9]/g,"_");
   var card=document.getElementById("cccard_"+cid);
   if(card){
     var logoWrap=card.querySelector(".cc-logo-wrap");
@@ -4730,8 +4702,8 @@ function selectEditBanco(id,bancoId){
         logoWrap.innerHTML=b.logo+logoWrap.querySelector(".cc-nm").outerHTML;
         logoWrap.style.display="flex";
       }else{
-        var nmEl=logoWrap.querySelector(".cc-nm");
-        logoWrap.innerHTML=nmEl?nmEl.outerHTML:"";
+        var nmWrap=logoWrap.querySelector(".cc-nm");
+        logoWrap.innerHTML=nmWrap?nmWrap.outerHTML:"";
         logoWrap.style.display="block";
       }
     }
@@ -4740,18 +4712,17 @@ function selectEditBanco(id,bancoId){
 
 function selectEditCor(id,cor){
   _editCorSel[id]=cor;
-  var cid=id.replace(/[^a-zA-Z0-9]/g,"_");
-  // Update circles
-  var cd=document.getElementById("editcor_"+cid);
+  // Update circles in bottom sheet
+  var cd=document.getElementById('bsEditContaCor');
   if(cd){
     cd.querySelectorAll("div[data-cor]").forEach(function(el){
       var sel=el.getAttribute("data-cor")===cor;
-      el.style.outline=sel?"3px solid "+cor:"2px solid transparent";
-      el.style.outlineOffset="2px";
-      el.style.boxShadow=sel?"0 0 0 1px #fff inset":"none";
+      el.style.border="2px solid "+(sel?"#fff":"transparent");
+      el.style.boxShadow=sel?"0 0 0 2px "+cor:"none";
     });
   }
   // Update card border + shadow in real time
+  var cid=id.replace(/[^a-zA-Z0-9]/g,"_");
   var card=document.getElementById("cccard_"+cid);
   if(card){
     card.style.boxShadow="0 0 0 3px "+cor+"28,var(--sh)";
@@ -4759,25 +4730,22 @@ function selectEditCor(id,cor){
   }
 }
 
-function saveEditConta(id){
+function saveEditConta(){
+  var id=_bsEditContaId;
   var c=contas.find(function(x){return x.id===id;});
   if(!c)return;
-  var cid=id.replace(/[^a-zA-Z0-9]/g,"_");
-  var siEl=document.getElementById("editsi_"+cid);
-  var nmEl=document.getElementById("editnome_"+cid);
+  var nmEl=document.getElementById('bsEditContaNome');
+  var siEl=document.getElementById('bsEditContaSI');
   c.cor=_editCorSel[id]||c.cor;
   c.banco=_editBancoSel[id]||c.banco;
   if(nmEl&&nmEl.value.trim())c.nome=nmEl.value.trim();
   if(siEl)c.si=parseFloat(siEl.value)||c.si;
   saveConta(c);
+  bsEditContaClose();
   renderContas();
 }
 
-function closeEditConta(id){
-  var cid=id.replace(/[^a-zA-Z0-9]/g,"_");
-  var panel=document.getElementById("editpanel_"+cid);
-  if(panel)panel.style.display="none";
-}
+function closeEditConta(id){bsEditContaClose();}
   // ===== ORÇAMENTO =====
 
 var ORC_MODE = localStorage.getItem('orc_mode') || 'equilibrado';
@@ -5233,6 +5201,77 @@ if(_c) banco = _c.nome;
     <div class="bs-actions">
       <button class="bs-btn danger" onclick="bsDelContaConfirmar()">🗑 Remover</button>
       <button class="bs-btn cancel" onclick="bsDelContaClose()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom Sheet Remover Meta -->
+<div id="bsDelMetaOverlay" class="bs-overlay" style="display:none;" onclick="if(event.target===this)bsDelMetaClose()">
+  <div class="bs-sheet" onclick="event.stopPropagation()">
+    <div class="bs-handle"></div>
+    <div class="bs-title">Remover meta?</div>
+    <div class="bs-sub" id="bsDelMetaSub">Esta ação não pode ser desfeita.</div>
+    <div class="bs-actions">
+      <button class="bs-btn danger" onclick="bsDelMetaConfirmar()">🗑 Remover</button>
+      <button class="bs-btn cancel" onclick="bsDelMetaClose()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom Sheet Editar Conta -->
+<div id="bsEditContaOverlay" class="bs-overlay" style="display:none;" onclick="if(event.target===this)bsEditContaClose()">
+  <div class="bs-sheet" onclick="event.stopPropagation()">
+    <div class="bs-handle"></div>
+    <div class="bs-title" id="bsEditContaTitulo">Editar conta</div>
+    <div style="overflow-y:auto;max-height:65vh;padding-bottom:.5rem;">
+      <div style="margin-bottom:.75rem;">
+        <label style="font-size:.78rem;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;">Nome da conta</label>
+        <input type="text" id="bsEditContaNome" style="width:100%;padding:.45rem .7rem;border-radius:10px;border:1px solid var(--div);background:var(--surf);color:var(--txt);font-size:.9rem;box-sizing:border-box;">
+      </div>
+      <div style="margin-bottom:.75rem;">
+        <label style="font-size:.78rem;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;">Banco</label>
+        <div id="bsEditContaBanco" style="display:flex;flex-wrap:wrap;gap:.35rem;"></div>
+      </div>
+      <div style="margin-bottom:.75rem;">
+        <label style="font-size:.78rem;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;">Cor do arco</label>
+        <div id="bsEditContaCor" style="display:flex;flex-wrap:wrap;gap:.4rem;"></div>
+      </div>
+      <div style="margin-bottom:.75rem;padding:.4rem .7rem;background:var(--surf2);border:1px solid var(--div);border-radius:10px;display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:.78rem;color:var(--muted);">Saldo real atual</span>
+        <span id="bsEditContaSaldoReal" style="font-size:.9rem;font-weight:700;"></span>
+      </div>
+      <div>
+        <label style="font-size:.78rem;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;">Saldo inicial (R$)</label>
+        <input type="number" id="bsEditContaSI" step="0.01" style="width:160px;padding:.45rem .7rem;border-radius:10px;border:1px solid var(--div);background:var(--surf);color:var(--txt);font-size:.9rem;">
+      </div>
+    </div>
+    <div class="bs-actions">
+      <button class="bs-btn confirm" onclick="saveEditConta()">Salvar</button>
+      <button class="bs-btn cancel" onclick="bsEditContaClose()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom Sheet Aportar Meta -->
+<div id="bsAportarMetaOverlay" class="bs-overlay" style="display:none;" onclick="if(event.target===this)bsAportarMetaClose()">
+  <div class="bs-sheet" onclick="event.stopPropagation()">
+    <div class="bs-handle"></div>
+    <div class="bs-title" id="bsAportarMetaTitulo">Adicionar à meta</div>
+    <div class="bs-sub" id="bsAportarMetaSub"></div>
+    <div style="margin-bottom:1rem;">
+      <div class="fg">
+        <label>Quanto deseja adicionar? (R$)</label>
+        <input type="number" id="bsAportarMetaVal" placeholder="Ex: 300.00" min="0" step="0.01"
+          style="font-size:1rem;padding:.55rem .75rem;"
+          onkeydown="if(event.key==='Enter')bsAportarMetaConfirmar()">
+        <span id="bsAportarMetaErro" style="display:none;font-size:.75rem;color:var(--red);margin-top:.25rem;">Informe um valor válido</span>
+      </div>
+    </div>
+    <div class="bs-actions">
+      <button class="bs-btn confirm"
+        style="background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;"
+        onclick="bsAportarMetaConfirmar()">✓ Adicionar</button>
+      <button class="bs-btn cancel" onclick="bsAportarMetaClose()">Cancelar</button>
     </div>
   </div>
 </div>
