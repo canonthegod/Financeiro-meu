@@ -1536,6 +1536,10 @@ input:focus, select:focus {
       <select id="iTransfPara"><option value="">— selecione —</option></select>
     </div>
   </div>
+  <div class="fg" style="margin-bottom:.5rem;">
+    <label>Categoria (opcional)</label>
+    <select id="iTransfCat"><option value="">— nenhuma —</option></select>
+  </div>
   <div id="transferenciaPreview" style="background:var(--glight);border:1px solid var(--green);border-radius:.5rem;padding:.5rem .75rem;font-size:.75rem;color:var(--green);display:none;"></div>
   <div id="transfReservaWrap" style="display:none;margin-top:.5rem;">
     <div class="fg" style="margin-bottom:0;"><label>Meta a creditar</label><select id="iTransfReserva"><option value="">— nenhuma —</option></select></div>
@@ -2055,7 +2059,7 @@ function deleteContaRemote(id){
 
 var MN=["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
 var MF=["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
-var CATS={"Essenciais":"#01696f","Alimentação":"#437a22","Transporte":"#d97706","Saúde":"#c0392b","Lazer":"#7a39bb","Educação":"#006494","Renda":"#4f98a3","Reserva":"#6daa45","Outros":"#6b6a67"};
+var CATS={"Essenciais":"#01696f","Alimentação":"#437a22","Transporte":"#d97706","Saúde":"#c0392b","Lazer":"#7a39bb","Educação":"#006494","Renda":"#4f98a3","Investimentos":"#6daa45","Outros":"#6b6a67"};
 var TIPOS_CONTA={"corrente":"Conta Corrente","poupanca":"Poupança","carteira":"Carteira Física","invest":"Investimento","reserva":"Reserva","outro":"Outro"};
 var BANCOS=[
   {id:'',nome:'Carteira/Outro',cor:'#607D8B',logo:'<svg viewBox=\"0 0 40 40\" width=\"32\" height=\"32\"><rect width=\"40\" height=\"40\" rx=\"10\" fill=\"#607D8B\"/><rect x=\"7\" y=\"13\" width=\"26\" height=\"16\" rx=\"3\" fill=\"none\" stroke=\"white\" stroke-width=\"2\"/><rect x=\"7\" y=\"18\" width=\"26\" height=\"4\" fill=\"white\" opacity=\".5\"/><circle cx=\"27\" cy=\"28\" r=\"3\" fill=\"white\"/></svg>'},
@@ -2093,7 +2097,7 @@ function loadBlogos(container){
 
 
 var CORES=["#2196F3","#F44336","#4CAF50","#FFC107","#9C27B0","#FF5722","#00BCD4","#E91E63","#795548","#607D8B","#01696f","#437a22","#006494","#f97316","#6366f1","#14b8a6","#ec4899","#a855f7"];
-var EMOJIS={"Essenciais":"🏠","Alimentação":"🛒","Transporte":"🚗","Saúde":"❤️","Lazer":"🎮","Educação":"📚","Renda":"💰","Reserva":"🛡️","Outros":"📌"};
+var EMOJIS={"Essenciais":"🏠","Alimentação":"🛒","Transporte":"🚗","Saúde":"❤️","Lazer":"🎮","Educação":"📚","Renda":"💰","Investimentos":"🛡️","Outros":"📌"};
 
 // SVG paths por categoria (subset do Lucide)
 var CAT_ICONS={
@@ -2104,7 +2108,7 @@ var CAT_ICONS={
   "Lazer":"M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z M8 12h8 M12 8v8",
   "Educação":"M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z",
   "Renda":"M12 2v20 M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6",
-  "Reserva":"M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z",
+  "Investimentos":"M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z",
   "Outros":"M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"
 };
 function getCatCor(cat){return CATS[cat]||"#607D8B";}
@@ -2896,9 +2900,11 @@ function addTransferencia(){
   if(!deId||!paraId||!v||!dt){alert('Preencha todos os campos!');return;}
   if(deId===paraId){alert('Conta de origem e destino não podem ser iguais!');return;}
   var gid='transf_'+Date.now();
+  var _transfCatEl=document.getElementById('iTransfCat');
+  var _transfCat=(_transfCatEl&&_transfCatEl.value)?_transfCatEl.value:'Transferência';
   var lSaida={
     id:String(Date.now()+Math.random()),
-    desc:desc,v:v,cat:'Transferência',t:'transf_s',
+    desc:desc,v:v,cat:_transfCat,t:'transf_s',
     dt:dt,rec:false,conta:deId,grupoTransfId:gid,
     contaDestino:paraId
   };
@@ -2926,6 +2932,7 @@ function addTransferencia(){
   document.getElementById('transferenciaPreview').style.display='none';
   var _trw=document.getElementById('transfReservaWrap');if(_trw)_trw.style.display='none';
   var _trdw=document.getElementById('transfReservaDebitWrap');if(_trdw)_trdw.style.display='none';
+  if(_transfCatEl)_transfCatEl.value='';
   render();
 }
 
@@ -3046,7 +3053,7 @@ function addLanc(){
   }
 
   // Efeito colateral na meta de reserva
-  if(cat==='Reserva'&&tipoAtual==='s'){
+  if(cat==='Investimentos'&&tipoAtual==='s'){
     var _metaId=document.getElementById('iSubReserva')?document.getElementById('iSubReserva').value:'';
     if(_metaId) applyReservaMeta(_metaId,v);
   }
@@ -4765,13 +4772,16 @@ function fillCategorySelect(selectId){
 }
 
 fillCategorySelect('iCat');
+fillCategorySelect('iTransfCat');
+document.getElementById('iTransfCat').insertAdjacentHTML('afterbegin','<option value="">— nenhuma —</option>');
+document.getElementById('iTransfCat').value='';
 (function(){
   var catSel=document.getElementById('iCat');
   if(catSel) catSel.addEventListener('change',function(){
     var wrap=document.getElementById('subReservaWrap');
     var sub=document.getElementById('iSubReserva');
     if(!wrap||!sub)return;
-    if(this.value==='Reserva'){
+    if(this.value==='Investimentos'){
       sub.innerHTML='<option value="">— nenhuma —</option>'+metas.map(function(m){
         return '<option value="'+m.id+'">'+m.nome+'</option>';
       }).join('');
@@ -5243,7 +5253,7 @@ function mapCategoriaOrc(cat){
   if (cat === 'Lazer') return 'Lazer';
   if (cat === 'Educação') return 'Lazer';
 
-  if (cat === 'Reserva') return 'Reserva';
+  if (cat === 'Investimentos') return 'Reserva';
   if (cat === 'Renda') return 'Reserva';
 
   return 'Dia a dia';
