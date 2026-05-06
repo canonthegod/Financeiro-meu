@@ -1537,6 +1537,12 @@ input:focus, select:focus {
     </div>
   </div>
   <div id="transferenciaPreview" style="background:var(--glight);border:1px solid var(--green);border-radius:.5rem;padding:.5rem .75rem;font-size:.75rem;color:var(--green);display:none;"></div>
+  <div id="transfReservaWrap" style="display:none;margin-top:.5rem;">
+    <div class="fg" style="margin-bottom:0;"><label>Meta a creditar</label><select id="iTransfReserva"><option value="">— nenhuma —</option></select></div>
+  </div>
+  <div id="transfReservaDebitWrap" style="display:none;margin-top:.5rem;">
+    <div class="fg" style="margin-bottom:0;"><label>Meta a debitar</label><select id="iTransfReservaDebit"><option value="">— nenhuma —</option></select></div>
+  </div>
 </div>
 
       <!-- GRID RESPONSIVO -->
@@ -1544,6 +1550,7 @@ input:focus, select:focus {
   <div class="fg"><label>Descrição</label><input type="text" id="iDesc" placeholder="Ex: Salário, Aluguel, Parcela carro…"></div>
   <div class="fg"><label>Valor (R$)</label><input type="number" id="iVal" placeholder="0,00" step="0.01" oninput="updateParcInfo()"></div>
   <div class="fg" id="fgCat"><label>Categoria</label><select id="iCat"></select></div>
+  <div class="fg" id="subReservaWrap" style="display:none;"><label>Qual reserva?</label><select id="iSubReserva"><option value="">— nenhuma —</option></select></div>
   <div class="fg" id="fgConta"><label>Conta</label><select id="iConta"><option value="">— nenhuma —</option></select></div>
   <div class="fg"><label>Data</label><input type="date" id="iDt" style="width:100%;"></div>
   <div class="fg">
@@ -2118,15 +2125,19 @@ function _temAdiantadoMes(l,k){return(l.paidMeses&&l.paidMeses.indexOf(k)!==-1)|
 function getLM(m,y){var k=y+"-"+("0"+(m+1)).slice(-2);var hoje=new Date().toISOString().slice(0,10);var mesAtual=(y===new Date().getFullYear()&&m===new Date().getMonth());return lancamentos.filter(function(l){
   if(!l.dt.startsWith(k))return false;
   if(l.t==="agenda")return false;
-  if(l.t==="transf_e"||l.t==="transf_s")return false; // transferências não entram no orçamento
+  if(l.t==="transf_e"||l.t==="transf_s")return false;
   if(mesAtual&&l.dt>hoje)return false;
   if(l.rec&&_temAdiantadoMes(l,k))return false;
+  // Mês atual: recorrentes só entram após confirmação (Caiu!/Saiu!)
+  if(mesAtual&&l.rec)return false;
   return true;
 });}
 function getAgendaLM(m,y){var k=y+"-"+("0"+(m+1)).slice(-2);return lancamentos.filter(function(l){return l.dt.startsWith(k)&&l.t==="agenda";});}
 function calcMes(m,y){var ls=getLM(m,y);var rec=ls.filter(function(l){return l.t=="e";}).reduce(function(s,l){return s+l.v;},0);var dep=ls.filter(function(l){return l.t=="s";}).reduce(function(s,l){return s+l.v;},0);return{rec:rec,dep:dep,sal:rec-dep,cnt:ls.length};}
 function addMeses(dt,n){var p=dt.split("-");var y=parseInt(p[0]),m=parseInt(p[1])-1,d=parseInt(p[2]);var nd=new Date(y,m+n,1);return nd.getFullYear()+"-"+("0"+(nd.getMonth()+1)).slice(-2)+"-"+("0"+Math.min(d,28)).slice(-2);}
-function saldoConta(id){var c=contas.find(function(x){return x.id==id;});if(!c)return 0;var hoje=new Date().toISOString().slice(0,10);function _naoRep(l){if(!l.rec)return true;var mk=l.dt.slice(0,7);return!((l.paidMeses&&l.paidMeses.indexOf(mk)!==-1)||lancamentos.some(function(x){return String(x.origemRecId)===String(l.id)&&x.dt.startsWith(mk)&&x.dt<=hoje;}));}var ent=lancamentos.filter(function(l){return l.t=="e"&&l.conta==id&&l.dt<=hoje&&_naoRep(l);}).reduce(function(s,l){return s+l.v;},0);var sai=lancamentos.filter(function(l){return l.t=="s"&&l.conta==id&&l.dt<=hoje&&_naoRep(l);}).reduce(function(s,l){return s+l.v;},0);
+function saldoConta(id){var c=contas.find(function(x){return x.id==id;});if(!c)return 0;var hoje=new Date().toISOString().slice(0,10);var mesHoje=hoje.slice(0,7);function _naoRep(l){if(!l.rec)return true;var mk=l.dt.slice(0,7);var confirmed=(l.paidMeses&&l.paidMeses.indexOf(mk)!==-1)||lancamentos.some(function(x){return String(x.origemRecId)===String(l.id)&&x.dt.startsWith(mk)&&x.dt<=hoje;});if(confirmed)return false;// original excluído quando há cópia confirmada
+if(mk===mesHoje)return false;// mês atual: exige confirmação
+return true;}var ent=lancamentos.filter(function(l){return l.t=="e"&&l.conta==id&&l.dt<=hoje&&_naoRep(l);}).reduce(function(s,l){return s+l.v;},0);var sai=lancamentos.filter(function(l){return l.t=="s"&&l.conta==id&&l.dt<=hoje&&_naoRep(l);}).reduce(function(s,l){return s+l.v;},0);
 // Entradas de transferência (transf_e)
 var entTransf=lancamentos.filter(function(l){
   return l.t=="transf_e"&&l.conta==id&&l.dt<=hoje;
@@ -2248,7 +2259,10 @@ function setTipo(t){
     document.getElementById('iTransfDe').innerHTML=opts;
     document.getElementById('iTransfPara').innerHTML=opts;
     ['iTransfDe','iTransfPara'].forEach(function(id){
-      document.getElementById(id).onchange=atualizarPreviewTransf;
+      document.getElementById(id).onchange=function(){
+        atualizarPreviewTransf();
+        updateTransfReservaSelects();
+      };
     });
     // Atualiza preview quando o valor muda
     var iVal=document.getElementById('iVal');
@@ -2265,7 +2279,7 @@ function setTipo(t){
   }
   var rw=document.getElementById("recWrap");
   var dfw=document.getElementById("diaFixoWrap");
-  if(t==="e"){
+  if(t==="e"||t==="s"){
     if(rw)rw.style.display="flex";
   } else {
     if(rw)rw.style.display="none";
@@ -2898,11 +2912,20 @@ function addTransferencia(){
   lancamentos.push(lEntrada);
   saveLanc(lSaida);
   saveLanc(lEntrada);
+  // Efeito na meta de reserva — crédito (para conta de reserva)
+  var _tCreditId=document.getElementById('iTransfReserva')?document.getElementById('iTransfReserva').value:'';
+  if(_tCreditId){var _paraConta=contas.find(function(c){return c.id===paraId;});if(_paraConta&&_paraConta.tipo==='reserva')applyReservaMeta(_tCreditId,v);}
+  // Efeito na meta de reserva — débito (de conta de reserva)
+  var _tDebitId=document.getElementById('iTransfReservaDebit')?document.getElementById('iTransfReservaDebit').value:'';
+  if(_tDebitId){var _deConta=contas.find(function(c){return c.id===deId;});if(_deConta&&_deConta.tipo==='reserva')applyReservaMeta(_tDebitId,-v);}
+
   document.getElementById('iDesc').value='';
   document.getElementById('iVal').value='';
   document.getElementById('iTransfDe').value='';
   document.getElementById('iTransfPara').value='';
   document.getElementById('transferenciaPreview').style.display='none';
+  var _trw=document.getElementById('transfReservaWrap');if(_trw)_trw.style.display='none';
+  var _trdw=document.getElementById('transfReservaDebitWrap');if(_trdw)_trdw.style.display='none';
   render();
 }
 
@@ -3022,11 +3045,19 @@ function addLanc(){
     saveLanc(nl);
   }
 
+  // Efeito colateral na meta de reserva
+  if(cat==='Reserva'&&tipoAtual==='s'){
+    var _metaId=document.getElementById('iSubReserva')?document.getElementById('iSubReserva').value:'';
+    if(_metaId) applyReservaMeta(_metaId,v);
+  }
+
   // Limpeza dos campos
   document.getElementById("iDesc").value = "";
   document.getElementById("iVal").value = "";
   document.getElementById("iRec").checked = false;
   document.getElementById("iParcelas").value = "";
+  var _srw=document.getElementById('subReservaWrap');if(_srw)_srw.style.display='none';
+  var _sr=document.getElementById('iSubReserva');if(_sr)_sr.value='';
   document.getElementById("parcInfo").className = "parc-info";
   document.getElementById("iTipoLanc").value = "normal";
   // Limpa calendários simples
@@ -3103,12 +3134,7 @@ function delLanc(id){
     if(btnTodos){ btnTodos.onclick=function(){doDeleteTodos();ov.style.display='none';}; }
     if(ov) ov.style.display='flex';
   } else {
-    if(window.innerWidth<=768){
-      bsShow('Excluir lançamento?','"'+desc+'" será removido permanentemente.',doDeleteSo);
-    } else {
-      if(!confirm('Excluir este lançamento?'))return;
-      doDeleteSo();
-    }
+    bsShow('Excluir lançamento?','"'+desc+'" será removido permanentemente.',doDeleteSo);
   }
 }
 
@@ -3311,6 +3337,43 @@ function adiantarPagamento(id){
 }
 
 
+// ===== CONFIRMAR RECEBIMENTO / PAGAMENTO (dia chegou) =====
+function confirmarRecebimento(id){
+  var m=agM!==null?agM:cM; var y=agY!==null?agY:cY;
+  var mesAlvo=y+'-'+('0'+(m+1)).slice(-2);
+  var l=lancamentos.find(function(x){return String(x.id)===String(id);});
+  if(!l)return;
+  var jaExiste=lancamentos.some(function(x){return String(x.origemRecId)===String(id)&&x.dt.startsWith(mesAlvo);});
+  if(jaExiste)return;
+  var day=l.diaFixoTipo?parseInt(calcDiaFixo(y,m,l.diaFixoTipo,l.diaFixoNum).slice(8,10)):(l.dt?parseInt(l.dt.slice(8,10)):1);
+  var dtAlvo=mesAlvo+'-'+('0'+day).slice(-2);
+  var nl={id:String(Date.now()+Math.random()),desc:l.desc,v:l.v,cat:l.cat,t:'e',dt:dtAlvo,conta:l.conta,rec:false,origemRecId:String(id)};
+  lancamentos.push(nl);
+  saveLanc(nl);
+  if(!l.paidMeses)l.paidMeses=[];
+  if(l.paidMeses.indexOf(mesAlvo)===-1)l.paidMeses.push(mesAlvo);
+  saveLanc(l);
+  render();
+}
+
+function confirmarPagamento(id){
+  var m=agM!==null?agM:cM; var y=agY!==null?agY:cY;
+  var mesAlvo=y+'-'+('0'+(m+1)).slice(-2);
+  var l=lancamentos.find(function(x){return String(x.id)===String(id);});
+  if(!l)return;
+  var jaExiste=lancamentos.some(function(x){return String(x.origemRecId)===String(id)&&x.dt.startsWith(mesAlvo);});
+  if(jaExiste)return;
+  var day=l.diaFixoTipo?parseInt(calcDiaFixo(y,m,l.diaFixoTipo,l.diaFixoNum).slice(8,10)):(l.dt?parseInt(l.dt.slice(8,10)):1);
+  var dtAlvo=mesAlvo+'-'+('0'+day).slice(-2);
+  var nl={id:String(Date.now()+Math.random()),desc:l.desc,v:l.v,cat:l.cat,t:'s',dt:dtAlvo,conta:l.conta,rec:false,origemRecId:String(id)};
+  lancamentos.push(nl);
+  saveLanc(nl);
+  if(!l.paidMeses)l.paidMeses=[];
+  if(l.paidMeses.indexOf(mesAlvo)===-1)l.paidMeses.push(mesAlvo);
+  saveLanc(l);
+  render();
+}
+
 // ===== ROTEADOR DE EXCLUSÃO NA AGENDA =====
 function excluirItemAgenda(id, tipo){
   if(tipo==='fixo'){
@@ -3435,23 +3498,22 @@ function renderAgenda(m,y){
         day=l.dt?parseInt(l.dt.slice(8,10)):1;
       }
 
-      // Se estamos no mês atual e o dia já passou → não mostrar (já foi/não foi lançado)
-      // Se estamos em mês futuro → mostrar sempre
-      var isMesAtualSec1=(m===hojeM&&y===hojeA);
-      if(isMesAtualSec1&&day<hojeD){
-        // Dia já passou no mês atual — não adiciona (evita fantasma)
-        return;
-      }
+      // Retroativo: só mostra se o lançamento foi criado antes ou durante o mês visualizado
+      var ultimoDiaMes=new Date(y,m+1,0).toISOString().slice(0,10);
+      if(l.dt && l.dt > ultimoDiaMes) return;
 
+      // Verificar confirmação antes de decidir se mostra
       var mesDaAgenda = y + '-' + ('0'+(m+1)).slice(-2);
-var jaAdiantado = (l.paidMeses && l.paidMeses.indexOf(mesDaAgenda) !== -1)
-  || lancamentos.some(function(x){
-       return String(x.origemRecId)===String(l.id) && x.dt.startsWith(mesDaAgenda);
-     });
+      var jaAdiantado = (l.paidMeses && l.paidMeses.indexOf(mesDaAgenda) !== -1)
+        || lancamentos.some(function(x){
+             return String(x.origemRecId)===String(l.id) && x.dt.startsWith(mesDaAgenda);
+           });
 
-if(!jaAdiantado){
-  items.push({day:day,desc:l.desc,v:l.v,t:l.t,cat:l.cat,tipo:'fixo',id:l.id,conta:l.conta,diaFixoTipo:l.diaFixoTipo,diaFixoNum:l.diaFixoNum});
-}
+      // Confirmado → não mostrar (já foi lançado)
+      if(jaAdiantado) return;
+
+      // Não confirmado → mostrar sempre (previsto se futuro, A Receber/A Pagar se dia chegou)
+      items.push({day:day,desc:l.desc,v:l.v,t:l.t,cat:l.cat,tipo:'fixo',id:l.id,conta:l.conta,diaFixoTipo:l.diaFixoTipo,diaFixoNum:l.diaFixoNum});
     }
   });
 
@@ -3583,8 +3645,9 @@ if(!jaAdiantado){
             borderColor='#22c55e22';
             tipoBtn='<div style="margin-top:.4rem;"><button onclick="adiantarRecebimento(\''+it.id+'\')" style="font-size:.72rem;padding:.2rem .6rem;border-radius:8px;" class="btn-recebi-antes">✅ Recebi antes</button></div>';
           } else {
-            tipoTag='<span style="font-size:.64rem;background:#22c55e22;color:#16a34a;border-radius:6px;padding:1px 6px;font-weight:600;">💰 Renda fixa</span>';
-            borderColor='#22c55e33';
+            tipoTag='<span style="font-size:.64rem;background:#f59e0b22;color:#d97706;border-radius:6px;padding:1px 6px;font-weight:700;">🔔 A Receber</span>';
+            borderColor='#f59e0b55';
+            tipoBtn='<div style="margin-top:.4rem;"><button onclick="confirmarRecebimento(\''+it.id+'\')" class="btn-recebi-antes">✅ Caiu!</button></div>';
           }
         } else {
           if(isFuturo){
@@ -3592,7 +3655,9 @@ if(!jaAdiantado){
             borderColor='#64748b33';
             tipoBtn='<div style="margin-top:.4rem;"><button onclick="adiantarPagamento(\''+it.id+'\')" style="font-size:.72rem;padding:.2rem .6rem;border-radius:8px;" class="btn-paguei-antes">⚡ Paguei antes</button></div>';
           } else {
-            tipoTag='<span style="font-size:.64rem;background:var(--div);color:var(--muted);border-radius:6px;padding:1px 6px;font-weight:600;">⚪ Fixo</span>';
+            tipoTag='<span style="font-size:.64rem;background:#f59e0b22;color:#d97706;border-radius:6px;padding:1px 6px;font-weight:700;">⚠️ A Pagar</span>';
+            borderColor='#f59e0b55';
+            tipoBtn='<div style="margin-top:.4rem;"><button onclick="confirmarPagamento(\''+it.id+'\')" class="btn-paguei-antes">⚡ Saiu!</button></div>';
           }
         }
       } else if(it.tipo==='entrada'){
@@ -3636,24 +3701,31 @@ if(!jaAdiantado){
   var qtdPend=itensSaida.filter(function(x){return !x.paid;}).length;
   var qtdPago=itensSaida.filter(function(x){return x.paid;}).length;
 
+  // A Receber — fixos de entrada com dia <= hoje (mês atual)
+  var isMesAtualKPI=(m===hoje.getMonth()&&y===hoje.getFullYear());
+  var aReceberDue=isMesAtualKPI?items.filter(function(x){return x.t==='e'&&!x.paid&&x.tipo==='fixo'&&x.day<=todayDay;}):[];
+  var totalAReceber=aReceberDue.reduce(function(s,x){return s+x.v;},0);
+  var qtdAReceber=aReceberDue.length;
+
   // 2. Entradas recebidas — lançamentos confirmados do mês (getLM)
   var lmMes=getLM(m,y);
   var entradasRecebidas=lmMes.filter(function(l){return l.t==='e';}).reduce(function(s,l){return s+l.v;},0);
 
-  // 3. Entradas previstas — items[] com t="e" ainda não pagos (recorrentes futuros na agenda)
-  var entradasPrevistas=items.filter(function(x){return x.t==='e'&&!x.paid;}).reduce(function(s,x){return s+x.v;},0);
+  // 3. Entradas previstas — items[] futuros com t="e" (dia ainda não chegou)
+  var entradasPrevistas=items.filter(function(x){return x.t==='e'&&!x.paid&&(!isMesAtualKPI||x.day>todayDay);}).reduce(function(s,x){return s+x.v;},0);
 
   // 4. Comprometido — despesas já lançadas no mês + agenda pendente
   var despesasMes=lmMes.filter(function(l){return l.t==='s';}).reduce(function(s,l){return s+l.v;},0);
   var totalComp=despesasMes+totalPend;
 
-  // 5. Sobra/Déficit estimado
-  var totalRenda=entradasRecebidas+entradasPrevistas;
+  // 5. Sobra/Déficit estimado (A Receber conta como esperado mas não confirmado)
+  var totalRenda=entradasRecebidas+entradasPrevistas+totalAReceber;
   var sobraEst=totalRenda-totalComp;
 
   var kpiEl=document.getElementById("agKpis");
   if(kpiEl){
     kpiEl.innerHTML=
+      (totalAReceber>0?'<div class="ag-kpi"><div class="ag-kpi-l">🔔 A Receber</div><div class="ag-kpi-v" style="color:var(--warn);">'+fmt(totalAReceber)+'</div><div style="font-size:.65rem;color:var(--faint);margin-top:.2rem;">'+qtdAReceber+' entrada'+(qtdAReceber>1?'s':'')+' aguardando</div></div>':'')+
       (totalPend>0?'<div class="ag-kpi"><div class="ag-kpi-l">⏳ A Pagar</div><div class="ag-kpi-v" style="color:var(--warn);">'+fmt(totalPend)+'</div><div style="font-size:.65rem;color:var(--faint);margin-top:.2rem;">compromissos pendentes</div></div>':'')+
       (totalPago>0?'<div class="ag-kpi"><div class="ag-kpi-l">✅ Pago</div><div class="ag-kpi-v" style="color:var(--green);">'+fmt(totalPago)+'</div><div style="font-size:.65rem;color:var(--faint);margin-top:.2rem;">compromissos quitados</div></div>':'')+
       (entradasRecebidas>0?'<div class="ag-kpi"><div class="ag-kpi-l">💰 Entradas recebidas</div><div class="ag-kpi-v" style="color:#22c55e;">'+fmt(entradasRecebidas)+'</div><div style="font-size:.65rem;color:var(--faint);margin-top:.2rem;">já entrou no mês</div></div>':'')+
@@ -3940,20 +4012,6 @@ function addMeta(){
 
 var _bsAportarMetaId = null;
 
-function aportarMeta(id){
-  var meta=metas.find(function(m){return m.id===id;});
-  if(!meta)return;
-  _bsAportarMetaId=id;
-  document.getElementById('bsAportarMetaTitulo').textContent='Adicionar à meta: '+meta.nome;
-  document.getElementById('bsAportarMetaSub').textContent='Atual: '+fmt(meta.atual)+'  |  Meta: '+fmt(meta.valor);
-  var valInput=document.getElementById('bsAportarMetaVal');
-  var erroEl=document.getElementById('bsAportarMetaErro');
-  valInput.value='';
-  if(erroEl) erroEl.style.display='none';
-  document.getElementById('bsAportarMetaOverlay').style.display='flex';
-  setTimeout(function(){valInput.focus();},300);
-}
-
 function bsAportarMetaClose(){
   document.getElementById('bsAportarMetaOverlay').style.display='none';
   _bsAportarMetaId=null;
@@ -3988,34 +4046,6 @@ function bsAportarMetaConfirmar(){
 
 var _bsUsarMetaId = null;
 
-function usarMeta(id){
-  var meta=metas.find(function(m){return m.id===id;});
-  if(!meta)return;
-  _bsUsarMetaId=id;
-
-  document.getElementById('bsUsarMetaTitulo').textContent='Usar meta: '+meta.nome;
-  document.getElementById('bsUsarMetaSub').textContent=
-    'Atual: '+fmt(meta.atual)+'  |  Meta: '+fmt(meta.valor);
-
-  var inputWrap=document.getElementById('bsUsarMetaInputWrap');
-  var msgConcluida=document.getElementById('bsUsarMetaMsgConcluida');
-  var valInput=document.getElementById('bsUsarMetaVal');
-
-  if(meta.concluida){
-    inputWrap.style.display='none';
-    msgConcluida.style.display='block';
-  } else {
-    inputWrap.style.display='block';
-    msgConcluida.style.display='none';
-    valInput.value='';
-    var erroEl=document.getElementById('bsUsarMetaErro');
-    if(erroEl) erroEl.style.display='none';
-    setTimeout(function(){valInput.focus();},300);
-  }
-
-  document.getElementById('bsUsarMetaOverlay').style.display='flex';
-}
-
 function bsUsarMetaClose(){
   document.getElementById('bsUsarMetaOverlay').style.display='none';
   _bsUsarMetaId=null;
@@ -4046,6 +4076,50 @@ function bsUsarMetaConfirmar(){
   renderMetas();
 }
 
+function applyReservaMeta(metaId, delta){
+  var meta=metas.find(function(m){return m.id===metaId;});
+  if(!meta)return;
+  meta.atual=Math.max(0,meta.atual+delta);
+  if(delta>0&&meta.atual>=meta.valor){
+    meta.concluida=true;
+    meta.excedente=meta.atual-meta.valor;
+    meta.atual=meta.valor;
+  } else if(meta.atual<meta.valor){
+    meta.concluida=false;
+    meta.excedente=0;
+  }
+  saveMetas();
+  if(currentUser&&db){
+    userDoc().collection('metas').doc(String(meta.id)).set(meta)
+      .catch(function(e){console.warn('meta save err',e);});
+  }
+  renderMetas();
+}
+function updateTransfReservaSelects(){
+  var deId=document.getElementById('iTransfDe')?document.getElementById('iTransfDe').value:'';
+  var paraId=document.getElementById('iTransfPara')?document.getElementById('iTransfPara').value:'';
+  var deConta=deId?contas.find(function(c){return c.id===deId;}):null;
+  var paraConta=paraId?contas.find(function(c){return c.id===paraId;}):null;
+  var creditWrap=document.getElementById('transfReservaWrap');
+  var debitWrap=document.getElementById('transfReservaDebitWrap');
+  var creditSel=document.getElementById('iTransfReserva');
+  var debitSel=document.getElementById('iTransfReservaDebit');
+  var metaOpts='<option value="">— nenhuma —</option>'+metas.map(function(m){
+    return '<option value="'+m.id+'">'+m.nome+'</option>';
+  }).join('');
+  if(paraConta&&paraConta.tipo==='reserva'){
+    if(creditSel)creditSel.innerHTML=metaOpts;
+    if(creditWrap)creditWrap.style.display='';
+  } else {
+    if(creditWrap)creditWrap.style.display='none';
+  }
+  if(deConta&&deConta.tipo==='reserva'){
+    if(debitSel)debitSel.innerHTML=metaOpts;
+    if(debitWrap)debitWrap.style.display='';
+  } else {
+    if(debitWrap)debitWrap.style.display='none';
+  }
+}
 var _bsDelMetaId=null;
 function delMeta(id){
   var m=metas.find(function(x){return x.id===id;});
@@ -4100,11 +4174,13 @@ function renderMetas(){
     }
     h+='</div>';
     h+='<div style="display:flex;gap:.375rem;flex-wrap:wrap;">';
-    h+='<button onclick="aportarMeta(\''+meta.id+'\')" style="font-size:.72rem;padding:.2rem .6rem;border-radius:8px;background:var(--plight);color:var(--p);border:1px solid var(--p);cursor:pointer;">+ Adicionar</button>';
-    if(!meta.concluida||meta.excedente>0)
-      h+='<button onclick="usarMeta(\''+meta.id+'\')" style="font-size:.72rem;padding:.2rem .6rem;border-radius:8px;background:var(--wlight);color:var(--warn);border:1px solid var(--warn);cursor:pointer;">Usar</button>';
-    h+='<button onclick="delMeta(\''+meta.id+'\')" style="font-size:.72rem;padding:.2rem .6rem;border-radius:8px;background:none;color:var(--faint);border:1px solid var(--border);cursor:pointer;margin-left:auto;">Remover</button>';
-    h+='</div></div>';
+    h+='<button onclick="delMeta(\''+meta.id+'\')" style="font-size:.72rem;padding:.2rem .6rem;border-radius:8px;background:none;color:var(--faint);border:1px solid var(--border);cursor:pointer;">Remover</button>';
+    h+='</div>';
+    h+='<div style="margin-top:.5rem;font-size:.72rem;color:var(--faint);line-height:1.6;">';
+    h+='<div>💡 Para adicionar: lance uma saída com categoria Reserva → '+meta.nome+'</div>';
+    h+='<div>💡 Para retirar: faça uma transferência da conta de reserva para outra conta</div>';
+    h+='</div>';
+    h+='</div>';
   });
   el.innerHTML=h;
 }
@@ -4686,6 +4762,22 @@ function fillCategorySelect(selectId){
 }
 
 fillCategorySelect('iCat');
+(function(){
+  var catSel=document.getElementById('iCat');
+  if(catSel) catSel.addEventListener('change',function(){
+    var wrap=document.getElementById('subReservaWrap');
+    var sub=document.getElementById('iSubReserva');
+    if(!wrap||!sub)return;
+    if(this.value==='Reserva'){
+      sub.innerHTML='<option value="">— nenhuma —</option>'+metas.map(function(m){
+        return '<option value="'+m.id+'">'+m.nome+'</option>';
+      }).join('');
+      wrap.style.display='';
+    } else {
+      wrap.style.display='none';
+    }
+  });
+})();
 
 (function(){
   // seed handled by firestore
@@ -4723,7 +4815,7 @@ function toggleTipoFields(){
   var mw=document.getElementById("mensalWrap");
   if(pw)pw.style.display=(tl==="parc")?"block":"none";
   if(dw)dw.style.display=(tl==="debito")?"flex":"none";
-  if(rw)rw.style.display="none";
+  if(rw)rw.style.display=(tl==="normal"&&(tipoAtual==="s"||tipoAtual==="e"))?"flex":"none";
   if(mw)mw.style.display=(tl==="mensal")?"block":"none";
   var dtBase=document.getElementById("iDt").value||new Date().toISOString().slice(0,10);
   if(tl==="parc")initSimpleCal('Parcela',dtBase);
@@ -4893,6 +4985,10 @@ const ORC_MODE_INFO = {
   folgado: {
     nome: "🧘 Flexível",
     desc: "Mais liberdade para lazer e consumo"
+  },
+  custom: {
+    nome: "⚙️ Personalizado",
+    desc: "Distribuição definida por você"
   }
 };
 
@@ -4911,6 +5007,10 @@ function setOrcBase(base){
   function getOrcPreset(){
     if (ORC_MODE === 'conservador') return [70, 15, 10, 5];
     if (ORC_MODE === 'folgado') return [65, 15, 15, 5];
+    if (ORC_MODE === 'custom') {
+      var c = JSON.parse(localStorage.getItem('orc_custom_v1')||'null');
+      if (c) return [c.essenciais||60, c.lazer||20, c.reserva||15, c.diaadia||5];
+    }
     return [60, 20, 15, 5];
   }
 
@@ -4920,6 +5020,28 @@ function renderOrcControls(){
   const modeInfo = ORC_MODE_INFO[ORC_MODE] || {nome:"",desc:""};
   const preset = getOrcPreset();
   const editing = host.getAttribute('data-editing') === 'true';
+  var customVals = JSON.parse(localStorage.getItem('orc_custom_v1')||'null') || {essenciais:60,lazer:20,reserva:15,diaadia:5};
+  var catKeys = ['essenciais','lazer','reserva','diaadia'];
+  var catNames = ['Essenciais','Lazer','Reserva','Dia a dia'];
+  var catEmojis = ['🏠','🎮','🛡️','📅'];
+  var base = getRendaOrcamento();
+  var customInputsHTML = catKeys.map(function(key,i){
+    var pct=customVals[key]||0;
+    var val=base>0?(base*pct/100).toFixed(2):'0.00';
+    return '<div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem;">'
+      +'<span style="font-size:.82rem;color:var(--txt);width:6rem;flex-shrink:0;">'+catEmojis[i]+' '+catNames[i]+'</span>'
+      +'<div style="display:flex;align-items:center;gap:.25rem;flex:1;">'
+      +'<input type="number" min="0" max="100" step="1" id="orc_pct_'+key+'" value="'+pct+'"'
+      +' style="width:4rem;padding:.3rem .4rem;border-radius:7px;border:1px solid var(--div);background:var(--surf2);color:var(--txt);font-size:.82rem;text-align:right;"'
+      +' oninput="orcCustomChange(\''+key+'\',\'pct\',this.value)">'
+      +'<span style="font-size:.8rem;color:var(--muted);">%</span>'
+      +'<span style="font-size:.75rem;color:var(--faint);">/</span>'
+      +'<span style="font-size:.8rem;color:var(--muted);">R$</span>'
+      +'<input type="number" min="0" step="0.01" id="orc_val_'+key+'" value="'+val+'"'
+      +' style="flex:1;min-width:0;padding:.3rem .4rem;border-radius:7px;border:1px solid var(--div);background:var(--surf2);color:var(--txt);font-size:.82rem;"'
+      +' oninput="orcCustomChange(\''+key+'\',\'val\',this.value)">'
+      +'</div></div>';
+  }).join('');
 
   host.innerHTML = `
     <div style="display:flex;align-items:center;justify-content:space-between;padding:.875rem 1rem .5rem;">
@@ -4932,15 +5054,23 @@ function renderOrcControls(){
 
     ${editing ? `
       <div style="padding:0 1rem .75rem;">
-        <div class="ttog" style="margin-bottom:.5rem;">
+        <div class="ttog" style="margin-bottom:.5rem;flex-wrap:wrap;overflow:visible;">
           <button class="${ORC_MODE==='conservador'?'oe':''}" onclick="setOrcMode('conservador')">70-15-10-5</button>
           <button class="${ORC_MODE==='equilibrado'?'oe':''}" onclick="setOrcMode('equilibrado')">60-20-15-5</button>
           <button class="${ORC_MODE==='folgado'?'oe':''}" onclick="setOrcMode('folgado')">65-15-15-5</button>
+          <button class="${ORC_MODE==='custom'?'oe':''}" onclick="setOrcMode('custom')">⚙ Personalizado</button>
         </div>
+        ${ORC_MODE !== 'custom' ? `
         <div style="margin-bottom:.5rem;font-size:.8rem;color:var(--muted);">
           <b>${modeInfo.nome}</b> — ${modeInfo.desc}<br>
           <small>Distribuição: ${preset.join('-')}%</small>
         </div>
+        ` : `
+        <div style="margin-bottom:.75rem;">
+          ${customInputsHTML}
+          <div id="orcCustomTotal" style="font-size:.82rem;font-weight:700;text-align:right;padding:.25rem 0 0;"></div>
+        </div>
+        `}
         <div class="ttog" style="margin-bottom:.5rem;">
           <button class="${ORC_BASE==='receita'?'oe':''}" onclick="setOrcBase('receita')">Usar Receita</button>
           <button class="${ORC_BASE==='manual'?'oe':''}" onclick="setOrcBase('manual')">Valor Manual</button>
@@ -4969,11 +5099,44 @@ function renderOrcControls(){
         input.addEventListener('input', () => {
           ORC_MANUAL = parseFloat(input.value) || 0;
           localStorage.setItem('orc_manual', ORC_MANUAL);
-          if(ORC_BASE === 'manual') renderOrc();
+          if(ORC_BASE === 'manual') { renderOrcCustomTotal(); renderOrc(); }
         });
       }
+      if(ORC_MODE === 'custom') renderOrcCustomTotal();
     }, 0);
   }
+}
+
+function orcCustomChange(key, type, rawVal){
+  var customVals = JSON.parse(localStorage.getItem('orc_custom_v1')||'null') || {essenciais:60,lazer:20,reserva:15,diaadia:5};
+  var base = getRendaOrcamento();
+  var val = parseFloat(rawVal) || 0;
+  if(type === 'pct'){
+    customVals[key] = Math.round(val * 100) / 100;
+    if(base > 0){
+      var vi = document.getElementById('orc_val_' + key);
+      if(vi) vi.value = (base * val / 100).toFixed(2);
+    }
+  } else {
+    if(base > 0){
+      var pct = Math.round((val / base) * 10000) / 100;
+      customVals[key] = pct;
+      var pi = document.getElementById('orc_pct_' + key);
+      if(pi) pi.value = pct.toFixed(2);
+    }
+  }
+  localStorage.setItem('orc_custom_v1', JSON.stringify(customVals));
+  renderOrcCustomTotal();
+  renderOrc();
+}
+function renderOrcCustomTotal(){
+  var c = JSON.parse(localStorage.getItem('orc_custom_v1')||'null') || {essenciais:0,lazer:0,reserva:0,diaadia:0};
+  var total = Math.round(((c.essenciais||0)+(c.lazer||0)+(c.reserva||0)+(c.diaadia||0))*100)/100;
+  var el = document.getElementById('orcCustomTotal');
+  if(!el) return;
+  var color = total < 100 ? 'var(--warn)' : total > 100 ? 'var(--red)' : 'var(--green)';
+  el.textContent = 'Total: ' + total + '%';
+  el.style.color = color;
 }
 
   function addOrcPresetSection(){
@@ -5396,5 +5559,4 @@ if(_c) banco = _c.nome;
 </div>
 
 </body>
-  </html>
-
+  </html> 
