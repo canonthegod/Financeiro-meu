@@ -4541,7 +4541,7 @@ function renderTbls(){
   function row(l){
     var isTransf=(l.t==="transf");
     var isPos=(l.t==="e");
-    var bdg=isTransf?'<span class="bdg" style="background:#1a73e822;color:#1a73e8;font-weight:700;">⇄ Transferência</span>':'<span class="bdg '+(isPos?"e":"s")+'">'+(isPos?"Entrada":"Saída")+'</span>';
+    var bdg=isTransf?'<span class="bdg" style="background:#1a73e822;color:#1a73e8;font-weight:700;">Transferência</span>':'<span class="bdg '+(isPos?"e":"s")+'">'+(isPos?"Entrada":"Saída")+'</span>';
     var desc=(isTransf?'⇄ ':'')+l.desc+(l.rec?'<span style="font-size:.58rem;color:var(--faint);margin-left:3px;">↺</span>':"")+(l.parc?'<span style="font-size:.58rem;color:var(--warn);margin-left:3px;">✂</span>':"");
     var cat=isTransf?(l.cat||'Transferência'):l.cat;
     var contaCol=isTransf?cNome(l.contaOrigem)+' → '+cNome(l.contaDestino):cNome(l.conta);
