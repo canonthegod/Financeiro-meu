@@ -239,6 +239,12 @@ input:focus,select:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(1,105,1
   .pt-row{padding:.35rem .5rem;}
   .pt-mes{font-size:.64rem;}
   .pt-v{font-size:.72rem;}
+  /* Orçamento editor */
+  .orc-editor-container{padding:0 .5rem .75rem!important;}
+  .orc-mode-tog{display:grid!important;grid-template-columns:1fr 1fr!important;border-radius:.5rem;}
+  .orc-mode-tog button{font-size:.75rem!important;padding:.35rem!important;}
+  .orc-base-tog{flex-direction:column!important;}
+  .orc-custom-inputs{display:grid!important;grid-template-columns:1fr 1fr!important;gap:.35rem!important;align-items:center!important;flex:unset!important;}
 }
 ::-webkit-scrollbar{width:4px;height:4px;}::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px;}
 
@@ -575,7 +581,8 @@ input:focus, select:focus {
   #lancGrid .fg:nth-child(4) { grid-column: span 1; }
   #lancGrid .fg:nth-child(5) { grid-column: span 1; }
   #lancGrid .fg:nth-child(6) { grid-column: 1 / -1; }
-  #lancGrid .fg:nth-child(6) button {
+  #lancGrid .fg:nth-child(7) { grid-column: 1 / -1; }
+  #lancGrid .fg:nth-child(7) button {
     width: 100%;
     height: 44px;
     font-size: .95rem;
@@ -587,6 +594,8 @@ input:focus, select:focus {
     font-size: .83rem;
     padding: .4rem .4rem !important;
   }
+  #transferenciaWrap .transfGrid { grid-template-columns: 1fr !important; }
+  #transferenciaWrap { overflow: hidden; }
 }
 
 @media(max-width: 480px) {
@@ -1529,8 +1538,8 @@ input:focus, select:focus {
       </div>
 
 <!-- Campos de transferência (aparecem só quando tipo = 't') -->
-<div id="transferenciaWrap" style="display:none;margin-bottom:.75rem;">
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.5rem;">
+<div id="transferenciaWrap" style="display:none;margin-bottom:.75rem;overflow:hidden;">
+  <div class="transfGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.5rem;">
     <div class="fg">
       <label>De (conta origem)</label>
       <select id="iTransfDe"><option value="">— selecione —</option></select>
@@ -1905,7 +1914,7 @@ document.addEventListener("DOMContentLoaded", function(){
   setupAuth();
 });
 var currentUser = null;
-var unsubLanc = null, unsubContas = null, unsubMetas = null;
+var unsubLanc = null, unsubContas = null, unsubMetas = null, unsubOrc = null;
 
 // ── AUTH ──
 function loginGoogle(){
@@ -2025,6 +2034,22 @@ function initFirestore(){
       snap.forEach(function(d){metas.push(Object.assign({id:d.id},d.data()));});
       renderMetas();
     }, function(e){console.error(e);});
+  // Listen configs/orcamento
+  unsubOrc=userDoc().collection("configs").doc("orcamento")
+    .onSnapshot(function(doc){
+      if(doc.exists){
+        var d=doc.data();
+        ORC_MODE=d.mode||'equilibrado';
+        ORC_BASE=d.base||'receita';
+        ORC_MANUAL=d.manual||0;
+        localStorage.setItem('orc_mode',ORC_MODE);
+        localStorage.setItem('orc_base',ORC_BASE);
+        localStorage.setItem('orc_manual',ORC_MANUAL);
+        if(d.custom) localStorage.setItem('orc_custom_v1',JSON.stringify(d.custom));
+        renderOrc();
+        renderOrcControls();
+      }
+    },function(e){console.error(e);});
 }
 
 function userDoc(){return db.collection("users").doc(currentUser.uid);}
@@ -4976,15 +5001,26 @@ const ORC_MODE_INFO = {
   }
 };
 
+function saveOrcFirestore(){
+  if(!currentUser||!db) return;
+  userDoc().collection("configs").doc("orcamento").set({
+    mode: ORC_MODE,
+    base: ORC_BASE,
+    manual: ORC_MANUAL,
+    custom: JSON.parse(localStorage.getItem('orc_custom_v1')||'{}')
+  }).catch(function(e){console.error(e);});
+}
   function setOrcMode(mode){
   ORC_MODE = mode;
   localStorage.setItem('orc_mode', ORC_MODE);
+  saveOrcFirestore();
   renderOrcControls();
   renderOrc();
 }
 function setOrcBase(base){
   ORC_BASE = base;
   localStorage.setItem('orc_base', ORC_BASE);
+  saveOrcFirestore();
   renderOrcControls();
   renderOrc();
 }
@@ -5017,7 +5053,7 @@ function renderOrcControls(){
     var val=base>0?(base*pct/100).toFixed(2):'0.00';
     return '<div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem;">'
       +'<span style="font-size:.82rem;color:var(--txt);width:6rem;flex-shrink:0;">'+catEmojis[i]+' '+catNames[i]+'</span>'
-      +'<div style="display:flex;align-items:center;gap:.25rem;flex:1;">'
+      +'<div class="orc-custom-inputs" style="display:flex;align-items:center;gap:.25rem;flex:1;">'
       +'<input type="number" min="0" max="100" step="1" id="orc_pct_'+key+'" value="'+pct+'"'
       +' style="width:4rem;padding:.3rem .4rem;border-radius:7px;border:1px solid var(--div);background:var(--surf2);color:var(--txt);font-size:.82rem;text-align:right;"'
       +' oninput="orcCustomChange(\''+key+'\',\'pct\',this.value)">'
@@ -5040,8 +5076,8 @@ function renderOrcControls(){
     </div>
 
     ${editing ? `
-      <div style="padding:0 1rem .75rem;">
-        <div class="ttog" style="margin-bottom:.5rem;flex-wrap:wrap;overflow:visible;">
+      <div class="orc-editor-container" style="padding:0 1rem .75rem;">
+        <div class="ttog orc-mode-tog" style="margin-bottom:.5rem;flex-wrap:wrap;overflow:visible;">
           <button class="${ORC_MODE==='conservador'?'oe':''}" onclick="setOrcMode('conservador')">70-15-10-5</button>
           <button class="${ORC_MODE==='equilibrado'?'oe':''}" onclick="setOrcMode('equilibrado')">60-20-15-5</button>
           <button class="${ORC_MODE==='folgado'?'oe':''}" onclick="setOrcMode('folgado')">65-15-15-5</button>
@@ -5058,7 +5094,7 @@ function renderOrcControls(){
           <div id="orcCustomTotal" style="font-size:.82rem;font-weight:700;text-align:right;padding:.25rem 0 0;"></div>
         </div>
         `}
-        <div class="ttog" style="margin-bottom:.5rem;">
+        <div class="ttog orc-base-tog" style="margin-bottom:.5rem;">
           <button class="${ORC_BASE==='receita'?'oe':''}" onclick="setOrcBase('receita')">Usar Receita</button>
           <button class="${ORC_BASE==='manual'?'oe':''}" onclick="setOrcBase('manual')">Valor Manual</button>
         </div>
@@ -5086,6 +5122,7 @@ function renderOrcControls(){
         input.addEventListener('input', () => {
           ORC_MANUAL = parseFloat(input.value) || 0;
           localStorage.setItem('orc_manual', ORC_MANUAL);
+          saveOrcFirestore();
           if(ORC_BASE === 'manual') { renderOrcCustomTotal(); renderOrc(); }
         });
       }
@@ -5113,6 +5150,7 @@ function orcCustomChange(key, type, rawVal){
     }
   }
   localStorage.setItem('orc_custom_v1', JSON.stringify(customVals));
+  saveOrcFirestore();
   renderOrcCustomTotal();
   renderOrc();
 }
