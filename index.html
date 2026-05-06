@@ -4942,26 +4942,16 @@ function saveEditConta(){
   c.banco=_editBancoSel[id]||c.banco;
   if(nmEl&&nmEl.value.trim())c.nome=nmEl.value.trim();
   if(siEl){
-    var saldoDesejado=parseFloat(siEl.value);
-    if(!isNaN(saldoDesejado)){
-      var saldoAtual=saldoConta(id);
-      var diff=Math.round((saldoDesejado-saldoAtual)*100)/100;
-      if(diff!==0){
-        var ajuste={
-          id:String(Date.now()+Math.random()),
-          desc:'Ajuste de saldo ('+c.nome+')',
-          v:Math.abs(diff),
-          cat:'Outros',
-          t:diff>0?'e':'s',
-          dt:new Date().toISOString().slice(0,10),
-          rec:false,
-          conta:id
-        };
-        lancamentos.push(ajuste);
-        saveLanc(ajuste);
-      }
+    var valorDigitado=parseFloat(siEl.value);
+    if(!isNaN(valorDigitado)){
+      var movimentos=saldoConta(id)-c.si;
+      c.si=Math.round((valorDigitado-movimentos)*100)/100;
     }
   }
+  // Limpa lançamentos de ajuste antigos do Firestore e do array local
+  var ajustesAntigos=lancamentos.filter(function(l){return l.desc&&l.desc.startsWith('Ajuste de saldo');});
+  ajustesAntigos.forEach(function(l){deleteLancRemote(l.id);});
+  lancamentos=lancamentos.filter(function(l){return !(l.desc&&l.desc.startsWith('Ajuste de saldo'));});
   saveConta(c);
   bsEditContaClose();
   render();
