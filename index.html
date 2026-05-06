@@ -1544,13 +1544,10 @@ input:focus, select:focus {
     <label>Categoria (opcional)</label>
     <select id="iTransfCat"><option value="">— nenhuma —</option></select>
   </div>
+  <div id="transfrMetaWrap" style="display:none;margin-bottom:.5rem;">
+    <div class="fg" style="margin-bottom:0;"><label>Qual meta creditar?</label><select id="iTransfMeta"><option value="">— nenhuma —</option></select></div>
+  </div>
   <div id="transferenciaPreview" style="background:var(--glight);border:1px solid var(--green);border-radius:.5rem;padding:.5rem .75rem;font-size:.75rem;color:var(--green);display:none;"></div>
-  <div id="transfReservaWrap" style="display:none;margin-top:.5rem;">
-    <div class="fg" style="margin-bottom:0;"><label>Meta a creditar</label><select id="iTransfReserva"><option value="">— nenhuma —</option></select></div>
-  </div>
-  <div id="transfReservaDebitWrap" style="display:none;margin-top:.5rem;">
-    <div class="fg" style="margin-bottom:0;"><label>Meta a debitar</label><select id="iTransfReservaDebit"><option value="">— nenhuma —</option></select></div>
-  </div>
 </div>
 
       <!-- GRID RESPONSIVO -->
@@ -2003,7 +2000,7 @@ function initFirestore(){
     .onSnapshot(function(snap){
       lancamentos=[];
       snap.forEach(function(d){
-        if(!_deletedIds.has(d.id)) // ignora IDs já deletados localmente
+        if(!_deletedIds.has(d.id))
           lancamentos.push(Object.assign({id:d.id},d.data()));
       });
       setSyncStatus("ok");
@@ -2143,8 +2140,8 @@ function _temAdiantadoMes(l,k){return(l.paidMeses&&l.paidMeses.indexOf(k)!==-1)|
 function getLM(m,y){var k=y+"-"+("0"+(m+1)).slice(-2);var hoje=new Date().toISOString().slice(0,10);var mesAtual=(y===new Date().getFullYear()&&m===new Date().getMonth());return lancamentos.filter(function(l){
   if(!l.dt.startsWith(k))return false;
   if(l.t==="agenda")return false;
-  if(l.t==="transf_e"||l.t==="transf_s")return false;
   if(mesAtual&&l.dt>hoje)return false;
+  if(l.t==="transf")return true;
   if(l.rec&&_temAdiantadoMes(l,k))return false;
   // Mês atual: recorrentes só entram após confirmação (Caiu!/Saiu!)
   if(mesAtual&&l.rec)return false;
@@ -2156,14 +2153,8 @@ function addMeses(dt,n){var p=dt.split("-");var y=parseInt(p[0]),m=parseInt(p[1]
 function saldoConta(id){var c=contas.find(function(x){return x.id==id;});if(!c)return 0;var hoje=new Date().toISOString().slice(0,10);var mesHoje=hoje.slice(0,7);function _naoRep(l){if(!l.rec)return true;var mk=l.dt.slice(0,7);var confirmed=(l.paidMeses&&l.paidMeses.indexOf(mk)!==-1)||lancamentos.some(function(x){return String(x.origemRecId)===String(l.id)&&x.dt.startsWith(mk)&&x.dt<=hoje;});if(confirmed)return false;// original excluído quando há cópia confirmada
 if(mk===mesHoje)return false;// mês atual: exige confirmação
 return true;}var ent=lancamentos.filter(function(l){return l.t=="e"&&l.conta==id&&l.dt<=hoje&&_naoRep(l);}).reduce(function(s,l){return s+l.v;},0);var sai=lancamentos.filter(function(l){return l.t=="s"&&l.conta==id&&l.dt<=hoje&&_naoRep(l);}).reduce(function(s,l){return s+l.v;},0);
-// Entradas de transferência (transf_e)
-var entTransf=lancamentos.filter(function(l){
-  return l.t=="transf_e"&&l.conta==id&&l.dt<=hoje;
-}).reduce(function(s,l){return s+l.v;},0);
-// Saídas de transferência (transf_s)
-var saiTransf=lancamentos.filter(function(l){
-  return l.t=="transf_s"&&l.conta==id&&l.dt<=hoje;
-}).reduce(function(s,l){return s+l.v;},0);
+var entTransf=lancamentos.filter(function(l){return l.t==="transf"&&String(l.contaDestino)===String(id)&&l.dt<=hoje;}).reduce(function(s,l){return s+l.v;},0);
+var saiTransf=lancamentos.filter(function(l){return l.t==="transf"&&String(l.contaOrigem)===String(id)&&l.dt<=hoje;}).reduce(function(s,l){return s+l.v;},0);
 return c.si+ent-sai+entTransf-saiTransf;}
 function saldoTotal(){
   var hoje=new Date().toISOString().slice(0,10);
@@ -2276,12 +2267,13 @@ function setTipo(t){
     }).join('');
     document.getElementById('iTransfDe').innerHTML=opts;
     document.getElementById('iTransfPara').innerHTML=opts;
-    ['iTransfDe','iTransfPara'].forEach(function(id){
-      document.getElementById(id).onchange=function(){
-        atualizarPreviewTransf();
-        updateTransfReservaSelects();
-      };
-    });
+    document.getElementById('iTransfDe').onchange=function(){
+      atualizarPreviewTransf();
+    };
+    document.getElementById('iTransfPara').onchange=function(){
+      atualizarPreviewTransf();
+      atualizarMetaTransfSelect();
+    };
     // Atualiza preview quando o valor muda
     var iVal=document.getElementById('iVal');
     if(iVal) iVal.oninput=function(){updateParcInfo();atualizarPreviewTransf();};
@@ -2907,6 +2899,27 @@ function atualizarPreviewTransf(){
     ' &nbsp;·&nbsp; Patrimônio: sem alteração ✅';
 }
 
+function atualizarMetaTransfSelect(){
+  var paraId=document.getElementById('iTransfPara')?document.getElementById('iTransfPara').value:'';
+  var wrap=document.getElementById('transfrMetaWrap');
+  var sel=document.getElementById('iTransfMeta');
+  if(!wrap||!sel)return;
+  var contaDest=paraId?contas.find(function(c){return String(c.id)===String(paraId);}):null;
+  if(contaDest&&contaDest.tipo==='reserva'){
+    wrap.style.display='';
+    sel.innerHTML=metas.length>0
+      ?'<option value="">— nenhuma —</option>'+metas.map(function(m){return'<option value="'+m.id+'">'+m.nome+'</option>';}).join('')
+      :'<option value="">Crie uma meta na aba Reserva</option>';
+  } else {
+    wrap.style.display='none';
+    sel.value='';
+  }
+}
+function saveMeta(meta){
+  if(!currentUser||!db)return;
+  userDoc().collection('metas').doc(String(meta.id)).set(meta)
+    .catch(function(e){console.warn('meta save err',e);});
+}
 function addTransferencia(){
   var deId=document.getElementById('iTransfDe').value;
   var paraId=document.getElementById('iTransfPara').value;
@@ -2915,40 +2928,27 @@ function addTransferencia(){
   var desc=document.getElementById('iDesc').value.trim()||'Transferência';
   if(!deId||!paraId||!v||!dt){alert('Preencha todos os campos!');return;}
   if(deId===paraId){alert('Conta de origem e destino não podem ser iguais!');return;}
-  var gid='transf_'+Date.now();
   var _transfCatEl=document.getElementById('iTransfCat');
-  var _transfCat=(_transfCatEl&&_transfCatEl.value)?_transfCatEl.value:'Transferência';
-  var lSaida={
+  var _cat=(_transfCatEl&&_transfCatEl.value)||'';
+  var _metaEl=document.getElementById('iTransfMeta');
+  var _metaId=(_metaEl&&_metaEl.value)||'';
+  var l={
     id:String(Date.now()+Math.random()),
-    desc:desc,v:v,cat:_transfCat,t:'transf_s',
-    dt:dt,rec:false,conta:deId,grupoTransfId:gid,
-    contaDestino:paraId
+    desc:desc,v:v,cat:_cat,t:'transf',
+    dt:dt,contaOrigem:deId,contaDestino:paraId
   };
-  var lEntrada={
-    id:String(Date.now()+Math.random()+1),
-    desc:desc,v:v,cat:'Transferência',t:'transf_e',
-    dt:dt,rec:false,conta:paraId,grupoTransfId:gid,
-    contaOrigem:deId
-  };
-  lancamentos.push(lSaida);
-  lancamentos.push(lEntrada);
-  saveLanc(lSaida);
-  saveLanc(lEntrada);
-  // Efeito na meta de reserva — crédito (para conta de reserva)
-  var _tCreditId=document.getElementById('iTransfReserva')?document.getElementById('iTransfReserva').value:'';
-  if(_tCreditId){var _paraConta=contas.find(function(c){return c.id===paraId;});if(_paraConta&&_paraConta.tipo==='reserva')applyReservaMeta(_tCreditId,v);}
-  // Efeito na meta de reserva — débito (de conta de reserva)
-  var _tDebitId=document.getElementById('iTransfReservaDebit')?document.getElementById('iTransfReservaDebit').value:'';
-  if(_tDebitId){var _deConta=contas.find(function(c){return c.id===deId;});if(_deConta&&_deConta.tipo==='reserva')applyReservaMeta(_tDebitId,-v);}
-
+  if(_metaId) l.metaId=_metaId;
+  lancamentos.push(l);
+  saveLanc(l);
+  if(_metaId) applyReservaMeta(_metaId, v);
   document.getElementById('iDesc').value='';
   document.getElementById('iVal').value='';
   document.getElementById('iTransfDe').value='';
   document.getElementById('iTransfPara').value='';
   document.getElementById('transferenciaPreview').style.display='none';
-  var _trw=document.getElementById('transfReservaWrap');if(_trw)_trw.style.display='none';
-  var _trdw=document.getElementById('transfReservaDebitWrap');if(_trdw)_trdw.style.display='none';
+  var _mw=document.getElementById('transfrMetaWrap');if(_mw)_mw.style.display='none';
   if(_transfCatEl)_transfCatEl.value='';
+  if(_metaEl)_metaEl.value='';
   render();
 }
 
@@ -4099,31 +4099,7 @@ function applyReservaMeta(metaId, delta){
     .catch(function(e){console.warn('meta save err',e);});
   renderMetas();
 }
-function updateTransfReservaSelects(){
-  var deId=document.getElementById('iTransfDe')?document.getElementById('iTransfDe').value:'';
-  var paraId=document.getElementById('iTransfPara')?document.getElementById('iTransfPara').value:'';
-  var deConta=deId?contas.find(function(c){return c.id===deId;}):null;
-  var paraConta=paraId?contas.find(function(c){return c.id===paraId;}):null;
-  var creditWrap=document.getElementById('transfReservaWrap');
-  var debitWrap=document.getElementById('transfReservaDebitWrap');
-  var creditSel=document.getElementById('iTransfReserva');
-  var debitSel=document.getElementById('iTransfReservaDebit');
-  var metaOpts='<option value="">— nenhuma —</option>'+metas.map(function(m){
-    return '<option value="'+m.id+'">'+m.nome+'</option>';
-  }).join('');
-  if(paraConta&&paraConta.tipo==='reserva'){
-    if(creditSel)creditSel.innerHTML=metaOpts;
-    if(creditWrap)creditWrap.style.display='';
-  } else {
-    if(creditWrap)creditWrap.style.display='none';
-  }
-  if(deConta&&deConta.tipo==='reserva'){
-    if(debitSel)debitSel.innerHTML=metaOpts;
-    if(debitWrap)debitWrap.style.display='';
-  } else {
-    if(debitWrap)debitWrap.style.display='none';
-  }
-}
+function updateTransfReservaSelects(){}
 var _bsDelMetaId=null;
 function delMeta(id){
   var m=metas.find(function(x){return x.id===id;});
@@ -4318,7 +4294,8 @@ function renderHist(){
     var preset = getOrcPreset();
     var cats = ['Essenciais','Lazer','Reserva','Dia a dia'];
     var limites = [preset[0], preset[1], preset[2], preset[3]];
-    var ORC_EMOJI_L = {"Essenciais":"🏠","Lazer":"🎮","Reserva":"🛡️","Dia a dia":"📅"};
+    var ORC_EMOJI_L = {"Essenciais":"🏠","Lazer":"🎮","Reserva":"📈","Dia a dia":"📅"};
+    var ORC_DISPLAY_L = {"Essenciais":"Essenciais","Lazer":"Lazer","Reserva":"Investimentos","Dia a dia":"Dia a dia"};
 
     var orcH = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.625rem;margin-top:.75rem;">';
     cats.forEach(function(cat, i){
@@ -4330,7 +4307,7 @@ function renderHist(){
       var status = percReal > 100 ? '🔴 +'+excesso.toFixed(0)+'%' : percReal >= 80 ? '🟡 Atenção' : '🟢 Ok';
       var cor = percReal >= 100 ? 'var(--red)' : percReal >= 80 ? 'var(--warn)' : 'var(--green)';
       orcH += '<div class="orc-item">'
-        + '<div class="orc-label"><span>'+ORC_EMOJI_L[cat]+' '+cat+'</span><span style="color:'+cor+';">'+percReal.toFixed(0)+'%</span></div>'
+        + '<div class="orc-label"><span>'+ORC_EMOJI_L[cat]+' '+(ORC_DISPLAY_L[cat]||cat)+'</span><span style="color:'+cor+';">'+percReal.toFixed(0)+'%</span></div>'
         + '<div class="orc-bar"><div style="width:'+perc+'%;height:100%;background:'+cor+';border-radius:5px;transition:width .4s;"></div></div>'
         + '<div style="display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);margin-top:4px;">'
         + '<span>'+fmt(gasto)+' / '+fmt(lim)+'</span>'
@@ -4561,7 +4538,17 @@ function selCen(i){cenSel=i;calcR();}
 function renderTbls(){
   var ls=getLM(cM,cY).sort(function(a,b){return b.dt.localeCompare(a.dt);});
   function cNome(id){var c=contas.find(function(x){return x.id==id;});if(!c)return"—";return'<span style="display:inline-flex;align-items:center;gap:.25rem;"><span style="width:7px;height:7px;border-radius:50%;background:'+c.cor+';flex-shrink:0;"></span>'+c.nome+'</span>';}
-  function row(l){return'<tr><td>'+fmtDt(l.dt)+'</td><td>'+l.desc+(l.rec?'<span style="font-size:.58rem;color:var(--faint);margin-left:3px;">↺</span>':"")+(l.parc?'<span style="font-size:.58rem;color:var(--warn);margin-left:3px;">✂</span>':"")+'</td><td><span class="cc">'+l.cat+'</span></td><td>'+cNome(l.conta)+'</td><td><span class="bdg '+(l.t=="e"?"e":"s")+'">'+(l.t=="e"?"Entrada":"Saída")+'</span></td><td class="'+(l.t=="e"?"ap":"an")+'">'+(l.t=="e"?"+":"−")+fmt(l.v)+'</td>';}
+  function row(l){
+    var isTransf=(l.t==="transf");
+    var isPos=(l.t==="e");
+    var bdg=isTransf?'<span class="bdg" style="background:#1a73e822;color:#1a73e8;font-weight:700;">⇄ Transferência</span>':'<span class="bdg '+(isPos?"e":"s")+'">'+(isPos?"Entrada":"Saída")+'</span>';
+    var desc=(isTransf?'⇄ ':'')+l.desc+(l.rec?'<span style="font-size:.58rem;color:var(--faint);margin-left:3px;">↺</span>':"")+(l.parc?'<span style="font-size:.58rem;color:var(--warn);margin-left:3px;">✂</span>':"");
+    var cat=isTransf?(l.cat||'Transferência'):l.cat;
+    var contaCol=isTransf?cNome(l.contaOrigem)+' → '+cNome(l.contaDestino):cNome(l.conta);
+    var valCol=isTransf?fmt(l.v):(isPos?'+':'−')+fmt(l.v);
+    var valClass=isTransf?'':isPos?'ap':'an';
+    return'<tr><td>'+fmtDt(l.dt)+'</td><td>'+desc+'</td><td><span class="cc">'+cat+'</span></td><td>'+contaCol+'</td><td>'+bdg+'</td><td class="'+valClass+'">'+valCol+'</td>';
+  }
   var empty='<tr><td colspan="7"><div class="etbl">Nenhum lançamento. Adicione acima.</div></td></tr>';
   document.getElementById("tRec").innerHTML=ls.length?ls.slice(0,6).map(function(l){return row(l)+'<td></td></tr>';}).join(""):empty.replace("7","6");
   document.getElementById("tLanc").innerHTML=ls.length?ls.map(function(l){
@@ -4767,7 +4754,7 @@ function fillCategorySelect(selectId){
 
 fillCategorySelect('iCat');
 fillCategorySelect('iTransfCat');
-document.getElementById('iTransfCat').insertAdjacentHTML('afterbegin','<option value="">— nenhuma —</option>');
+document.getElementById('iTransfCat').insertAdjacentHTML('afterbegin','<option value="">— sem categoria —</option>');
 document.getElementById('iTransfCat').value='';
 (function(){
   var catSel=document.getElementById('iCat');
@@ -4967,7 +4954,7 @@ var ORC_MANUAL = parseFloat(localStorage.getItem('orc_manual')) || 0;
 const ORC_EMOJI = {
   "Essenciais": "🏠",
   "Lazer": "🎮",
-  "Reserva": "🛡️",
+  "Investimentos": "📈",
   "Dia a dia": "📅"
 };
 const ORC_MODE_INFO = {
@@ -5022,8 +5009,8 @@ function renderOrcControls(){
   const editing = host.getAttribute('data-editing') === 'true';
   var customVals = JSON.parse(localStorage.getItem('orc_custom_v1')||'null') || {essenciais:60,lazer:20,reserva:15,diaadia:5};
   var catKeys = ['essenciais','lazer','reserva','diaadia'];
-  var catNames = ['Essenciais','Lazer','Reserva','Dia a dia'];
-  var catEmojis = ['🏠','🎮','🛡️','📅'];
+  var catNames = ['Essenciais','Lazer','Investimentos','Dia a dia'];
+  var catEmojis = ['🏠','🎮','📈','📅'];
   var base = getRendaOrcamento();
   var customInputsHTML = catKeys.map(function(key,i){
     var pct=customVals[key]||0;
@@ -5159,7 +5146,8 @@ function renderOrc(){
     var dados=getOrcReal();
     var preset=getOrcPreset();
     var nomes=['Essenciais','Lazer','Reserva','Dia a dia'];
-    var emojis={'Essenciais':'🏠','Lazer':'🎮','Reserva':'🛡️','Dia a dia':'📅'};
+    var emojis={'Essenciais':'🏠','Lazer':'🎮','Reserva':'📈','Dia a dia':'📅'};
+    var displayNomes={'Essenciais':'Essenciais','Lazer':'Lazer','Reserva':'Investimentos','Dia a dia':'Dia a dia'};
 
     var h='';
     nomes.forEach(function(nome,index){
@@ -5170,8 +5158,9 @@ function renderOrc(){
       var cor=perc>=100?'var(--red)':perc>=80?'var(--warn)':'var(--green)';
       var emoji=emojis[nome]||'📊';
       var pct=preset[index]||0;
+      var nomeExib=displayNomes[nome]||nome;
       h+='<div class="orc-item">';
-      h+='<div class="orc-label"><span>'+emoji+' '+nome+' - '+pct+'%</span><span style="color:'+cor+';">'+Math.min(perc,100).toFixed(0)+'%</span></div>';
+      h+='<div class="orc-label"><span>'+emoji+' '+nomeExib+' - '+pct+'%</span><span style="color:'+cor+';">'+Math.min(perc,100).toFixed(0)+'%</span></div>';
       h+='<div class="orc-bar"><div style="width:'+Math.min(perc,100)+'%;height:100%;background:'+cor+';transition:width 0.4s ease;border-radius:6px;"></div></div>';
       h+='<div style="margin-top:6px;font-size:.75rem;color:var(--muted);display:flex;justify-content:space-between;">';
       h+='<span>'+fmt(info.gasto)+' / '+fmt(info.limite)+'</span>';
@@ -5191,10 +5180,10 @@ function getRendaOrcamento(){
 }
 function getGastosPorCategoria(){
   const res = {};
-  const k = cY + "-" + ("0"+(cM+1)).slice(-2); // ex: "2026-04"
+  const k = cY + "-" + ("0"+(cM+1)).slice(-2);
 
   lancamentos
-    .filter(l => l.t === 's' && l.dt && l.dt.startsWith(k) && !(l.rec && _temAdiantadoMes(l, k)))
+    .filter(l => (l.t === 's' || (l.t === 'transf' && l.cat)) && l.dt && l.dt.startsWith(k) && !(l.rec && _temAdiantadoMes(l, k)))
     .forEach(l => {
       const cat = mapCategoriaOrc(l.cat);
       res[cat] = (res[cat] || 0) + l.v;
