@@ -2009,6 +2009,7 @@ function initFirestore(){
       setSyncStatus("ok");
       render();
       renderOrc();
+      renderOrcControls();
     }, function(e){setSyncStatus("error");console.error(e);});
   // Listen contas
   unsubContas=db.collection("users").doc(currentUser.uid).collection("contas")
@@ -2018,6 +2019,7 @@ function initFirestore(){
       setSyncStatus("ok");
       render();
       renderOrc();
+      renderOrcControls();
     }, function(e){setSyncStatus("error");console.error(e);});
   // Listen metas
   unsubMetas=db.collection("users").doc(currentUser.uid).collection("metas")
@@ -2755,66 +2757,6 @@ function dfCalSelect(dtStr){
 }
 
 // ===== CALENDÁRIO INLINE DA AGENDA =====
-var _agCalState={};
-
-function renderAgCal(id){
-  var st=_agCalState[id];
-  if(!st)return;
-  var container=document.getElementById('agcal_'+id);
-  if(!container)return;
-  var m=st.mes,y=st.ano,sel=st.sel;
-  var primeiroDia=new Date(y,m,1).getDay();
-  var ultimoDia=new Date(y,m+1,0).getDate();
-  var MNC=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-  var h='<div class="dfcal">';
-  h+='<div class="dfcal-nav">';
-  h+='<button onclick="agCalNav(\''+id+'\',-1)" type="button">&#x2039;</button>';
-  h+='<span>'+MNC[m]+' '+y+'</span>';
-  h+='<button onclick="agCalNav(\''+id+'\',1)" type="button">&#x203a;</button>';
-  h+='</div>';
-  h+='<div class="dfcal-grid">';
-  ['D','S','T','Q','Q','S','S'].forEach(function(dw){h+='<div class="dfcal-dow">'+dw+'</div>';});
-  for(var i=0;i<primeiroDia;i++)h+='<div class="dfcal-day vazio"></div>';
-  for(var di=1;di<=ultimoDia;di++){
-    var dtStr=y+'-'+('0'+(m+1)).slice(-2)+'-'+('0'+di).slice(-2);
-    var isSel=sel===dtStr;
-    var cls='dfcal-day'+(isSel?' selecionado':'');
-    h+='<div class="'+cls+'" data-dt="'+dtStr+'">'+di+'</div>';
-  }
-  h+='</div></div>';
-  container.innerHTML=h;
-  container.querySelectorAll('.dfcal-day[data-dt]').forEach(function(el){
-    el.addEventListener('click',function(){agCalSelect(id,this.getAttribute('data-dt'));});
-  });
-}
-function agCalNav(id,dir){
-  var st=_agCalState[id];
-  if(!st)return;
-  st.mes+=dir;
-  if(st.mes>11){st.mes=0;st.ano++;}
-  if(st.mes<0){st.mes=11;st.ano--;}
-  renderAgCal(id);
-}
-function agCalToggle(id){
-  var wrap=document.getElementById('agcal_wrap_'+id);
-  if(!wrap)return;
-  var opening=wrap.style.display==='none';
-  wrap.style.display=opening?'':'none';
-  if(opening)renderAgCal(id);
-}
-function agCalSelect(id,dtStr){
-  var st=_agCalState[id];
-  if(!st)return;
-  st.sel=dtStr;
-  var hEl=document.getElementById('dtpago_'+id);
-  if(hEl)hEl.value=dtStr;
-  var pts=dtStr.split('-');
-  var lbl=document.getElementById('agcal_dtlbl_'+id);
-  if(lbl)lbl.textContent=pts[2]+'/'+pts[1]+'/'+pts[0];
-  renderAgCal(id);
-  var wrap=document.getElementById('agcal_wrap_'+id);
-  if(wrap)wrap.style.display='none';
-}
 
 // ===== CALENDÁRIOS SIMPLES (parcela, mensal, débito) =====
 var _dfCalSelParcela=null,_dfCalSelMensal=null,_dfCalSelDebito=null;
@@ -3561,8 +3503,6 @@ function renderAgenda(m,y){
   document.getElementById("agH1").textContent="Agenda \u2014 "+MF[m]+" "+y;
   var grid=document.getElementById("agContent");
   if(!grid)return;
-  _agCalState={};
-
   // Collect all items for this month
   var items=[];
   var hoje=new Date();
@@ -3682,50 +3622,22 @@ function renderAgenda(m,y){
         } else if(isFuturo){
           tipoTag='<span style="font-size:.64rem;background:#f59e0b22;color:#d97706;border-radius:6px;padding:1px 6px;font-weight:700;">⏰ Previsto dia '+day+'</span>';
           borderColor='#64748b33';
-          var todayStr2=new Date().toISOString().slice(0,10);
-          var td2=new Date(todayStr2+'T12:00:00');
-          _agCalState[it.id]={mes:td2.getMonth(),ano:td2.getFullYear(),sel:todayStr2};
-          var pts2=todayStr2.split('-');
-          var dtLbl2=pts2[2]+'/'+pts2[1]+'/'+pts2[0];
           var contaOpts2=contas.map(function(c){return '<option value="'+c.id+'"'+(c.id===it.conta?' selected':'')+'>'+c.nome+'</option>';}).join('');
-          tipoBtn='<div style="margin-top:.4rem;">'
+          tipoBtn='<div style="margin-top:.4rem;display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;">'
             +'<button class="btn-paguei-antes" onclick="togglePagoAgenda(\''+it.id+'\',true)">⚡ Paguei antes</button>'
-            +'<input type="hidden" id="dtpago_'+it.id+'" value="'+todayStr2+'">'
-            +'<div style="display:flex;align-items:center;gap:.4rem;margin-top:.4rem;">'
-            +'<span id="agcal_dtlbl_'+it.id+'" style="font-size:.78rem;color:var(--txt);font-weight:600;">'+dtLbl2+'</span>'
-            +'<button onclick="agCalToggle(\''+it.id+'\')" type="button" style="background:transparent;border:1px solid var(--border);border-radius:8px;padding:.2rem .4rem;cursor:pointer;font-size:.82rem;color:var(--txt);">📅</button>'
-            +'</div>'
-            +'<div id="agcal_wrap_'+it.id+'" style="display:none;margin-top:.4rem;">'
-            +'<div id="agcal_'+it.id+'"></div>'
-            +'</div>'
-            +'<select id="ctapago_'+it.id+'" style="font-size:.72rem;padding:.15rem .4rem;border-radius:8px;border:1px solid var(--div);background:var(--surf2)!important;color:var(--txt)!important;height:26px;margin-top:.35rem;">'+contaOpts2+'</select>'
+            +'<select id="ctapago_'+it.id+'" style="font-size:.72rem;padding:.15rem .4rem;border-radius:8px;border:1px solid var(--div);background:var(--surf2)!important;color:var(--txt)!important;height:26px;">'+contaOpts2+'</select>'
             +'</div>';
 } else {
           tipoTag='<span style="font-size:.64rem;background:'+bgTag+';color:'+fgTag+';border-radius:6px;padding:1px 6px;font-weight:600;">'+labelTipo+'</span>';
           borderColor=it.tipoLanc==='debito'?'#ef444444':'#8b5cf644';
           // Controles de pagamento inline
-          var todayStr=new Date().toISOString().slice(0,10);
-          var td=new Date(todayStr+'T12:00:00');
-          _agCalState[it.id]={mes:td.getMonth(),ano:td.getFullYear(),sel:todayStr};
-          var pts=todayStr.split('-');
-          var dtLbl=pts[2]+'/'+pts[1]+'/'+pts[0];
           var contaOpts=contas.map(function(c){return '<option value="'+c.id+'"'+(c.id===it.conta?' selected':'')+'>'+c.nome+'</option>';}).join('');
-          tipoBtn='<div style="margin-top:.4rem;">'
-            +'<div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;">'
+          tipoBtn='<div style="margin-top:.4rem;display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;">'
             +'<label style="font-size:.72rem;color:var(--muted);display:flex;align-items:center;gap:.3rem;cursor:pointer;">'
             +'<input type="checkbox" id="chk_'+it.id+'" onchange="togglePagoAgenda(\''+it.id+'\',this.checked)" style="accent-color:#22c55e;width:15px;height:15px;">'
             +'<span>Marcar como pago</span>'
             +'</label>'
             +'<select id="ctapago_'+it.id+'" style="font-size:.72rem;padding:.15rem .4rem;border-radius:8px;border:1px solid var(--div);background:var(--surf2)!important;color:var(--txt)!important;height:26px;" title="Conta do pagamento">'+contaOpts+'</select>'
-            +'</div>'
-            +'<div style="display:flex;align-items:center;gap:.4rem;margin-top:.4rem;">'
-            +'<span id="agcal_dtlbl_'+it.id+'" style="font-size:.78rem;color:var(--txt);font-weight:600;">'+dtLbl+'</span>'
-            +'<button onclick="agCalToggle(\''+it.id+'\')" type="button" style="background:transparent;border:1px solid var(--border);border-radius:8px;padding:.2rem .4rem;cursor:pointer;font-size:.82rem;color:var(--txt);">📅</button>'
-            +'</div>'
-            +'<input type="hidden" id="dtpago_'+it.id+'" value="'+todayStr+'">'
-            +'<div id="agcal_wrap_'+it.id+'" style="display:none;margin-top:.4rem;">'
-            +'<div id="agcal_'+it.id+'"></div>'
-            +'</div>'
             +'</div>';
         }
       } else if(it.tipo==='compromisso'&&!isPaid){
@@ -4741,7 +4653,7 @@ function togglePagoAgenda(id, checked){
   if(!l)return;
 
   var dtEl=document.getElementById("dtpago_"+id);
-  var dtPago=dtEl?dtEl.value:l.dt;
+  var dtPago=dtEl?dtEl.value:new Date().toISOString().slice(0,10);
 
   // Pega a conta escolhida no select (ou usa a conta original da parcela)
   var ctaEl=document.getElementById("ctapago_"+id);
@@ -5099,15 +5011,18 @@ function setOrcBase(base){
   renderOrcControls();
   renderOrc();
 }
-  function getOrcPreset(){
-    if (ORC_MODE === 'conservador') return [70, 15, 10, 5];
-    if (ORC_MODE === 'folgado') return [65, 15, 15, 5];
-    if (ORC_MODE === 'custom') {
-      var c = JSON.parse(localStorage.getItem('orc_custom_v1')||'null');
-      if (c) return [c.essenciais||60, c.lazer||20, c.reserva||15, c.diaadia||5];
-    }
-    return [60, 20, 15, 5];
+function getOrcPreset(){
+  var mode = localStorage.getItem('orc_mode') || ORC_MODE || 'equilibrado';
+  if(mode === 'custom'){
+    try{
+      var custom = JSON.parse(localStorage.getItem('orc_custom_v1'));
+      if(custom) return [custom.essenciais||60, custom.lazer||20, custom.reserva||15, custom.diaadia||5];
+    }catch(e){}
   }
+  if(mode === 'conservador') return [70, 15, 10, 5];
+  if(mode === 'folgado') return [65, 15, 15, 5];
+  return [60, 20, 15, 5];
+}
 
 function renderOrcControls(){
   const host = document.getElementById('orcPresetWrap');
