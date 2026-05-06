@@ -230,6 +230,9 @@ input:focus,select:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(1,105,1
   .agenda-header{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));}
   #mobileTopBar { display: flex !important; }
   .main { padding-top: 5.5rem; }
+  /* Orçamento editor em telas médias */
+  .orc-mode-tog{height:auto!important;}
+  .orc-base-tog{height:auto!important;}
 }
 @media(max-width:480px){
   .resgrid{grid-template-columns:1fr 1fr;}
@@ -241,10 +244,13 @@ input:focus,select:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(1,105,1
   .pt-v{font-size:.72rem;}
   /* Orçamento editor */
   .orc-editor-container{padding:0 .5rem .75rem!important;}
-  .orc-mode-tog{display:grid!important;grid-template-columns:1fr 1fr!important;border-radius:.5rem;}
-  .orc-mode-tog button{font-size:.75rem!important;padding:.35rem!important;}
-  .orc-base-tog{flex-direction:column!important;}
+  .orc-mode-tog{display:grid!important;grid-template-columns:1fr 1fr!important;border-radius:.5rem;height:auto!important;}
+  .orc-mode-tog button{font-size:.75rem!important;padding:.35rem!important;height:auto!important;min-height:36px!important;}
+  .orc-base-tog{flex-direction:column!important;height:auto!important;}
+  .orc-base-tog button{height:auto!important;min-height:36px!important;}
   .orc-custom-inputs{display:grid!important;grid-template-columns:1fr 1fr!important;gap:.35rem!important;align-items:center!important;flex:unset!important;}
+  /* Transferência: evita texto cortado com 3 botões em tela pequena */
+  .ttog button{white-space:nowrap!important;font-size:.73rem!important;}
 }
 ::-webkit-scrollbar{width:4px;height:4px;}::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px;}
 
