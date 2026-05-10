@@ -1345,6 +1345,11 @@ input:focus, select:focus {
   border-top: 1px solid var(--div);
 }
 .contas-grupo-label:first-child { border-top: none; margin-top: 0; }
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
+input[type=number]{-moz-appearance:textfield;}
+.orc-input-pct::-webkit-inner-spin-button,
+.orc-input-pct::-webkit-outer-spin-button{-webkit-appearance:none;}
 </style>
 <script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
 </head>
@@ -2171,11 +2176,12 @@ function _temAdiantadoMes(l,k){return(l.paidMeses&&l.paidMeses.indexOf(k)!==-1)|
 function getLM(m,y){var k=y+"-"+("0"+(m+1)).slice(-2);var hoje=new Date().toISOString().slice(0,10);var mesAtual=(y===new Date().getFullYear()&&m===new Date().getMonth());return lancamentos.filter(function(l){
   if(!l.dt.startsWith(k))return false;
   if(l.t==="agenda")return false;
+  if(l.t==="transf_e"||l.t==="transf_s")return false;
   if(mesAtual&&l.dt>hoje)return false;
-  if(l.t==="transf")return true;
-  if(l.rec&&_temAdiantadoMes(l,k))return false;
-  // Mês atual: recorrentes só entram após confirmação (Caiu!/Saiu!)
-  if(mesAtual&&l.rec)return false;
+  if(l.rec){
+    var confirmado=lancamentos.some(function(x){return String(x.origemRecId)===String(l.id)&&x.dt.startsWith(k);});
+    if(!confirmado&&mesAtual)return false;
+  }
   return true;
 });}
 function getAgendaLM(m,y){var k=y+"-"+("0"+(m+1)).slice(-2);return lancamentos.filter(function(l){return l.dt.startsWith(k)&&l.t==="agenda";});}
@@ -2935,12 +2941,10 @@ function atualizarMetaTransfSelect(){
   var wrap=document.getElementById('transfrMetaWrap');
   var sel=document.getElementById('iTransfMeta');
   if(!wrap||!sel)return;
-  var contaDest=paraId?contas.find(function(c){return String(c.id)===String(paraId);}):null;
-  if(contaDest&&contaDest.tipo==='reserva'){
+  var metasVinculadas=paraId?metas.filter(function(m){return String(m.conta)===String(paraId);}):[];
+  if(metasVinculadas.length>0){
     wrap.style.display='';
-    sel.innerHTML=metas.length>0
-      ?'<option value="">— nenhuma —</option>'+metas.map(function(m){return'<option value="'+m.id+'">'+m.nome+'</option>';}).join('')
-      :'<option value="">Crie uma meta na aba Reserva</option>';
+    sel.innerHTML='<option value="">— nenhuma —</option>'+metasVinculadas.map(function(m){return'<option value="'+m.id+'">'+m.nome+'</option>';}).join('');
   } else {
     wrap.style.display='none';
     sel.value='';
@@ -2968,6 +2972,7 @@ function addTransferencia(){
     desc:desc,v:v,cat:_cat,t:'transf',
     dt:dt,contaOrigem:deId,contaDestino:paraId
   };
+  console.log('transf',{contaOrigem:deId,contaDestino:paraId,v:v});
   if(_metaId) l.metaId=_metaId;
   lancamentos.push(l);
   saveLanc(l);
@@ -4169,8 +4174,12 @@ function renderMetas(){
       chegaEm=MN[nd.getMonth()]+' '+nd.getFullYear();
     }
     h+='<div style="border:1px solid '+(meta.concluida?'var(--green)':'var(--border)')+';border-radius:.75rem;padding:.875rem 1rem;margin-bottom:.5rem;background:'+(meta.concluida?'var(--glight)':'var(--surf2)')+';">';
-    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;">';
+    var contaMeta=contas.find(function(c){return c.id===meta.conta;});
+    h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.5rem;">';
+    h+='<div>';
     h+='<div style="font-weight:700;font-size:.9rem;">'+(meta.concluida?'✅ ':'')+''+meta.nome+'</div>';
+    if(contaMeta)h+='<span style="font-size:.68rem;color:var(--muted);">🏦 '+contaMeta.nome+'</span>';
+    h+='</div>';
     h+='<span style="font-size:.72rem;font-weight:700;padding:.1rem .5rem;border-radius:9999px;background:'+(meta.concluida?'var(--glight)':'var(--plight)')+';color:'+(meta.concluida?'var(--green)':'var(--p)')+';">'+pct+'%</span>';
     h+='</div>';
     h+='<div style="height:8px;background:var(--surf3);border-radius:9999px;overflow:hidden;margin-bottom:.375rem;">';
@@ -4456,8 +4465,12 @@ function renderRanking(m, y, ls, cm){
 
       // Movimento no mês
       var doMes=ls.filter(function(l){return l.conta===c.id;});
-      var entMes=doMes.filter(function(l){return l.t==="e";}).reduce(function(s,l){return s+l.v;},0);
-      var saiMes=doMes.filter(function(l){return l.t==="s";}).reduce(function(s,l){return s+l.v;},0);
+      var entLancamentos=doMes.filter(function(l){return l.t==="e";}).reduce(function(s,l){return s+l.v;},0);
+      var saiLancamentos=doMes.filter(function(l){return l.t==="s";}).reduce(function(s,l){return s+l.v;},0);
+      var entTransf=lancamentos.filter(function(x){return x.t==="transf"&&String(x.contaDestino)===String(c.id)&&x.dt.startsWith(curKey);}).reduce(function(s,l){return s+l.v;},0);
+      var saiTransf=lancamentos.filter(function(x){return x.t==="transf"&&String(x.contaOrigem)===String(c.id)&&x.dt.startsWith(curKey);}).reduce(function(s,l){return s+l.v;},0);
+      var entMes=entLancamentos+entTransf;
+      var saiMes=saiLancamentos+saiTransf;
       var saldoFim=saldoInicio+entMes-saiMes;
 
       // Só saldo fim considerando o mês corrente
@@ -4471,8 +4484,8 @@ function renderRanking(m, y, ls, cm){
       contaH+='<div class="conta-ev-info">';
       contaH+='<div class="conta-ev-nome">'+c.nome+'</div>';
       contaH+='<div class="conta-ev-subs">';
-      contaH+='<span title="Entradas no mês" style="color:var(--green);">↑ Entrou: '+fmt(entMes)+'</span>';
-      contaH+='<span title="Saídas no mês" style="color:var(--red);">↓ Saiu: '+fmt(saiMes)+'</span>';
+      contaH+='<span title="Entradas no mês (inclui transferências)" style="color:var(--green);">↑ Entrou: '+fmt(entMes)+(entTransf>0?' <small style="opacity:.7">(+transf.)</small>':'')+'</span>';
+      contaH+='<span title="Saídas no mês (inclui transferências)" style="color:var(--red);">↓ Saiu: '+fmt(saiMes)+(saiTransf>0?' <small style="opacity:.7">(+transf.)</small>':'')+'</span>';
       contaH+='</div>';
       contaH+='<div style="font-size:.72rem;color:var(--muted);margin-top:.3rem;">'+fmt(saldoInicio)+' → '+fmt(saldoFim)+'<span style="margin-left:.4rem;font-weight:700;color:'+diffCor+';">'+(diff>=0?'(+':' (')+fmt(Math.abs(diff))+' no mês)</span></div>';
       contaH+='</div>';
@@ -5062,7 +5075,7 @@ function renderOrcControls(){
       + '<div style="font-size:.8rem;font-weight:600;margin-bottom:.375rem;">' + catEmojis[i] + ' ' + catNames[i] + '</div>'
       + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;">'
         + '<div style="display:flex;align-items:center;gap:.25rem;">'
-          + '<input type="number" min="0" max="100" step="1" id="orc_pct_' + key + '" value="' + pct + '"'
+          + '<input type="number" min="0" max="100" step="1" id="orc_pct_' + key + '" value="' + pct + '" class="orc-input-pct"'
           + ' style="flex:1;padding:.4rem;border-radius:8px;border:1px solid var(--div);background:var(--surf2);color:var(--txt);font-size:.82rem;text-align:right;"'
           + ' oninput="orcCustomChange(\'' + key + '\',\'pct\',this.value)">'
           + '<span style="font-size:.8rem;color:var(--muted);">%</span>'
