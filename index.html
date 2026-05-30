@@ -3490,16 +3490,19 @@ function renderAgenda(m,y){
 
       // Verificar confirmação antes de decidir se mostra
       var mesDaAgenda = y + '-' + ('0'+(m+1)).slice(-2);
-      var jaAdiantado = (l.paidMeses && l.paidMeses.indexOf(mesDaAgenda) !== -1)
-        || lancamentos.some(function(x){
-             return String(x.origemRecId)===String(l.id) && x.dt.startsWith(mesDaAgenda);
-           });
+      var dtEsperada = mesDaAgenda + '-' + ('0'+day).slice(-2);
+      var avulsoMes = lancamentos.find(function(x){
+        return String(x.origemRecId)===String(l.id) && x.dt.startsWith(mesDaAgenda);
+      });
+      var foiAdiantado = avulsoMes && avulsoMes.dt !== dtEsperada;
+      var foiConfirmado = (avulsoMes && avulsoMes.dt === dtEsperada)
+        || (!foiAdiantado && l.paidMeses && l.paidMeses.indexOf(mesDaAgenda) !== -1);
 
-      // Confirmado → não mostrar (já foi lançado)
-      if(jaAdiantado) return;
+      // Confirmado na data esperada → não mostrar
+      if(foiConfirmado) return;
 
-      // Não confirmado → mostrar sempre (previsto se futuro, A Receber/A Pagar se dia chegou)
-      items.push({day:day,desc:l.desc,v:l.v,t:l.t,cat:l.cat,tipo:'fixo',id:l.id,conta:l.conta,diaFixoTipo:l.diaFixoTipo,diaFixoNum:l.diaFixoNum});
+      var adiantadoDia = foiAdiantado ? parseInt(avulsoMes.dt.slice(8,10)) : null;
+      items.push({day:day,desc:l.desc,v:l.v,t:l.t,cat:l.cat,tipo:'fixo',id:l.id,conta:l.conta,diaFixoTipo:l.diaFixoTipo,diaFixoNum:l.diaFixoNum,adiantadoDia:adiantadoDia});
     }
   });
 
@@ -3626,7 +3629,11 @@ function renderAgenda(m,y){
         borderColor='#ef444444';
       } else if(it.tipo==='fixo'){
         if(it.t==='e'){
-          if(isFuturo){
+          if(it.adiantadoDia){
+            tipoTag='<span style="font-size:.64rem;background:#f59e0b22;color:#d97706;border-radius:6px;padding:1px 6px;font-weight:600;">⚡ Adiantado — recebido dia '+it.adiantadoDia+'</span>';
+            borderColor='#f59e0b55';
+            tipoBtn='<div style="margin-top:.4rem;"><button style="font-size:.72rem;padding:.2rem .6rem;border-radius:8px;opacity:.65;cursor:default;" class="btn-recebi-antes" disabled>✅ Recebido (dia '+it.adiantadoDia+')</button></div>';
+          } else if(isFuturo){
             tipoTag='<span style="font-size:.64rem;background:#22c55e11;color:#16a34a99;border-radius:6px;padding:1px 6px;font-weight:600;">⏰ Previsto dia '+day+'</span>';
             borderColor='#22c55e22';
             tipoBtn='<div style="margin-top:.4rem;"><button onclick="adiantarRecebimento(\''+it.id+'\')" style="font-size:.72rem;padding:.2rem .6rem;border-radius:8px;" class="btn-recebi-antes">✅ Recebi antes</button></div>';
@@ -5237,9 +5244,13 @@ function renderGastoDia(){
   if(lbl)lbl.textContent=lblTxt;
   var ls=lancamentos.filter(function(l){
     if(l.dt!==ds)return false;
-    if(l.t==="agenda")return false;
-    if(l.t==="transf"||l.t==="transf_e"||l.t==="transf_s")return false;
-    if(l.rec&&_temAdiantadoMes(l,ds.slice(0,7)))return false;
+    if(l.t==="agenda"||l.t==="transf"||l.t==="transf_e"||l.t==="transf_s")return false;
+    if(l.rec){
+      var confirmado=lancamentos.some(function(x){
+        return String(x.origemRecId)===String(l.id)&&x.dt===ds;
+      });
+      if(!confirmado)return false;
+    }
     return true;
   });
   if(!ls.length){el.innerHTML='<div class="dia-vazio">Nenhum lançamento hoje.</div>';return;}
