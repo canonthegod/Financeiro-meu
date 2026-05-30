@@ -670,6 +670,16 @@ input:focus, select:focus {
 .dfcal-grid .dfcal-day.selecionado.destaque{background:#16a34a;color:#fff;border-color:#16a34a;}
 .dfcal-info{font-size:.75rem;color:#16a34a;font-weight:600;margin-top:.4rem;padding:.3rem .5rem;background:#22c55e15;border-radius:8px;text-align:center;display:none;}
 .dfcal-info.on{display:block;}
+/* === AGENDA PANEL CALENDÁRIO INLINE === */
+.ag-panel{background:var(--surf2);border:1px solid var(--border);border-radius:12px;padding:.6rem .75rem;margin-top:.35rem;}
+.ag-panel-row{display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap;}
+.ag-panel-cal{flex:0 0 auto;max-width:200px;min-width:170px;}
+.ag-panel-cal .dfcal{margin-top:0;max-width:none;padding:.5rem .55rem;}
+.ag-panel-cal .dfcal-day{padding:.26rem .05rem;font-size:.72rem;}
+.ag-panel-cal .dfcal-nav span{font-size:.8rem;}
+.ag-panel-aside{flex:1;min-width:95px;display:flex;flex-direction:column;gap:6px;padding-top:.2rem;}
+.ag-panel-aside select{font-size:.78rem;padding:.3rem .5rem;border-radius:8px;border:1.5px solid var(--border);background:var(--surf);color:var(--txt);width:100%;}
+@media(max-width:480px){.ag-panel-row{flex-direction:column;}.ag-panel-cal{max-width:100%;min-width:0;width:100%;}}
 
 
 @keyframes pulseGreen {
@@ -3459,6 +3469,158 @@ function delAgendaGrupoRestantes(l){
   render();
 }
 
+// ===== AGENDA PANEL — CALENDÁRIO CUSTOMIZADO INLINE =====
+var _agPanelOpen = {};
+var _agPanelCalState = {};
+
+function openAgPanel(id, initDt) {
+  _agPanelOpen[id] = true;
+  if(!_agPanelCalState[id]) {
+    var dt = initDt || new Date().toISOString().slice(0,10);
+    var d = new Date(dt+'T12:00:00');
+    _agPanelCalState[id] = {mes: d.getMonth(), ano: d.getFullYear(), sel: dt};
+  }
+  renderAgenda();
+}
+
+function closeAgPanel(id) {
+  delete _agPanelOpen[id];
+  renderAgenda();
+}
+
+function agPanelCalNav(id, dir) {
+  var st = _agPanelCalState[id];
+  if(!st) return;
+  st.mes += dir;
+  if(st.mes > 11) { st.mes = 0; st.ano++; }
+  if(st.mes < 0) { st.mes = 11; st.ano--; }
+  var cont = document.querySelector('[data-agpanelcal="'+id+'"]');
+  if(cont) renderAgPanelCalInEl(id, cont);
+}
+
+function agPanelCalSelect(id, dtStr) {
+  var st = _agPanelCalState[id];
+  if(!st) return;
+  st.sel = dtStr;
+  var cont = document.querySelector('[data-agpanelcal="'+id+'"]');
+  if(cont) renderAgPanelCalInEl(id, cont);
+  var dtEl = document.getElementById('agpaneldt_'+id);
+  if(dtEl) dtEl.textContent = '📅 '+fmtDt(dtStr);
+}
+
+function renderAgPanelCalInEl(id, container) {
+  var st = _agPanelCalState[id];
+  if(!st || !container) return;
+  var m = st.mes, y = st.ano, selDt = st.sel;
+  var primeiroDia = new Date(y,m,1).getDay();
+  var ultimoDia = new Date(y,m+1,0).getDate();
+  var h = '<div class="dfcal" style="margin-top:0;max-width:none;">';
+  h += '<div class="dfcal-nav">';
+  h += '<button onclick="agPanelCalNav(\''+id+'\',-1)" type="button">&#x2039;</button>';
+  h += '<span>'+_MN_CAL[m]+' '+y+'</span>';
+  h += '<button onclick="agPanelCalNav(\''+id+'\',1)" type="button">&#x203a;</button>';
+  h += '</div><div class="dfcal-grid">';
+  ['D','S','T','Q','Q','S','S'].forEach(function(d){h+='<div class="dfcal-dow">'+d+'</div>';});
+  for(var i=0;i<primeiroDia;i++) h+='<div class="dfcal-day vazio"></div>';
+  for(var d=1;d<=ultimoDia;d++){
+    var dtStr=y+'-'+('0'+(m+1)).slice(-2)+'-'+('0'+d).slice(-2);
+    var isSel=selDt===dtStr;
+    h+='<div class="dfcal-day'+(isSel?' selecionado':'')+'" data-dt="'+dtStr+'">'+d+'</div>';
+  }
+  h+='</div></div>';
+  container.innerHTML=h;
+  container.querySelectorAll('.dfcal-day[data-dt]').forEach(function(el){
+    el.addEventListener('click',function(){ agPanelCalSelect(id,this.getAttribute('data-dt')); });
+  });
+}
+
+function _mkAgPanelHtml(id, t, contaOpts) {
+  var st = _agPanelCalState[id];
+  var dtDisp = (st && st.sel) ? fmtDt(st.sel) : 'Selecione uma data';
+  var confirmBg = (t==='e') ? '#16a34a' : '#d97706';
+  var confirmCall = (t==='agenda-item') ? 'confirmAgPanelAgendaItem(\''+id+'\')' : 'confirmAgPanelFixo(\''+id+'\',\''+t+'\')';
+  var h = '<div class="ag-panel">';
+  h += '<div class="ag-panel-row">';
+  h += '<div class="ag-panel-cal" id="agcal_'+id+'" data-agpanelcal="'+id+'"></div>';
+  h += '<div class="ag-panel-aside">';
+  h += '<select id="agpanelconta_'+id+'">'+contaOpts+'</select>';
+  h += '<button onclick="'+confirmCall+'" style="background:'+confirmBg+';color:#fff;font-size:.78rem;padding:.35rem .6rem;border-radius:8px;font-weight:700;border:none;cursor:pointer;width:100%;">✅ Confirmar</button>';
+  h += '<button onclick="closeAgPanel(\''+id+'\')" style="background:none;color:var(--muted);font-size:.7rem;padding:.2rem .4rem;border-radius:6px;border:1px solid var(--div);cursor:pointer;width:100%;">✕ Cancelar</button>';
+  h += '</div></div>';
+  h += '<div id="agpaneldt_'+id+'" style="font-size:.7rem;color:var(--p);font-weight:600;margin-top:.3rem;">📅 '+dtDisp+'</div>';
+  h += '</div>';
+  return h;
+}
+
+function confirmAgPanelFixo(id, t) {
+  var st = _agPanelCalState[id];
+  if(!st || !st.sel) { alert('Selecione uma data'); return; }
+  var dt = st.sel;
+  var contaEl = document.getElementById('agpanelconta_'+id);
+  var conta = contaEl ? contaEl.value : '';
+  var l = lancamentos.find(function(x){ return String(x.id)===String(id); });
+  if(!l) return;
+  var mesAlvo = dt.slice(0,7);
+  var jaExiste = lancamentos.some(function(x){ return String(x.origemRecId)===String(id)&&x.dt.startsWith(mesAlvo); });
+  if(!jaExiste) {
+    var nl = {
+      id: String(Date.now()+Math.random()),
+      desc: l.desc, v: l.v, cat: l.cat,
+      t: t, dt: dt, conta: conta||l.conta,
+      rec: false, origemRecId: String(id)
+    };
+    lancamentos.push(nl);
+    saveLanc(nl);
+    if(!l.paidMeses) l.paidMeses=[];
+    if(l.paidMeses.indexOf(mesAlvo)===-1) l.paidMeses.push(mesAlvo);
+    saveLanc(l);
+  }
+  delete _agPanelOpen[id];
+  delete _agPanelCalState[id];
+  render();
+  renderAgenda();
+}
+
+function confirmAgPanelAgendaItem(id) {
+  var st = _agPanelCalState[id];
+  if(!st || !st.sel) { alert('Selecione uma data'); return; }
+  var dt = st.sel;
+  var contaEl = document.getElementById('agpanelconta_'+id);
+  var conta = contaEl ? contaEl.value : '';
+  var l = lancamentos.find(function(x){ return String(x.id)===String(id); });
+  if(!l) return;
+  if(!l.dtOriginal) l.dtOriginal = l.dt;
+  l.paid = true; l.dtPago = dt; l.contaPago = conta||l.conta;
+  var novaDespesa = {
+    id: String(Date.now()+Math.random()),
+    desc: l.desc, v: l.v, cat: l.cat, t: 's',
+    dt: dt, rec: false, conta: conta||l.conta,
+    origemAgendaId: String(l.id)
+  };
+  lancamentos.push(novaDespesa);
+  saveLanc(novaDespesa);
+  if(l.tipoLanc==='debito'&&l.rec) {
+    var proximaData = addMeses(dt,1);
+    var jaTem = lancamentos.some(function(x){ return (x.grupoId===l.id||x.grupoId===l.grupoId)&&x.t==='agenda'&&!x.paid&&x.dt.slice(0,7)===proximaData.slice(0,7); });
+    if(!jaTem) {
+      var prox = {
+        id: String(Date.now()+Math.random()),
+        grupoId: l.grupoId||l.id,
+        desc: l.desc, v: l.v, cat: l.cat, t: 'agenda',
+        dt: proximaData, rec: true, conta: l.conta,
+        parc: false, tipoLanc: 'debito', diaDebito: l.diaDebito, paid: false
+      };
+      lancamentos.push(prox);
+      saveLanc(prox);
+    }
+  }
+  saveLanc(l);
+  delete _agPanelOpen[id];
+  delete _agPanelCalState[id];
+  render();
+  renderAgenda();
+}
+
 function renderAgenda(m,y){
   if(m===undefined){m=cM;}
   if(y===undefined){y=cY;}
@@ -3589,30 +3751,23 @@ function renderAgenda(m,y){
         } else if(isFuturo){
           tipoTag='<span style="font-size:.64rem;background:#f59e0b22;color:#d97706;border-radius:6px;padding:1px 6px;font-weight:700;">⏰ Previsto dia '+day+'</span>';
           borderColor='#64748b33';
-          var todayStr2=new Date().toISOString().slice(0,10);
-          var contaOpts2=contas.map(function(c){return '<option value="'+c.id+'"'+(c.id===it.conta?' selected':'')+'>'+c.nome+'</option>';}).join('');
-          tipoBtn='<div style="display:flex;align-items:center;gap:.5rem;margin-top:.4rem;flex-wrap:wrap;">'
-            +'<label style="font-size:.72rem;color:var(--muted);display:flex;align-items:center;gap:.3rem;cursor:pointer;">'
-            +'<input type="checkbox" data-pid="'+it.id+'" class="chk-adiantar-pago" style="accent-color:#22c55e;width:15px;height:15px;">'
-            +'<span>⚡ Paguei antes</span>'
-            +'</label>'
-            +'<input type="date" id="dtpago_'+it.id+'" value="'+todayStr2+'" style="font-size:.72rem;padding:.15rem .4rem;border-radius:8px;border:1px solid var(--div);background:var(--surf);color:var(--txt);height:26px;">'
-            +'<select id="ctapago_'+it.id+'" style="font-size:.72rem;padding:.15rem .4rem;border-radius:8px;border:1px solid var(--div);background:var(--surf);color:var(--txt);height:26px;">'+contaOpts2+'</select>'
-            +'</div>';
-} else {
+          var coAgf=contas.map(function(c){return '<option value="'+c.id+'"'+(c.id===it.conta?' selected':'')+'>'+c.nome+'</option>';}).join('');
+          var initDtAgf=new Date().toISOString().slice(0,10);
+          if(_agPanelOpen[it.id]){
+            tipoBtn='<div style="margin-top:.4rem;">'+_mkAgPanelHtml(it.id,'agenda-item',coAgf)+'</div>';
+          } else {
+            tipoBtn='<div style="margin-top:.4rem;"><button onclick="openAgPanel(\''+it.id+'\',\''+initDtAgf+'\')" style="font-size:.72rem;padding:.2rem .6rem;border-radius:8px;" class="btn-paguei-antes">⚡ Paguei antes</button></div>';
+          }
+        } else {
           tipoTag='<span style="font-size:.64rem;background:'+bgTag+';color:'+fgTag+';border-radius:6px;padding:1px 6px;font-weight:600;">'+labelTipo+'</span>';
           borderColor=it.tipoLanc==='debito'?'#ef444444':'#8b5cf644';
-          // Controles de pagamento inline
-          var todayStr=new Date().toISOString().slice(0,10);
-          var contaOpts=contas.map(function(c){return '<option value="'+c.id+'"'+(c.id===it.conta?' selected':'')+'>'+c.nome+'</option>';}).join('');
-          tipoBtn='<div style="display:flex;align-items:center;gap:.5rem;margin-top:.4rem;flex-wrap:wrap;">'
-            +'<label style="font-size:.72rem;color:var(--muted);display:flex;align-items:center;gap:.3rem;cursor:pointer;">'
-            +'<input type="checkbox" id="chk_'+it.id+'" onchange="togglePagoAgenda(\''+it.id+'\',this.checked)" style="accent-color:#22c55e;width:15px;height:15px;">'
-            +'<span>Marcar como pago</span>'
-            +'</label>'
-            +'<input type="date" id="dtpago_'+it.id+'" value="'+todayStr+'" style="font-size:.72rem;padding:.15rem .4rem;border-radius:8px;border:1px solid var(--div);background:var(--surf);color:var(--txt);height:26px;" title="Data real do pagamento">'
-            +'<select id="ctapago_'+it.id+'" style="font-size:.72rem;padding:.15rem .4rem;border-radius:8px;border:1px solid var(--div);background:var(--surf);color:var(--txt);height:26px;" title="Conta do pagamento">'+contaOpts+'</select>'
-            +'</div>';
+          var coAgn=contas.map(function(c){return '<option value="'+c.id+'"'+(c.id===it.conta?' selected':'')+'>'+c.nome+'</option>';}).join('');
+          var initDtAgn=new Date().toISOString().slice(0,10);
+          if(_agPanelOpen[it.id]){
+            tipoBtn='<div style="margin-top:.4rem;">'+_mkAgPanelHtml(it.id,'agenda-item',coAgn)+'</div>';
+          } else {
+            tipoBtn='<div style="margin-top:.4rem;"><button onclick="openAgPanel(\''+it.id+'\',\''+initDtAgn+'\')" style="font-size:.72rem;padding:.2rem .6rem;border-radius:8px;" class="btn-paguei-antes">⚡ Pagar</button></div>';
+          }
         }
       } else if(it.tipo==='compromisso'&&!isPaid){
         tipoTag='<span style="font-size:.64rem;background:#f59e0b22;color:#f59e0b;border-radius:6px;padding:1px 6px;font-weight:600;">🟡 Compromisso</span>';
@@ -3636,21 +3791,45 @@ function renderAgenda(m,y){
           } else if(isFuturo){
             tipoTag='<span style="font-size:.64rem;background:#22c55e11;color:#16a34a99;border-radius:6px;padding:1px 6px;font-weight:600;">⏰ Previsto dia '+day+'</span>';
             borderColor='#22c55e22';
-            tipoBtn='<div style="margin-top:.4rem;"><button onclick="adiantarRecebimento(\''+it.id+'\')" style="font-size:.72rem;padding:.2rem .6rem;border-radius:8px;" class="btn-recebi-antes">✅ Recebi antes</button></div>';
+            var coFef=contas.map(function(c){return '<option value="'+c.id+'"'+(c.id===it.conta?' selected':'')+'>'+c.nome+'</option>';}).join('');
+            var initDtFef=new Date().toISOString().slice(0,10);
+            if(_agPanelOpen[it.id]){
+              tipoBtn='<div style="margin-top:.4rem;">'+_mkAgPanelHtml(it.id,'e',coFef)+'</div>';
+            } else {
+              tipoBtn='<div style="margin-top:.4rem;"><button onclick="openAgPanel(\''+it.id+'\',\''+initDtFef+'\')" style="font-size:.72rem;padding:.2rem .6rem;border-radius:8px;" class="btn-recebi-antes">✅ Recebi antes</button></div>';
+            }
           } else {
             tipoTag='<span style="font-size:.64rem;background:#f59e0b22;color:#d97706;border-radius:6px;padding:1px 6px;font-weight:700;">🔔 A Receber</span>';
             borderColor='#f59e0b55';
-            tipoBtn='<div style="margin-top:.4rem;"><button onclick="confirmarRecebimento(\''+it.id+'\')" class="btn-recebi-antes">✅ Caiu!</button></div>';
+            var coFen=contas.map(function(c){return '<option value="'+c.id+'"'+(c.id===it.conta?' selected':'')+'>'+c.nome+'</option>';}).join('');
+            var initDtFen=y+'-'+('0'+(m+1)).slice(-2)+'-'+('0'+it.day).slice(-2);
+            if(_agPanelOpen[it.id]){
+              tipoBtn='<div style="margin-top:.4rem;">'+_mkAgPanelHtml(it.id,'e',coFen)+'</div>';
+            } else {
+              tipoBtn='<div style="margin-top:.4rem;"><button onclick="openAgPanel(\''+it.id+'\',\''+initDtFen+'\')" class="btn-recebi-antes">✅ Caiu!</button></div>';
+            }
           }
         } else {
           if(isFuturo){
             tipoTag='<span style="font-size:.64rem;background:#f59e0b22;color:#d97706;border-radius:6px;padding:1px 6px;font-weight:700;">⏰ Previsto dia '+day+'</span>';
             borderColor='#64748b33';
-            tipoBtn='<div style="margin-top:.4rem;"><button onclick="adiantarPagamento(\''+it.id+'\')" style="font-size:.72rem;padding:.2rem .6rem;border-radius:8px;" class="btn-paguei-antes">⚡ Paguei antes</button></div>';
+            var coFsf=contas.map(function(c){return '<option value="'+c.id+'"'+(c.id===it.conta?' selected':'')+'>'+c.nome+'</option>';}).join('');
+            var initDtFsf=new Date().toISOString().slice(0,10);
+            if(_agPanelOpen[it.id]){
+              tipoBtn='<div style="margin-top:.4rem;">'+_mkAgPanelHtml(it.id,'s',coFsf)+'</div>';
+            } else {
+              tipoBtn='<div style="margin-top:.4rem;"><button onclick="openAgPanel(\''+it.id+'\',\''+initDtFsf+'\')" style="font-size:.72rem;padding:.2rem .6rem;border-radius:8px;" class="btn-paguei-antes">⚡ Paguei antes</button></div>';
+            }
           } else {
             tipoTag='<span style="font-size:.64rem;background:#f59e0b22;color:#d97706;border-radius:6px;padding:1px 6px;font-weight:700;">⚠️ A Pagar</span>';
             borderColor='#f59e0b55';
-            tipoBtn='<div style="margin-top:.4rem;"><button onclick="confirmarPagamento(\''+it.id+'\')" class="btn-paguei-antes">⚡ Saiu!</button></div>';
+            var coFsn=contas.map(function(c){return '<option value="'+c.id+'"'+(c.id===it.conta?' selected':'')+'>'+c.nome+'</option>';}).join('');
+            var initDtFsn=y+'-'+('0'+(m+1)).slice(-2)+'-'+('0'+it.day).slice(-2);
+            if(_agPanelOpen[it.id]){
+              tipoBtn='<div style="margin-top:.4rem;">'+_mkAgPanelHtml(it.id,'s',coFsn)+'</div>';
+            } else {
+              tipoBtn='<div style="margin-top:.4rem;"><button onclick="openAgPanel(\''+it.id+'\',\''+initDtFsn+'\')" class="btn-paguei-antes">⚡ Saiu!</button></div>';
+            }
           }
         }
       } else if(it.tipo==='entrada'){
@@ -3679,11 +3858,9 @@ function renderAgenda(m,y){
   });
 
   grid.innerHTML=h;
-  // Delegação de eventos para checkboxes de "Paguei antes" em itens previstos
-  grid.querySelectorAll('.chk-adiantar-pago').forEach(function(el){
-    el.addEventListener('change',function(){
-      if(this.checked) togglePagoAgenda(this.getAttribute('data-pid'),true);
-    });
+  // Inicializar calendários dos painéis abertos
+  grid.querySelectorAll('[data-agpanelcal]').forEach(function(el){
+    renderAgPanelCalInEl(el.getAttribute('data-agpanelcal'), el);
   });
 
   // ── KPIs da Agenda ──
