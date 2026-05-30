@@ -3749,7 +3749,8 @@ function renderAgenda(m,y){
   }
 
   // ── Badge de pendentes no menu ──
-  var totalPendGlobal=lancamentos.filter(function(l){return l.t==="agenda"&&!l.paid;}).length;
+  var mesAtualKey=y+"-"+("0"+(m+1)).slice(-2);
+  var totalPendGlobal=lancamentos.filter(function(l){return l.t==="agenda"&&!l.paid&&l.dt&&l.dt.startsWith(mesAtualKey);}).length;
   document.querySelectorAll("[onclick=\"nav('agenda')\"]").forEach(function(btn){
     var badge=btn.querySelector(".agenda-badge");
     if(totalPendGlobal>0){
