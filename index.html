@@ -2428,13 +2428,9 @@ function editSaldo(id){
   if(novo===null) return;
   var val=parseFloat(novo.replace(',','.'));
   if(isNaN(val)) return alert("Valor inválido.");
-  var diff=val-cur;
-  if(Math.abs(diff)<0.01) return;
-  var today=new Date();
-  var ds=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
-  var l={id:Date.now(),desc:"Ajuste de saldo ("+c.nome+")",valor:Math.abs(diff),tipo:diff>=0?'e':'s',cat:'Outros',conta:id,data:ds,recorrente:false,parcelas:1,parcelaAtual:1};
-  lancamentos.push(l);
-  saveLanc(l);
+  if(Math.abs(val-cur)<0.01) return;
+  c.si=Math.round((c.si+(val-cur))*100)/100;
+  saveConta(c);
   render();
   renderContas();
 }
@@ -5091,18 +5087,7 @@ function saveEditConta(){
       var saldoAtual=saldoConta(id);
       var diff=Math.round((saldoDesejado-saldoAtual)*100)/100;
       if(diff!==0){
-        var ajuste={
-          id:String(Date.now()+Math.random()),
-          desc:'Ajuste de saldo ('+c.nome+')',
-          v:Math.abs(diff),
-          cat:'Outros',
-          t:diff>0?'e':'s',
-          dt:new Date().toISOString().slice(0,10),
-          rec:false,
-          conta:id
-        };
-        lancamentos.push(ajuste);
-        saveLanc(ajuste);
+        c.si=Math.round((c.si+diff)*100)/100;
       }
     }
   }
