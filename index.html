@@ -3587,14 +3587,20 @@ function confirmAgPanelAgendaItem(id) {
   if(!l) return;
   if(!l.dtOriginal) l.dtOriginal = l.dt;
   l.paid = true; l.dtPago = dt; l.contaPago = conta||l.conta;
-  var novaDespesa = {
-    id: String(Date.now()+Math.random()),
-    desc: l.desc, v: l.v, cat: l.cat, t: 's',
-    dt: dt, rec: false, conta: conta||l.conta,
-    origemAgendaId: String(l.id)
-  };
-  lancamentos.push(novaDespesa);
-  saveLanc(novaDespesa);
+  var despExist=lancamentos.find(function(x){return String(x.origemAgendaId)===String(id);});
+  if(despExist){
+    despExist.dt=dt; despExist.conta=conta||l.conta;
+    saveLanc(despExist);
+  } else {
+    var novaDespesa={
+      id:String(Date.now()+Math.random()),
+      desc:l.desc, v:l.v, cat:l.cat, t:'s',
+      dt:dt, rec:false, conta:conta||l.conta,
+      origemAgendaId:String(l.id)
+    };
+    lancamentos.push(novaDespesa);
+    saveLanc(novaDespesa);
+  }
   if(l.tipoLanc==='debito'&&l.rec) {
     var proximaData = addMeses(dt,1);
     var jaTem = lancamentos.some(function(x){ return (x.grupoId===l.id||x.grupoId===l.grupoId)&&x.t==='agenda'&&!x.paid&&x.dt.slice(0,7)===proximaData.slice(0,7); });
@@ -4826,19 +4832,25 @@ function togglePagoAgenda(id, checked){
     l.contaPago=contaPagamento; // salva qual conta foi usada
     // NÃO muda l.t para "s" — evita contaminar meses anteriores
 
-    var novaDespesa={
-      id:String(Date.now()+Math.random()),
-      desc:l.desc,
-      v:l.v,
-      cat:l.cat,
-      t:"s",
-      dt:dtPago,
-      rec:false,
-      conta:contaPagamento, // usa a conta selecionada
-      origemAgendaId:String(l.id)
-    };
-    lancamentos.push(novaDespesa);
-    saveLanc(novaDespesa);
+    var despExist=lancamentos.find(function(x){return String(x.origemAgendaId)===String(l.id);});
+    if(despExist){
+      despExist.dt=dtPago; despExist.conta=contaPagamento;
+      saveLanc(despExist);
+    } else {
+      var novaDespesa={
+        id:String(Date.now()+Math.random()),
+        desc:l.desc,
+        v:l.v,
+        cat:l.cat,
+        t:"s",
+        dt:dtPago,
+        rec:false,
+        conta:contaPagamento,
+        origemAgendaId:String(l.id)
+      };
+      lancamentos.push(novaDespesa);
+      saveLanc(novaDespesa);
+    }
 
     // Se débito recorrente, cria próxima ocorrência pendente
     if(l.tipoLanc==='debito'&&l.rec){
@@ -5406,13 +5418,9 @@ function renderGastoDia(){
   if(lbl)lbl.textContent=lblTxt;
   var ls=lancamentos.filter(function(l){
     if(l.dt!==ds)return false;
-    if(l.t==="agenda"||l.t==="transf"||l.t==="transf_e"||l.t==="transf_s")return false;
-    if(l.rec){
-      var confirmado=lancamentos.some(function(x){
-        return String(x.origemRecId)===String(l.id)&&x.dt===ds;
-      });
-      if(!confirmado)return false;
-    }
+    if(l.t==="agenda")return false;
+    if(l.t==="transf"||l.t==="transf_e"||l.t==="transf_s")return false;
+    if(l.rec&&lancamentos.some(function(x){return String(x.origemRecId)===String(l.id)&&x.dt===ds;}))return false;
     return true;
   });
   if(!ls.length){el.innerHTML='<div class="dia-vazio">Nenhum lançamento hoje.</div>';return;}
