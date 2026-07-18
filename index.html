@@ -1574,7 +1574,7 @@ input:focus, select:focus {
           <select id="iTipoLanc" onchange="toggleTipoFields()" style="width:100%;padding:.45rem .75rem;border-radius:10px;border:1px solid var(--div);background:var(--surf);color:var(--txt);font-size:.88rem;">
             <option value="normal">💳 Pagamento normal</option>
             <option value="parc">📅 Parcelado</option>
-            <option value="debito">🔴 Débito automático</option>
+            <option value="recmensal">🔄 Recorrente mensal (sem fim)</option>
             <option value="mensal">📆 Parcelado (Valor fixo por X meses)</option>
           </select>
         </div>
@@ -1591,14 +1591,14 @@ input:focus, select:focus {
           </div>
           <p style="font-size:.75rem;color:var(--p);margin:.3rem 0 0;padding:.35rem .6rem;background:var(--plight);border-radius:8px;">📅 Cada parcela aparece na Agenda do Mês como compromisso pendente. Só entra nas despesas quando você marcar como paga.</p>
         </div>
-        <!-- Débito automático -->
-        <div id="debitoWrap" style="display:none;margin-bottom:.6rem;flex-direction:column;gap:.75rem;">
+        <!-- Recorrente mensal sem fim -->
+        <div id="recMensalWrap" style="display:none;margin-bottom:.6rem;flex-direction:column;gap:.75rem;">
           <div class="fg">
-            <label>Dia fixo do débito</label>
-            <div id="dfCalDebito"></div>
-            <input type="hidden" id="iDtDebitoHidden">
+            <label>Dia do mês que sempre desconta</label>
+            <div id="dfCalRecMensal"></div>
+            <input type="hidden" id="iDtRecMensalHidden">
           </div>
-          <p style="font-size:.75rem;color:var(--p);margin:.25rem 0 0;padding:.35rem .6rem;background:var(--plight);border-radius:8px;">🔴 Aparece na Agenda todo mês neste dia. Ao marcar como pago na Agenda, entra automaticamente nas despesas.</p>
+          <p id="recMensalInfo" style="font-size:.75rem;color:var(--p);margin:.25rem 0 0;padding:.35rem .6rem;background:var(--plight);border-radius:8px;">🔄 Desconta todo mês, indefinidamente</p>
         </div>
 <div id="mensalWrap" style="display:none;margin-bottom:.6rem;">
   <div class="fg" style="margin-bottom:.5rem;">
@@ -2770,12 +2770,12 @@ function dfCalSelect(dtStr){
   }
 }
 
-// ===== CALENDÁRIOS SIMPLES (parcela, mensal, débito) =====
-var _dfCalSelParcela=null,_dfCalSelMensal=null,_dfCalSelDebito=null;
+// ===== CALENDÁRIOS SIMPLES (parcela, mensal, recorrente mensal) =====
+var _dfCalSelParcela=null,_dfCalSelMensal=null,_dfCalSelRecMensal=null;
 var _calState={
   Parcela:{mes:null,ano:null,sel:null,hiddenId:'iDtParcelaHidden'},
   Mensal: {mes:null,ano:null,sel:null,hiddenId:'iDtMensalHidden'},
-  Debito: {mes:null,ano:null,sel:null,hiddenId:'iDtDebitoHidden'}
+  RecMensal: {mes:null,ano:null,sel:null,hiddenId:'iDtRecMensalHidden'}
 };
 
 function initSimpleCal(ctx,dtBase){
@@ -2801,7 +2801,7 @@ function renderSimpleCal(ctx){
   var m=st.mes,y=st.ano;
   var primeiroDia=new Date(y,m,1).getDay();
   var ultimoDia=new Date(y,m+1,0).getDate();
-  var selDt=ctx==='Parcela'?_dfCalSelParcela:ctx==='Mensal'?_dfCalSelMensal:_dfCalSelDebito;
+  var selDt=ctx==='Parcela'?_dfCalSelParcela:ctx==='Mensal'?_dfCalSelMensal:_dfCalSelRecMensal;
   var h='<div class="dfcal">';
   h+='<div class="dfcal-nav">';
   h+='<button onclick="simpleCalNav(\''+ctx+'\',-1)" type="button">&#x2039;</button>';
@@ -2837,7 +2837,7 @@ function simpleCalSelect(ctx,dtStr){
   st.sel=dtStr;
   if(ctx==='Parcela')_dfCalSelParcela=dtStr;
   else if(ctx==='Mensal')_dfCalSelMensal=dtStr;
-  else _dfCalSelDebito=dtStr;
+  else if(ctx==='RecMensal'){_dfCalSelRecMensal=dtStr;updateRecMensalInfo(dtStr);}
   var hEl=document.getElementById(st.hiddenId);
   if(hEl)hEl.value=dtStr;
   renderSimpleCal(ctx);
@@ -2994,22 +2994,22 @@ function addLanc(){
       lancamentos.push(nl);
       saveLanc(nl);
     }
-  } else if(tl == "debito") {
-    var dtDebito = document.getElementById("iDtDebitoHidden").value || dtCal || dt;
-    var diaDebito = parseInt(dtDebito.split("-")[2]) || 1;
+  } else if(tl == "recmensal" && tipoAtual == "s") {
+    var dtRecMensal = document.getElementById("iDtRecMensalHidden").value || dtCal || dt;
+    var diaRec = parseInt(dtRecMensal.split("-")[2]) || 1;
     var nl = {
       id: String(Date.now() + Math.random()),
       desc: desc,
       v: v,
       cat: cat,
-      t: "agenda", // entra nas despesas só quando pago na agenda
-      dt: dtDebito,
+      t: tipoAtual, // "s" — só entra nas despesas quando confirmado na Agenda
+      dt: dtRecMensal,
       rec: true,
-      conta: conta,
-      parc: false,
-      tipoLanc: "debito",
-      diaDebito: diaDebito,
-      paid: false
+      recTipo: "mensal",
+      recDia: diaRec,
+      diaFixoTipo: "fixo",
+      diaFixoNum: diaRec,
+      conta: conta
     };
     lancamentos.push(nl);
     saveLanc(nl);
@@ -3076,7 +3076,7 @@ function addLanc(){
   document.getElementById("parcInfo").className = "parc-info";
   document.getElementById("iTipoLanc").value = "normal";
   // Limpa calendários simples
-  ['Parcela','Mensal','Debito'].forEach(function(ctx){
+  ['Parcela','Mensal','RecMensal'].forEach(function(ctx){
     _calState[ctx].mes=null;_calState[ctx].ano=null;_calState[ctx].sel=null;
     var hEl=document.getElementById(_calState[ctx].hiddenId);if(hEl)hEl.value='';
     var cEl=document.getElementById('dfCal'+ctx);if(cEl)cEl.innerHTML='';
@@ -3717,8 +3717,6 @@ function renderAgenda(m,y){
   agItems.forEach(function(l){
     var day=parseInt(l.dt.slice(8,10))||1;
     var tipo='parcela';
-    if(l.tipoLanc==='debito') tipo='debito';
-    else if(l.tipoLanc==='mensal') tipo='parcela';
     items.push({day:day,desc:l.desc,v:l.v,t:'s',cat:l.cat,tipo:tipo,id:l.id,conta:l.conta,pn:l.pn,pt:l.pt,paid:l.paid,agendaItem:true,tipoLanc:l.tipoLanc});
   });
 
@@ -3731,10 +3729,10 @@ function renderAgenda(m,y){
         items.push({day:day,desc:l.desc,v:l.v,t:'s',cat:l.cat,tipo:'compromisso',id:l.id,conta:l.conta,paid:l.paid});
       }
     }
-    // Débitos automáticos antigos (tipoLanc debito com t:"s")
+    // Débitos automáticos antigos (registros legados) — tratados como pagamento normal
     if(l.tipoLanc==='debito'&&l.t==='s'){
       var day=l.diaDebito||parseInt(l.dt.slice(8,10));
-      items.push({day:day,desc:l.desc,v:l.v,t:'s',cat:l.cat,tipo:'debito',id:l.id,conta:l.conta,paid:l.paid});
+      items.push({day:day,desc:l.desc,v:l.v,t:'s',cat:l.cat,tipo:'normal',id:l.id,conta:l.conta,paid:l.paid});
     }
   });
 
@@ -3779,10 +3777,10 @@ function renderAgenda(m,y){
       var opacidade=isFuturo?'0.55':'1';
 
       if(it.agendaItem){
-        // Novo sistema: parcelas/débitos da agenda
-        var labelTipo=it.tipoLanc==='debito'?'🔴 Débito auto':(it.pt?'🟣 Parcela '+(it.pn||'')+'/'+(it.pt||''):'🟣 Parcelado');
-        var bgTag=it.tipoLanc==='debito'?'#ef444422':'#8b5cf622';
-        var fgTag=it.tipoLanc==='debito'?'#ef4444':'#8b5cf6';
+        // Novo sistema: parcelas da agenda
+        var labelTipo=it.pt?'🟣 Parcela '+(it.pn||'')+'/'+(it.pt||''):'💳 Pagamento normal';
+        var bgTag=it.pt?'#8b5cf622':'#60a5fa22';
+        var fgTag=it.pt?'#8b5cf6':'#3b82f6';
         if(isPaid){
           tipoTag='<span style="font-size:.64rem;background:#22c55e22;color:#16a34a;border-radius:6px;padding:1px 6px;font-weight:600;">✅ Pago</span>';
           borderColor='#22c55e44';
@@ -3798,7 +3796,7 @@ function renderAgenda(m,y){
           }
         } else {
           tipoTag='<span style="font-size:.64rem;background:'+bgTag+';color:'+fgTag+';border-radius:6px;padding:1px 6px;font-weight:600;">'+labelTipo+'</span>';
-          borderColor=it.tipoLanc==='debito'?'#ef444444':'#8b5cf644';
+          borderColor=it.pt?'#8b5cf644':'#60a5fa44';
           var coAgn=contas.map(function(c){return '<option value="'+c.id+'"'+(c.id===it.conta?' selected':'')+'>'+c.nome+'</option>';}).join('');
           var initDtAgn=new Date().toISOString().slice(0,10);
           if(_agPanelOpen[it.id]){
@@ -3817,9 +3815,6 @@ function renderAgenda(m,y){
       } else if(it.tipo==='compromisso'&&isPaid){
         tipoTag='<span style="font-size:.64rem;background:#22c55e22;color:#16a34a;border-radius:6px;padding:1px 6px;font-weight:600;">✅ Pago</span>';
         borderColor='#22c55e44';
-      } else if(it.tipo==='debito'&&!it.agendaItem){
-        tipoTag='<span style="font-size:.64rem;background:#ef444422;color:#ef4444;border-radius:6px;padding:1px 6px;font-weight:600;">🔴 D\u00e9bito auto</span>';
-        borderColor='#ef444444';
       } else if(it.tipo==='fixo'){
         if(it.t==='e'){
           if(it.adiantadoDia){
@@ -4965,18 +4960,25 @@ if(ctm) ctm.textContent = String(n.getHours()).padStart(2,'0') + ':' + String(n.
 function toggleTipoFields(){
   var tl=document.getElementById("iTipoLanc").value;
   var pw=document.getElementById("parcWrap");
-  var dw=document.getElementById("debitoWrap");
   var rw=document.getElementById("recWrap");
   var mw=document.getElementById("mensalWrap");
+  var rmw=document.getElementById("recMensalWrap");
   if(pw)pw.style.display=(tl==="parc")?"block":"none";
-  if(dw)dw.style.display=(tl==="debito")?"flex":"none";
   if(rw)rw.style.display="none";
   if(mw)mw.style.display=(tl==="mensal")?"block":"none";
+  if(rmw)rmw.style.display=(tl==="recmensal")?"flex":"none";
   var dtBase=document.getElementById("iDt").value||new Date().toISOString().slice(0,10);
   if(tl==="parc")initSimpleCal('Parcela',dtBase);
-  if(tl==="debito")initSimpleCal('Debito',dtBase);
   if(tl==="mensal")initSimpleCal('Mensal',dtBase);
+  if(tl==="recmensal"){initSimpleCal('RecMensal',dtBase);updateRecMensalInfo(document.getElementById("iDtRecMensalHidden").value);}
   document.getElementById("parcInfo").className="parc-info";
+}
+
+function updateRecMensalInfo(dtStr){
+  var infoEl=document.getElementById("recMensalInfo");
+  if(!infoEl)return;
+  var dia=dtStr?parseInt(dtStr.slice(8,10)):null;
+  infoEl.textContent=dia?('🔄 Desconta todo dia '+dia+' do mês, indefinidamente'):'🔄 Desconta todo mês, indefinidamente';
 }
 
 function pagarParcela(id){
