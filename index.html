@@ -77,6 +77,9 @@ tr:hover td{background:var(--surf2);}
 label{font-size:.65rem;font-weight:700;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;}
 input[type=text],input[type=number],input[type=date],select{background:var(--surf2);border:1.5px solid var(--border);border-radius:.5rem;padding:.4rem .65rem;font-size:.83rem;color:var(--txt);outline:none;width:100%;transition:border-color .15s,box-shadow .15s;}
 input:focus,select:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(1,105,111,.1);}
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+input[type="number"]{-moz-appearance:textfield;appearance:textfield;}
 .ttog{display:flex;border-radius:.5rem;overflow:hidden;border:1.5px solid var(--border);margin-bottom:.625rem;}
 .ttog button{flex:1;padding:.4rem;font-size:.83rem;font-weight:700;border:none;background:var(--surf2);color:var(--muted);cursor:pointer;transition:background .15s,color .15s;}
 .ttog button.oe{background:var(--green);color:#fff;}
@@ -3657,8 +3660,8 @@ function confirmAgPanelAgendaItem(id) {
 }
 
 function renderAgenda(m,y){
-  if(m===undefined){m=cM;}
-  if(y===undefined){y=cY;}
+  if(m===undefined){m=(agM!==null?agM:cM);}
+  if(y===undefined){y=(agM!==null?agY:cY);}
   agM=m; agY=y;
   document.getElementById("agH1").textContent="Agenda \u2014 "+MF[m]+" "+y;
   var grid=document.getElementById("agContent");
