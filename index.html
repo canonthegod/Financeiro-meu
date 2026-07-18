@@ -3738,8 +3738,7 @@ function renderAgenda(m,y){
 
   if(!items.length){
     grid.innerHTML='<p style="color:var(--muted);padding:2rem;text-align:center;">Nenhum item neste m\u00eas.</p>';
-    return;
-  }
+  } else {
 
   items.sort(function(a,b){return a.day-b.day;});
 
@@ -3896,40 +3895,47 @@ function renderAgenda(m,y){
     renderAgPanelCalInEl(el.getAttribute('data-agpanelcal'), el);
   });
 
+  } // fim do else (items.length)
+
+  var todayDayKpi=(m===hoje.getMonth()&&y===hoje.getFullYear())?hoje.getDate():0;
+
   // ── KPIs da Agenda ──
-  // 1. A pagar / Pago — itens de saída da agenda (items[])
+  // Calculados EXCLUSIVAMENTE a partir de items[] deste mês — nunca busca
+  // lançamentos/recorrentes fora da lista de compromissos exibida acima.
   var itensSaida=items.filter(function(x){return x.t!=='e';});
+  var itensEntrada=items.filter(function(x){return x.t==='e';});
   var totalPend=itensSaida.filter(function(x){return !x.paid;}).reduce(function(s,x){return s+x.v;},0);
   var totalPago=itensSaida.filter(function(x){return x.paid;}).reduce(function(s,x){return s+x.v;},0);
   var qtdPend=itensSaida.filter(function(x){return !x.paid;}).length;
   var qtdPago=itensSaida.filter(function(x){return x.paid;}).length;
 
-  // A Receber — fixos de entrada com dia <= hoje (mês atual)
+  // A Receber — fixos de entrada com dia <= hoje (mês atual), a partir de items[]
   var isMesAtualKPI=(m===hoje.getMonth()&&y===hoje.getFullYear());
-  var aReceberDue=isMesAtualKPI?items.filter(function(x){return x.t==='e'&&!x.paid&&x.tipo==='fixo'&&x.day<=todayDay;}):[];
+  var aReceberDue=isMesAtualKPI?itensEntrada.filter(function(x){return !x.paid&&x.tipo==='fixo'&&x.day<=todayDayKpi;}):[];
   var totalAReceber=aReceberDue.reduce(function(s,x){return s+x.v;},0);
   var qtdAReceber=aReceberDue.length;
 
-  // 2. Entradas recebidas — lançamentos confirmados do mês (getLM)
-  var lmMes=getLM(m,y);
-  var entradasRecebidas=lmMes.filter(function(l){return l.t==='e';}).reduce(function(s,l){return s+l.v;},0);
+  // Entradas recebidas — itens de entrada já confirmados/pagos em items[]
+  var entradasRecebidas=itensEntrada.filter(function(x){return x.paid;}).reduce(function(s,x){return s+x.v;},0);
 
-  // 3. Entradas previstas — items[] futuros com t="e" (dia ainda não chegou)
-  var entradasPrevistas=items.filter(function(x){return x.t==='e'&&!x.paid&&(!isMesAtualKPI||x.day>todayDay);}).reduce(function(s,x){return s+x.v;},0);
+  // Entradas previstas — itens de entrada futuros/pendentes em items[]
+  var entradasPrevistas=itensEntrada.filter(function(x){return !x.paid&&(!isMesAtualKPI||x.day>todayDayKpi);}).reduce(function(s,x){return s+x.v;},0);
 
-  // 4. Comprometido — despesas já lançadas no mês + agenda pendente
-  var despesasMes=lmMes.filter(function(l){return l.t==='s';}).reduce(function(s,l){return s+l.v;},0);
-  var totalComp=despesasMes+totalPend;
+  // totalEntradas = soma de items[] de entrada (t="e")
+  var totalEntradas=itensEntrada.reduce(function(s,x){return s+x.v;},0);
 
-  // 5. Sobra/Déficit estimado (A Receber conta como esperado mas não confirmado)
-  var totalRenda=entradasRecebidas+entradasPrevistas+totalAReceber;
+  // totalComprometido = soma de items[] de saída (pago ou não)
+  var totalComp=itensSaida.reduce(function(s,x){return s+x.v;},0);
+
+  // sobra = totalEntradas - totalComprometido
+  var totalRenda=totalEntradas;
   var sobraEst=totalRenda-totalComp;
 
   var kpiEl=document.getElementById("agKpis");
   if(kpiEl){
     kpiEl.innerHTML=
       (totalAReceber>0?'<div class="ag-kpi"><div class="ag-kpi-l">🔔 A Receber</div><div class="ag-kpi-v" style="color:var(--warn);">'+fmt(totalAReceber)+'</div><div style="font-size:.65rem;color:var(--faint);margin-top:.2rem;">'+qtdAReceber+' entrada'+(qtdAReceber>1?'s':'')+' aguardando</div></div>':'')+
-      (totalPend>0?'<div class="ag-kpi"><div class="ag-kpi-l">⏳ A Pagar</div><div class="ag-kpi-v" style="color:var(--warn);">'+fmt(totalPend)+'</div><div style="font-size:.65rem;color:var(--faint);margin-top:.2rem;">compromissos pendentes</div></div>':'')+
+      '<div class="ag-kpi"><div class="ag-kpi-l">⏳ A Pagar</div><div class="ag-kpi-v" style="color:'+(totalPend>0?'var(--warn)':'var(--muted)')+';">'+fmt(totalPend)+'</div><div style="font-size:.65rem;color:var(--faint);margin-top:.2rem;">compromissos pendentes</div></div>'+
       (totalPago>0?'<div class="ag-kpi"><div class="ag-kpi-l">✅ Pago</div><div class="ag-kpi-v" style="color:var(--green);">'+fmt(totalPago)+'</div><div style="font-size:.65rem;color:var(--faint);margin-top:.2rem;">compromissos quitados</div></div>':'')+
       (entradasRecebidas>0?'<div class="ag-kpi"><div class="ag-kpi-l">💰 Entradas recebidas</div><div class="ag-kpi-v" style="color:#22c55e;">'+fmt(entradasRecebidas)+'</div><div style="font-size:.65rem;color:var(--faint);margin-top:.2rem;">já entrou no mês</div></div>':'')+
       (entradasPrevistas>0?'<div class="ag-kpi"><div class="ag-kpi-l">📈 Entradas previstas</div><div class="ag-kpi-v" style="color:var(--muted);">'+fmt(entradasPrevistas)+'</div><div style="font-size:.65rem;color:var(--faint);margin-top:.2rem;">ainda vai entrar</div></div>':'')+
