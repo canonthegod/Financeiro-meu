@@ -241,13 +241,16 @@ input[type="number"]{-moz-appearance:textfield;appearance:textfield;}
   .resgrid{grid-template-columns:repeat(2,1fr);}
   .cenarios{grid-template-columns:repeat(3,1fr);}
   .agenda-header{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));}
-  #mobileTopBar { display: flex !important; }
-  .main { padding-top: 5.5rem; }
 }
 @media(max-width:768px){
   .side{display:none;}
   .navbar-mini{display:flex;}
   .pcnt{padding:.875rem .875rem calc(40px + env(safe-area-inset-bottom) + .875rem);}
+  #mobileTopBar { display: flex !important; }
+  .main { padding-top: 5.5rem; }
+}
+@media(min-width:769px){
+  #mobileTopBar { display: none !important; }
 }
 @media(max-width:480px){
   .resgrid{grid-template-columns:1fr 1fr;}
@@ -553,6 +556,45 @@ input:focus, select:focus {
 }
 /* ...todo CSS que já existe... */
 
+/* ===== ORÇAMENTO — RESPONSIVIDADE MOBILE ===== */
+#orcPresetWrap, #orcGrid {
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+.orc-custom-row {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  margin-bottom: .5rem;
+}
+@media(max-width:768px){
+  .orc-mode-ttog{
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    height: auto !important;
+    gap: 6px !important;
+  }
+  .orc-mode-ttog button{ height: auto !important; padding: .5rem .3rem !important; }
+  .orc-custom-row{
+    flex-direction: column;
+    align-items: stretch;
+    gap: .35rem;
+  }
+  .orc-custom-row > span{ width: auto !important; }
+  .orc-custom-row > div{ width: 100%; }
+  .orc-base-ttog button{ width: 100%; }
+}
+
+/* ===== TRANSFERÊNCIA — RESPONSIVIDADE MOBILE ===== */
+@media(max-width:768px){
+  .transf-de-para-row{
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+}
+
 /* Lançamento grid responsivo */
 #lancGrid {
   display: grid;
@@ -678,15 +720,22 @@ input:focus, select:focus {
 .dfcal-info{font-size:.75rem;color:#16a34a;font-weight:600;margin-top:.4rem;padding:.3rem .5rem;background:#22c55e15;border-radius:8px;text-align:center;display:none;}
 .dfcal-info.on{display:block;}
 /* === AGENDA PANEL CALENDÁRIO INLINE === */
-.ag-panel{background:var(--surf2);border:1px solid var(--border);border-radius:12px;padding:.6rem .75rem;margin-top:.35rem;}
-.ag-panel-row{display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap;}
-.ag-panel-cal{flex:0 0 auto;max-width:200px;min-width:170px;}
-.ag-panel-cal .dfcal{margin-top:0;max-width:none;padding:.5rem .55rem;}
+.ag-panel{background:var(--surf2);border:1px solid var(--border);border-radius:12px;padding:.6rem .75rem;margin-top:.35rem;width:100%;max-width:100%;box-sizing:border-box;overflow:hidden;}
+.ag-panel-row{display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap;width:100%;box-sizing:border-box;}
+.ag-panel-cal{flex:0 0 auto;max-width:200px;min-width:170px;box-sizing:border-box;}
+.ag-panel-cal .dfcal{margin-top:0;max-width:none;width:100%;padding:.5rem .55rem;box-sizing:border-box;}
 .ag-panel-cal .dfcal-day{padding:.26rem .05rem;font-size:.72rem;}
 .ag-panel-cal .dfcal-nav span{font-size:.8rem;}
 .ag-panel-aside{flex:1;min-width:95px;display:flex;flex-direction:column;gap:6px;padding-top:.2rem;}
-.ag-panel-aside select{font-size:.78rem;padding:.3rem .5rem;border-radius:8px;border:1.5px solid var(--border);background:var(--surf);color:var(--txt);width:100%;}
-@media(max-width:480px){.ag-panel-row{flex-direction:column;}.ag-panel-cal{max-width:100%;min-width:0;width:100%;}}
+.ag-panel-aside select{font-size:.78rem;padding:.3rem .5rem;border-radius:8px;border:1.5px solid var(--border);background:var(--surf);color:var(--txt);width:100%;box-sizing:border-box;}
+@media(max-width:768px){
+  .ag-panel{padding:.6rem 12px;}
+  .ag-panel-row{flex-direction:column;}
+  .ag-panel-cal{max-width:100%;min-width:0;width:100%;}
+  .ag-panel-aside{width:100%;}
+  .ag-panel-aside>div{flex-direction:column!important;width:100%;}
+  .ag-panel-aside>div button{width:100%;box-sizing:border-box;}
+}
 
 
 @keyframes pulseGreen {
@@ -1540,8 +1589,8 @@ input:focus, select:focus {
       </div>
 
 <!-- Campos de transferência (aparecem só quando tipo = 't') -->
-<div id="transferenciaWrap" style="display:none;margin-bottom:.75rem;">
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.5rem;">
+<div id="transferenciaWrap" class="transf-wrap" style="display:none;margin-bottom:.75rem;width:100%;max-width:100%;box-sizing:border-box;">
+  <div class="transf-de-para-row" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;margin-bottom:.5rem;">
     <div class="fg">
       <label>De (conta origem)</label>
       <select id="iTransfDe"><option value="">— selecione —</option></select>
@@ -1549,6 +1598,10 @@ input:focus, select:focus {
     <div class="fg">
       <label>Para (conta destino)</label>
       <select id="iTransfPara"><option value="">— selecione —</option></select>
+    </div>
+    <div class="fg">
+      <label>Categoria</label>
+      <select id="iTransfCat" onchange="atualizarPreviewTransf()"></select>
     </div>
   </div>
   <div id="transferenciaPreview" style="background:var(--glight);border:1px solid var(--green);border-radius:.5rem;padding:.5rem .75rem;font-size:.75rem;color:var(--green);display:none;"></div>
@@ -1560,7 +1613,7 @@ input:focus, select:focus {
   <div class="fg"><label>Valor (R$)</label><input type="number" id="iVal" placeholder="0,00" step="0.01" oninput="updateParcInfo()"></div>
   <div class="fg" id="fgCat"><label>Categoria</label><select id="iCat"></select></div>
   <div class="fg" id="fgConta"><label>Conta</label><select id="iConta"><option value="">— nenhuma —</option></select></div>
-  <div class="fg"><label>Data</label><input type="date" id="iDt" style="width:100%;"></div>
+  <div class="fg"><label>Data</label><input type="date" id="iDt" lang="pt-BR" style="width:100%;"></div>
   <div class="fg">
     <label style="visibility:hidden;">.</label>
     <button class="btn bp" onclick="addLanc()" style="width:100%;height:36px;">＋ Adicionar</button>
@@ -1722,10 +1775,11 @@ input:focus, select:focus {
           <div id="metaAporteWrap" class="fg"><label>Aporte mensal (R$)</label><input type="number" id="metaAporte" placeholder="300" step="0.01" oninput="calcPreviewMeta()"></div>
           <div id="metaPrazoWrap" class="fg" style="display:none;"><label>Prazo (meses)</label><input type="number" id="metaPrazo" min="1" placeholder="12" oninput="calcPreviewMeta()"></div>
           <div class="fg"><label>Conta vinculada</label>
-            <select id="metaConta">
+            <select id="metaConta" onchange="metaContaChange()">
               <option value="">— nenhuma —</option>
             </select>
           </div>
+          <div class="fg"><label>Saldo atual (R$)</label><input type="number" id="metaSaldoAtual" placeholder="0" step="0.01"></div>
         </div>
         <div id="metaPreview" style="font-size:.75rem;color:var(--p);padding:.35rem .6rem;background:var(--plight);border-radius:8px;margin-bottom:.5rem;display:none;"></div>
         <div style="display:flex;gap:.375rem;">
@@ -1899,7 +1953,7 @@ document.addEventListener("DOMContentLoaded", function(){
   setupAuth();
 });
 var currentUser = null;
-var unsubLanc = null, unsubContas = null;
+var unsubLanc = null, unsubContas = null, unsubMetas = null, unsubOrc = null, unsubIndFin = null;
 
 // ── AUTH ──
 function loginGoogle(){
@@ -1920,6 +1974,9 @@ function loginGoogle(){
 function logout(){
   if(unsubLanc) unsubLanc();
   if(unsubContas) unsubContas();
+  if(unsubMetas) unsubMetas();
+  if(unsubOrc) unsubOrc();
+  if(unsubIndFin) unsubIndFin();
   var mob=document.getElementById("userInfoMobile");
   if(mob) mob.style.display="none";
   var si=document.getElementById("sairBtnSidebar");if(si)si.style.display="none";
@@ -2009,6 +2066,81 @@ function initFirestore(){
       render();
       renderOrc();
     }, function(e){setSyncStatus("error");console.error(e);});
+  // Listen metas (reservas) — sincroniza entre dispositivos
+  unsubMetas=db.collection("users").doc(currentUser.uid).collection("metas")
+    .onSnapshot(function(snap){
+      metas=[];
+      snap.forEach(function(d){metas.push(Object.assign({id:d.id},d.data()));});
+      localStorage.setItem('metas_v1', JSON.stringify(metas));
+      if(typeof renderMetas==='function') renderMetas();
+    }, function(e){console.error(e);});
+  // Listen perfil de orçamento — sincroniza entre mobile e desktop
+  unsubOrc=db.collection("users").doc(currentUser.uid).collection("config").doc("orcamento")
+    .onSnapshot(function(doc){
+      if(!doc.exists)return;
+      var d=doc.data()||{};
+      if(d.mode){ORC_MODE=d.mode;localStorage.setItem('orc_mode',ORC_MODE);}
+      if(d.base){ORC_BASE=d.base;localStorage.setItem('orc_base',ORC_BASE);}
+      if(typeof d.manual==='number'){ORC_MANUAL=d.manual;localStorage.setItem('orc_manual',ORC_MANUAL);}
+      if(d.custom){localStorage.setItem('orc_custom_v1',JSON.stringify(d.custom));}
+      var host=document.getElementById('orcPresetWrap');
+      var editingLocally=host&&host.getAttribute('data-editing')==='true';
+      if(!editingLocally&&typeof renderOrcControls==='function') renderOrcControls();
+      if(typeof renderOrc==='function') renderOrc();
+    }, function(e){console.error(e);});
+  // Listen configuração de independência financeira — sincroniza entre mobile e desktop
+  unsubIndFin=db.collection("users").doc(currentUser.uid).collection("config").doc("indFin")
+    .onSnapshot(function(doc){
+      if(!doc.exists)return;
+      var d=doc.data()||{};
+      if(d.mode){INDFIN_MODE=d.mode;localStorage.setItem('indfin_mode',INDFIN_MODE);}
+      if(typeof d.taxa==='number'){INDFIN_TAXA=d.taxa;localStorage.setItem('indfin_taxa',INDFIN_TAXA);}
+      if(typeof d.valorManual==='number'){INDFIN_VALOR_MANUAL=d.valorManual;localStorage.setItem('indfin_valor_manual',INDFIN_VALOR_MANUAL);}
+      var pg=document.getElementById('p-reserva');
+      var onReservaPage=pg&&pg.classList.contains('on');
+      if(onReservaPage){
+        var taxaEl=document.getElementById('taxaRendimento');
+        if(taxaEl) taxaEl.value=INDFIN_TAXA;
+        var manualEl=document.getElementById('gastosManualVal');
+        if(manualEl && INDFIN_VALOR_MANUAL) manualEl.value=INDFIN_VALOR_MANUAL;
+        if(typeof setGastosMode==='function') setGastosMode(INDFIN_MODE==='manual'?'manual':'auto', false);
+      }
+    }, function(e){console.error(e);});
+}
+
+function saveOrcPerfilFS(){
+  if(!currentUser||!db)return;
+  setSyncStatus("syncing");
+  var custom=JSON.parse(localStorage.getItem('orc_custom_v1')||'null')||{essenciais:60,lazer:20,reserva:15,diaadia:5};
+  db.collection("users").doc(currentUser.uid).collection("config").doc("orcamento")
+    .set({mode:ORC_MODE,base:ORC_BASE,manual:ORC_MANUAL,custom:custom},{merge:true})
+    .then(function(){setSyncStatus("ok");})
+    .catch(function(e){setSyncStatus("error");console.error("Falha ao salvar perfil de orçamento no Firestore (verifique as regras de segurança para users/{uid}/config):",e);});
+}
+
+function saveIndFinFS(){
+  if(!currentUser||!db)return;
+  setSyncStatus("syncing");
+  db.collection("users").doc(currentUser.uid).collection("config").doc("indFin")
+    .set({mode:INDFIN_MODE,taxa:INDFIN_TAXA,valorManual:INDFIN_VALOR_MANUAL},{merge:true})
+    .then(function(){setSyncStatus("ok");})
+    .catch(function(e){setSyncStatus("error");console.error("Falha ao salvar independência financeira no Firestore (verifique as regras de segurança para users/{uid}/config):",e);});
+}
+
+function saveMetaFS(m){
+  if(!currentUser||!db)return;
+  setSyncStatus("syncing");
+  db.collection("users").doc(currentUser.uid).collection("metas").doc(String(m.id)).set(m)
+    .then(function(){setSyncStatus("ok");})
+    .catch(function(e){setSyncStatus("error");console.error("Falha ao salvar meta no Firestore (verifique as regras de segurança para users/{uid}/metas):",e);});
+}
+
+function deleteMetaFS(id){
+  if(!currentUser||!db)return;
+  setSyncStatus("syncing");
+  db.collection("users").doc(currentUser.uid).collection("metas").doc(String(id)).delete()
+    .then(function(){setSyncStatus("ok");})
+    .catch(function(e){setSyncStatus("error");console.error("Falha ao remover meta no Firestore:",e);});
 }
 
 function userDoc(){return db.collection("users").doc(currentUser.uid);}
@@ -2235,8 +2367,11 @@ function nav(v){
     setTimeout(function(){
       try{
         renderMetas();
-        setGastosMode('auto');
-        calcIndep();
+        var taxaEl=document.getElementById('taxaRendimento');
+        if(taxaEl) taxaEl.value=INDFIN_TAXA;
+        var manualEl=document.getElementById('gastosManualVal');
+        if(manualEl && INDFIN_VALOR_MANUAL) manualEl.value=INDFIN_VALOR_MANUAL;
+        setGastosMode(INDFIN_MODE==='manual'?'manual':'auto', false);
       }catch(e){console.warn(e);}
     },100);
   }
@@ -2301,12 +2436,16 @@ function setTipo(t){
     }).join('');
     document.getElementById('iTransfDe').innerHTML=opts;
     document.getElementById('iTransfPara').innerHTML=opts;
+    fillCategorySelect('iTransfCat');
     ['iTransfDe','iTransfPara'].forEach(function(id){
       document.getElementById(id).onchange=atualizarPreviewTransf;
     });
     // Atualiza preview quando o valor muda
     var iVal=document.getElementById('iVal');
     if(iVal) iVal.oninput=function(){updateParcInfo();atualizarPreviewTransf();};
+    // Atualiza preview quando a data muda
+    var iDtT=document.getElementById('iDt');
+    if(iDtT) iDtT.onchange=atualizarPreviewTransf;
   } else {
     var iVal2=document.getElementById('iVal');
     if(iVal2) iVal2.oninput=updateParcInfo;
@@ -2911,12 +3050,26 @@ function atualizarPreviewTransf(){
   if(!cDe||!cPara){prev.style.display='none';return;}
   var sldDe=saldoConta(deId);
   var sldPara=saldoConta(paraId);
+  var dtVal=document.getElementById('iDt')?document.getElementById('iDt').value:'';
   prev.style.display='block';
   prev.innerHTML=
     '<strong>'+cDe.nome+':</strong> '+fmt(sldDe)+' → '+fmt(sldDe-v)+
     ' &nbsp;·&nbsp; '+
     '<strong>'+cPara.nome+':</strong> '+fmt(sldPara)+' → '+fmt(sldPara+v)+
-    ' &nbsp;·&nbsp; Patrimônio: sem alteração ✅';
+    ' &nbsp;·&nbsp; Patrimônio: sem alteração ✅'+
+    (dtVal?' &nbsp;·&nbsp; 📅 '+fmtDt(dtVal):'');
+}
+
+// Atualiza o saldo da meta vinculada à conta destino quando a transferência é categorizada como "Reserva"
+function syncMetasAposTransferencia(paraId, cat){
+  if(cat!=='Reserva')return;
+  var meta=metas.find(function(m){return m.conta===paraId;});
+  if(!meta)return;
+  meta.atual=saldoConta(paraId);
+  if(meta.atual>=meta.valor){meta.concluida=true;meta.excedente=meta.atual-meta.valor;meta.atual=meta.valor;}
+  else{meta.concluida=false;}
+  saveMetas();
+  renderMetas();
 }
 
 function addTransferencia(){
@@ -2925,18 +3078,19 @@ function addTransferencia(){
   var v=parseFloat(document.getElementById('iVal').value)||0;
   var dt=document.getElementById('iDt').value;
   var desc=document.getElementById('iDesc').value.trim()||'Transferência';
+  var cat=document.getElementById('iTransfCat').value||'Outros';
   if(!deId||!paraId||!v||!dt){alert('Preencha todos os campos!');return;}
   if(deId===paraId){alert('Conta de origem e destino não podem ser iguais!');return;}
   var gid='transf_'+Date.now();
   var lSaida={
     id:String(Date.now()+Math.random()),
-    desc:desc,v:v,cat:'Transferência',t:'transf_s',
+    desc:desc,v:v,cat:cat,t:'transf_s',
     dt:dt,rec:false,conta:deId,grupoTransfId:gid,
     contaDestino:paraId
   };
   var lEntrada={
     id:String(Date.now()+Math.random()+1),
-    desc:desc,v:v,cat:'Transferência',t:'transf_e',
+    desc:desc,v:v,cat:cat,t:'transf_e',
     dt:dt,rec:false,conta:paraId,grupoTransfId:gid,
     contaOrigem:deId
   };
@@ -2944,6 +3098,7 @@ function addTransferencia(){
   lancamentos.push(lEntrada);
   saveLanc(lSaida);
   saveLanc(lEntrada);
+  syncMetasAposTransferencia(paraId, cat);
   document.getElementById('iDesc').value='';
   document.getElementById('iVal').value='';
   document.getElementById('iTransfDe').value='';
@@ -4084,15 +4239,20 @@ function limparSimulacao(){
 }
 
 // ── RESERVA & METAS ──
-var gastosMode = 'auto';
 var metas = []; // array de metas do usuário
 
-// Carrega/salva metas no localStorage por enquanto
+// ── INDEPENDÊNCIA FINANCEIRA (persistido no Firestore, cache em localStorage) ──
+var INDFIN_MODE = localStorage.getItem('indfin_mode') || 'auto';
+var INDFIN_TAXA = parseFloat(localStorage.getItem('indfin_taxa')) || 6;
+var INDFIN_VALOR_MANUAL = parseFloat(localStorage.getItem('indfin_valor_manual')) || 0;
+
+// Carrega do localStorage (cache offline) — quando logado, o Firestore sincroniza e sobrescreve
 function loadMetas(){
   try{ metas=JSON.parse(localStorage.getItem('metas_v1')||'[]'); }catch(e){ metas=[]; }
 }
 function saveMetas(){
   localStorage.setItem('metas_v1', JSON.stringify(metas));
+  metas.forEach(saveMetaFS);
 }
 loadMetas();
 
@@ -4107,8 +4267,20 @@ function toggleMetaForm(){
     if(sel){
       sel.innerHTML='<option value="">— nenhuma —</option>'+
         contas.map(function(c){return '<option value="'+c.id+'">'+c.nome+'</option>';}).join('');
+      sel.value='';
     }
+    var saldoEl=document.getElementById('metaSaldoAtual');
+    if(saldoEl) saldoEl.value='';
   }
+}
+
+// Ao selecionar uma conta na meta, preenche automaticamente o saldo atual com o saldo da conta
+function metaContaChange(){
+  var contaId=document.getElementById('metaConta').value;
+  var saldoEl=document.getElementById('metaSaldoAtual');
+  if(!saldoEl)return;
+  if(!contaId){saldoEl.value='';return;}
+  saldoEl.value=saldoConta(contaId).toFixed(2);
 }
 
 function calcPreviewMeta(){
@@ -4160,22 +4332,24 @@ function addMeta(){
   } else {
     aporte=parseFloat(document.getElementById('metaAporte').value)||0;
   }
+  var saldoAtual=parseFloat(document.getElementById('metaSaldoAtual').value)||0;
   var meta={
     id:'meta_'+Date.now(),
     nome:nome,
     valor:valor,
     aporte:aporte,
     conta:conta,
-    atual:0,
+    atual:saldoAtual,
     criado:new Date().toISOString().slice(0,10),
-    concluida:false,
-    excedente:0
+    concluida:saldoAtual>=valor,
+    excedente:saldoAtual>valor?saldoAtual-valor:0
   };
   metas.push(meta);
   saveMetas();
   document.getElementById('metaNome').value='';
   document.getElementById('metaValor').value='';
   document.getElementById('metaAporte').value='';
+  document.getElementById('metaSaldoAtual').value='';
   var prazoEl=document.getElementById('metaPrazo');
   if(prazoEl)prazoEl.value='';
   document.getElementById('metaForm').style.display='none';
@@ -4306,6 +4480,7 @@ function bsDelMetaConfirmar(){
   var id=_bsDelMetaId;
   bsDelMetaClose();
   metas=metas.filter(function(m){return m.id!==id;});
+  deleteMetaFS(id);
   saveMetas();
   renderMetas();
 }
@@ -4354,10 +4529,12 @@ function renderMetas(){
 }
 
 // ── INDEPENDÊNCIA FINANCEIRA ──
-var gastosManualMode = false;
+var gastosManualMode = (INDFIN_MODE === 'manual');
 
-function setGastosMode(mode){
+function setGastosMode(mode, persist){
   gastosManualMode = (mode==='manual');
+  INDFIN_MODE = gastosManualMode ? 'manual' : 'auto';
+  localStorage.setItem('indfin_mode', INDFIN_MODE);
   var btnAuto=document.getElementById('btnGastosAuto');
   var btnManual=document.getElementById('btnGastosManual');
   var autoInfo=document.getElementById('gastosAutoInfo');
@@ -4367,6 +4544,7 @@ function setGastosMode(mode){
   if(autoInfo) autoInfo.style.display=!gastosManualMode?'block':'none';
   if(manualInput) manualInput.style.display=gastosManualMode?'block':'none';
   calcIndep();
+  if(persist!==false) saveIndFinFS();
 }
 
 function getMediaGastos6Meses(){
@@ -4390,6 +4568,12 @@ function calcIndep(){
     ?(parseFloat(document.getElementById('gastosManualVal').value)||0)
     :mediaAuto;
   var taxa=parseFloat(document.getElementById('taxaRendimento').value)||6;
+  INDFIN_TAXA=taxa;
+  INDFIN_VALOR_MANUAL=gastosManualMode?gastos:INDFIN_VALOR_MANUAL;
+  localStorage.setItem('indfin_taxa',INDFIN_TAXA);
+  localStorage.setItem('indfin_valor_manual',INDFIN_VALOR_MANUAL);
+  clearTimeout(window._indFinSaveT);
+  window._indFinSaveT=setTimeout(saveIndFinFS,500);
   var resultado=document.getElementById('indepResultado');
   var vazio=document.getElementById('indepVazio');
   if(!gastos||gastos<=0){
@@ -5149,12 +5333,14 @@ const ORC_MODE_INFO = {
   localStorage.setItem('orc_mode', ORC_MODE);
   renderOrcControls();
   renderOrc();
+  saveOrcPerfilFS();
 }
 function setOrcBase(base){
   ORC_BASE = base;
   localStorage.setItem('orc_base', ORC_BASE);
   renderOrcControls();
   renderOrc();
+  saveOrcPerfilFS();
 }
   function getOrcPreset(){
     if (ORC_MODE === 'conservador') return [70, 15, 10, 5];
@@ -5180,7 +5366,7 @@ function renderOrcControls(){
   var customInputsHTML = catKeys.map(function(key,i){
     var pct=customVals[key]||0;
     var val=base>0?(base*pct/100).toFixed(2):'0.00';
-    return '<div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem;">'
+    return '<div class="orc-custom-row">'
       +'<span style="font-size:.82rem;color:var(--txt);width:6rem;flex-shrink:0;">'+catEmojis[i]+' '+catNames[i]+'</span>'
       +'<div style="display:flex;align-items:center;gap:.25rem;flex:1;">'
       +'<input type="number" min="0" max="100" step="1" id="orc_pct_'+key+'" value="'+pct+'"'
@@ -5206,7 +5392,7 @@ function renderOrcControls(){
 
     ${editing ? `
       <div style="padding:0 1rem .75rem;">
-        <div class="ttog" style="margin-bottom:.5rem;flex-wrap:wrap;overflow:visible;">
+        <div class="ttog orc-mode-ttog" style="margin-bottom:.5rem;flex-wrap:wrap;overflow:visible;">
           <button class="${ORC_MODE==='conservador'?'oe':''}" onclick="setOrcMode('conservador')">70-15-10-5</button>
           <button class="${ORC_MODE==='equilibrado'?'oe':''}" onclick="setOrcMode('equilibrado')">60-20-15-5</button>
           <button class="${ORC_MODE==='folgado'?'oe':''}" onclick="setOrcMode('folgado')">65-15-15-5</button>
@@ -5223,7 +5409,7 @@ function renderOrcControls(){
           <div id="orcCustomTotal" style="font-size:.82rem;font-weight:700;text-align:right;padding:.25rem 0 0;"></div>
         </div>
         `}
-        <div class="ttog" style="margin-bottom:.5rem;">
+        <div class="ttog orc-base-ttog" style="margin-bottom:.5rem;">
           <button class="${ORC_BASE==='receita'?'oe':''}" onclick="setOrcBase('receita')">Usar Receita</button>
           <button class="${ORC_BASE==='manual'?'oe':''}" onclick="setOrcBase('manual')">Valor Manual</button>
         </div>
@@ -5252,6 +5438,8 @@ function renderOrcControls(){
           ORC_MANUAL = parseFloat(input.value) || 0;
           localStorage.setItem('orc_manual', ORC_MANUAL);
           if(ORC_BASE === 'manual') { renderOrcCustomTotal(); renderOrc(); }
+          clearTimeout(window._orcManualSaveT);
+          window._orcManualSaveT = setTimeout(saveOrcPerfilFS, 500);
         });
       }
       if(ORC_MODE === 'custom') renderOrcCustomTotal();
@@ -5280,6 +5468,8 @@ function orcCustomChange(key, type, rawVal){
   localStorage.setItem('orc_custom_v1', JSON.stringify(customVals));
   renderOrcCustomTotal();
   renderOrc();
+  clearTimeout(window._orcCustomSaveT);
+  window._orcCustomSaveT = setTimeout(saveOrcPerfilFS, 500);
 }
 function renderOrcCustomTotal(){
   var c = JSON.parse(localStorage.getItem('orc_custom_v1')||'null') || {essenciais:0,lazer:0,reserva:0,diaadia:0};
