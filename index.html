@@ -568,14 +568,9 @@ input:focus, select:focus {
   gap: .5rem;
   margin-bottom: .5rem;
 }
+.orc-mode-desc{display:block;width:100%;margin-bottom:.75rem;}
+.orc-recebido-box{display:block;width:100%;padding:.75rem;border-radius:10px;background:var(--surf2);margin-top:.5rem;font-size:.85rem;}
 @media(max-width:768px){
-  .orc-mode-ttog{
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    height: auto !important;
-    gap: 6px !important;
-  }
-  .orc-mode-ttog button{ height: auto !important; padding: .5rem .3rem !important; }
   .orc-custom-row{
     flex-direction: column;
     align-items: stretch;
@@ -583,7 +578,6 @@ input:focus, select:focus {
   }
   .orc-custom-row > span{ width: auto !important; }
   .orc-custom-row > div{ width: 100%; }
-  .orc-base-ttog button{ width: 100%; }
 }
 
 /* ===== TRANSFERÊNCIA — RESPONSIVIDADE MOBILE ===== */
@@ -1390,6 +1384,164 @@ input:focus, select:focus {
   border-top: 1px solid var(--div);
 }
 .contas-grupo-label:first-child { border-top: none; margin-top: 0; }
+
+/* ── Variáveis próprias do redesign do dashboard (theme-aware) ── */
+:root{--card-bg:#f0f0f0;--border-color:#d0d0d0;}
+[data-theme="dark"]{--card-bg:#1a1a1a;--border-color:#1e1e1e;}
+
+/* ============================================================
+   DASHBOARD REDESIGN — header, gráficos e refinamentos desktop
+   ============================================================ */
+
+/* ── Top bar mobile: avatar + título + tema ── */
+.mtb-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#0d9298,#14c4cb);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:.72rem;flex-shrink:0;overflow:hidden;}
+.mtb-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.mtb-title{flex:1;text-align:center;font-size:.85rem;font-weight:700;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 .5rem;}
+
+/* ── Toggles em pílula (gráficos): Entradas/Saídas, categorias, contas ── */
+.chart-toggle-row{display:flex;gap:.4rem;margin-bottom:.5rem;flex-wrap:wrap;}
+.chart-toggle-pill{display:inline-flex;align-items:center;gap:.4rem;padding:.3rem .7rem;border-radius:6px;font-size:.72rem;font-weight:700;transition:opacity .15s,background .15s,color .15s,border-color .15s;}
+.chart-toggle-pill.off{opacity:.4;}
+.ctp-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+
+/* ── Sidebar: item ativo com destaque verde sutil ── */
+.ni.on{position:relative;}
+.ni.on::after{display:block !important;content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:60%;background:#22c55e;border-radius:0 3px 3px 0;}
+[data-theme="dark"] .ni.on{background:#141f14 !important;}
+[data-theme="light"] .ni.on{background:rgba(34,197,94,.08) !important;}
+
+/* ── Dashboard desktop: cards do topo mais clean (theme-aware) ── */
+#p-dash .kpi{background:var(--card-bg) !important;border-radius:14px !important;}
+#p-dash .kpi.g{border:.5px solid rgba(34,197,94,.35) !important;}
+#p-dash .kpi.r{border:.5px solid rgba(229,57,53,.35) !important;}
+#p-dash .kpi.b{border:.5px solid rgba(79,152,163,.35) !important;}
+#p-dash .kpi.w{border:.5px solid rgba(217,119,6,.4) !important;}
+#p-dash .kpi-v{font-weight:300 !important;}
+#p-dash .kpi-v.g{color:#22c55e !important;}
+#p-dash .kpi-v.r{color:#e05f50 !important;}
+#p-dash .kpi-v.w{color:#e0b93e !important;}
+#p-dash .kpi-l{color:var(--muted) !important;}
+#p-dash .kpi-s{color:var(--muted) !important;opacity:.7;}
+
+/* ============================================================
+   DASHBOARD — LAYOUT MOBILE COMPLETO (100% theme-aware)
+   ============================================================ */
+.dash-hero{display:none;}
+@media(max-width:768px){
+  #p-dash{background:var(--bg);}
+  #p-dash .pcnt{background:var(--bg);}
+  #p-dash .card{background:var(--card-bg) !important;border-color:var(--border-color) !important;border-radius:12px !important;border-width:.5px !important;}
+  #p-dash #dashPhdr,
+  #p-dash .kpis,
+  #p-dash #dashUltimosCard{display:none !important;}
+
+  /* Desmonta o grid do ch2 para os dois gráficos virarem cards empilháveis
+     e reposicionáveis via order, junto dos outros cards do dashboard */
+  #p-dash .ch2{display:contents;}
+  #p-dash .dash-hero{order:1;}
+  #p-dash #dashPieCard{order:2;}
+  #p-dash #dashOrcCard{order:3;}
+  #p-dash #dashBarCard{order:4;}
+  #p-dash #dashGastoDiaCard{order:5;}
+  #p-dash #dashPieCard .chw,
+  #p-dash #dashBarCard .chw{height:170px !important;}
+  #p-dash #cPieToggles{justify-content:center;}
+
+  .dash-hero{display:flex;flex-direction:column;align-items:center;text-align:center;padding:1.5rem 0 1.75rem;}
+  .hero-lbl{font-size:.66rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem;}
+  .hero-val{font-family:'Sora',sans-serif;font-size:36px;font-weight:200;color:var(--txt);line-height:1;margin-bottom:1.1rem;font-variant-numeric:tabular-nums;}
+  .hero-pills{display:flex;gap:.2rem;background:var(--card-bg);border:.5px solid var(--border-color);border-radius:9999px;padding:.2rem;margin-bottom:1.5rem;}
+  .hero-pill{padding:.35rem 1.1rem;border-radius:9999px;font-size:.72rem;font-weight:700;color:var(--muted);background:transparent;transition:background .15s,color .15s;}
+  .hero-pill.active{background:#fff;color:#000;}
+  .hero-stats{display:flex;width:100%;max-width:320px;margin-bottom:1.5rem;}
+  .hero-stat{flex:1;display:flex;flex-direction:column;align-items:center;padding:0 .4rem;}
+  .hero-stat+.hero-stat{border-left:.5px solid var(--border-color);}
+  .hs-lbl{font-size:.58rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.35rem;}
+  .hs-lbl.g{color:#3ecf5c;}.hs-lbl.r{color:#e0554b;}.hs-lbl.y{color:#e0b93e;}
+  .hs-val{font-family:'Sora',sans-serif;font-size:.85rem;font-weight:700;color:var(--txt);font-variant-numeric:tabular-nums;}
+  .hero-bars{display:flex;align-items:flex-end;gap:5px;height:44px;width:100%;max-width:200px;}
+  .hero-bars .hb{flex:1;background:var(--glight);border-radius:3px 3px 0 0;transition:height .4s ease;}
+  .hero-bars .hb:last-child{background:var(--green);}
+}
+
+/* ── Orçamento mobile: painel de edição sem sobreposição ──
+   Seletores compostos (.ttog.orc-*) para garantir especificidade
+   maior que ".ttog{height:48px!important}" definido acima. ── */
+@media(max-width:768px){
+  #orcPresetWrap{display:flex !important;flex-direction:column !important;position:static !important;}
+  #orcPresetWrap *{position:static !important;}
+  #orcPresetWrap > div{width:100%;}
+
+  /* 1. Seletor de perfis: grid 2 colunas, cards sempre do mesmo tamanho */
+  .ttog.orc-mode-ttog{
+    display:grid !important;
+    grid-template-columns:1fr 1fr !important;
+    grid-auto-rows:52px !important;
+    height:auto !important;
+    gap:8px !important;
+    overflow:visible !important;
+  }
+  .ttog.orc-mode-ttog button{
+    width:100% !important;
+    min-width:0 !important;
+    max-width:none !important;
+    height:52px !important;
+    min-height:52px !important;
+    max-height:52px !important;
+    margin:0 !important;
+    padding:0 6px !important;
+    flex:none !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    text-align:center !important;
+    border-radius:8px !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+    font-size:.72rem !important;
+    line-height:1 !important;
+    box-sizing:border-box !important;
+  }
+  .ttog.orc-mode-ttog button.oe{background:#22c55e !important;color:#fff !important;}
+  .ttog.orc-mode-ttog button:not(.oe){background:var(--card-bg) !important;color:var(--muted) !important;}
+  /* Caso especial: exatamente 3 opções → 2 em cima, a 3ª (última) centralizada com 50% de largura */
+  .ttog.orc-mode-ttog button:nth-child(3):last-child{
+    grid-column:1 / -1 !important;
+    width:50% !important;
+    margin:0 auto !important;
+  }
+
+  /* 2. Texto descritivo do perfil: bloco próprio, sempre abaixo */
+  .orc-mode-desc{display:block !important;width:100% !important;padding:8px 0 !important;}
+
+  /* 3. Usar Receita / Valor Manual: linha, gap 8px, flex:1 cada */
+  .ttog.orc-base-ttog{
+    display:flex !important;
+    height:auto !important;
+    flex-direction:row !important;
+    flex-wrap:nowrap !important;
+    gap:8px !important;
+    margin-top:12px !important;
+  }
+  .ttog.orc-base-ttog button{
+    width:auto !important;
+    flex:1 !important;
+    min-width:0;
+    height:auto !important;
+    padding:10px 6px !important;
+  }
+
+  /* 4. Recebido até hoje / input manual: bloco próprio abaixo */
+  .orc-recebido-box{margin-top:8px !important;padding:12px !important;border-radius:8px !important;background:var(--card-bg) !important;}
+
+  .orc-custom-row{flex-direction:column;align-items:stretch;gap:.35rem;}
+  .orc-custom-row > span{width:auto !important;}
+  .orc-custom-row > div{width:100%;}
+}
+@media(max-width:480px){
+  .orc-custom-row > div{flex-wrap:wrap;row-gap:.3rem;}
+}
 </style>
 <script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
 </head>
@@ -1413,18 +1565,14 @@ input:focus, select:focus {
 
 <div class="shell" id="appShell">
   <div id="mobileTopBar" style="display:none;">
-  <!-- Linha 1: perfil | hora | sair -->
+  <!-- Linha 1: avatar | título da página | tema -->
   <div class="mtb-row1">
-    <div id="mtbUser" style="display:flex;align-items:center;gap:.4rem;">
-      <img id="mtbAvatar" src="" style="width:26px;height:26px;border-radius:50%;object-fit:cover;display:none;">
-      <span id="mtbName" style="font-size:.72rem;font-weight:700;color:var(--txt);"></span>
+    <div class="mtb-avatar" id="mtbAvatarWrap">
+      <img id="mtbAvatar" src="" style="display:none;">
+      <span id="mtbInitials">U</span>
     </div>
-    <div style="display:flex;flex-direction:column;align-items:center;line-height:1.3;">
-      <span id="clockDateMobile" style="font-size:.62rem;color:var(--muted);"></span>
-      <span id="clockTimeMobile" style="font-size:.76rem;font-weight:700;color:var(--p);font-variant-numeric:tabular-nums;"></span>
-    </div>
-    <button class="btn bd bsm" onclick="logout()">Sair</button>
-    <button class="icb" onclick="toggleTheme()" id="themeBtn" title="Alternar tema"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+    <span class="mtb-title" id="mtbPageTitle">Dashboard</span>
+    <button class="icb mtb-moon" onclick="toggleTheme()" id="themeBtn" title="Alternar tema"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
   </div>
   <!-- Linha 2: setas mês -->
   <div class="mtb-row2">
@@ -1478,8 +1626,23 @@ input:focus, select:focus {
 
 <!-- DASHBOARD -->
 <section class="page on" id="p-dash">
-  <div class="phdr"><h1 id="dh1">Dashboard — Abril 2026</h1><p>Visão geral do mês</p></div>
+  <div class="phdr" id="dashPhdr"><h1 id="dh1">Dashboard — Abril 2026</h1><p>Visão geral do mês</p></div>
   <div class="pcnt">
+    <div class="dash-hero" id="dashHero">
+      <div class="hero-lbl">Patrimônio Total</div>
+      <div class="hero-val" id="heroPatrimonio">R$ 0,00</div>
+      <div class="hero-pills">
+        <button class="hero-pill" data-range="dia" onclick="setHeroRange('dia')">Hoje</button>
+        <button class="hero-pill active" data-range="mes" onclick="setHeroRange('mes')">Mês</button>
+        <button class="hero-pill" data-range="ano" onclick="setHeroRange('ano')">Ano</button>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="hs-lbl g">Receitas</div><div class="hs-val g" id="heroRec">R$ 0,00</div></div>
+        <div class="hero-stat"><div class="hs-lbl r">Despesas</div><div class="hs-val r" id="heroDep">R$ 0,00</div></div>
+        <div class="hero-stat"><div class="hs-lbl y">Saldo</div><div class="hs-val y" id="heroSal">R$ 0,00</div></div>
+      </div>
+      <div class="hero-bars" id="heroBars"></div>
+    </div>
     <div class="kpis">
       <div class="kpi g"><div class="kpi-l">Receitas</div><div class="kpi-v g" id="k-r">R$ 0,00</div><div class="kpi-s">entradas no mês</div></div>
       <div class="kpi r"><div class="kpi-l">Despesas</div><div class="kpi-v r" id="k-d">R$ 0,00</div><div class="kpi-s">saídas no mês</div></div>
@@ -1487,18 +1650,18 @@ input:focus, select:focus {
       <div class="kpi w"><div class="kpi-l">Patrimônio</div><div class="kpi-v w" id="k-t">R$ 0,00</div><div class="kpi-s">contas + investimentos</div></div>
     </div>
     <div class="ch2">
-      <div class="card"><div class="ctit">Gastos por Categoria</div><div class="chw"><canvas id="cPie"></canvas></div></div>
-      <div class="card"><div class="ctit">Entradas vs Saídas <small>últimos 6 meses</small></div><div class="chw"><canvas id="cBar"></canvas></div></div>
+      <div class="card" id="dashPieCard"><div class="ctit">Gastos por Categoria</div><div class="chw"><canvas id="cPie"></canvas></div><div class="chart-toggle-row" id="cPieToggles"></div></div>
+      <div class="card" id="dashBarCard"><div class="ctit">Entradas vs Saídas <small>últimos 6 meses</small></div><div class="chart-toggle-row" id="cBarToggles"></div><div class="chw"><canvas id="cBar"></canvas></div></div>
     </div>
-    <div class="card">
+    <div class="card" id="dashOrcCard">
   <div class="ctit">Orçamento do Mês</div>
   <div id="orcGrid"></div>
 </div>
-    <div class="card">
+    <div class="card" id="dashGastoDiaCard">
       <div class="ctit">Gastos do dia <small id="gastoDiaData"></small></div>
       <div id="gastoDiaCard"></div>
     </div>
-    <div class="card">
+    <div class="card" id="dashUltimosCard">
       <div class="ctit">Últimos lançamentos <button class="btn bg bsm" onclick="nav('lanc')">Ver todos →</button></div>
       <div class="tw"><table><thead><tr><th>Data</th><th>Descrição</th><th>Cat.</th><th>Conta</th><th>Tipo</th><th>Valor</th></tr></thead><tbody id="tRec"></tbody></table></div>
     </div>
@@ -1572,7 +1735,7 @@ input:focus, select:focus {
           <div class="fg" style="margin-top:.5rem;"><label>Cor</label><div id="corPicker" style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.25rem;"></div></div>
       </div>
     </div>
-    <div class="card"><div class="ctit">Distribuição do saldo</div><div class="chw"><canvas id="cContas"></canvas></div></div>
+    <div class="card"><div class="ctit">Distribuição do saldo</div><div class="chw"><canvas id="cContas"></canvas></div><div class="chart-toggle-row" id="cContasToggles" style="justify-content:center;"></div></div>
   </div>
 </section>
 
@@ -1930,6 +2093,7 @@ input:focus, select:focus {
       <button class="nbs-item" data-page="proj" onclick="navFromSheet('proj')"><i class="ti ti-chart-line"></i><span>Projeção</span></button>
       <button class="nbs-item" data-page="hist" onclick="navFromSheet('hist')"><i class="ti ti-history"></i><span>Histórico</span></button>
       <button class="nbs-item" data-page="reserva" onclick="navFromSheet('reserva')"><i class="ti ti-shield"></i><span>Reserva</span></button>
+      <button class="nbs-item" onclick="logout()"><i class="ti ti-logout"></i><span>Sair</span></button>
     </div>
   </div>
 </div>
@@ -1991,10 +2155,14 @@ auth.onAuthStateChanged(function(user){
     document.getElementById("authScreen").style.display="none";
 
     // ── MOBILE top bar ──
-    var mtbName = document.getElementById('mtbName');
     var mtbAvatar = document.getElementById('mtbAvatar');
-    if(mtbName) mtbName.textContent = user.displayName || 'Usuário';
-    if(mtbAvatar && user.photoURL){ mtbAvatar.src = user.photoURL; mtbAvatar.style.display = 'block'; }
+    var mtbInitials = document.getElementById('mtbInitials');
+    if(mtbInitials) mtbInitials.textContent = getInitials(user.displayName);
+    if(mtbAvatar && user.photoURL){
+      mtbAvatar.src = user.photoURL;
+      mtbAvatar.style.display = 'block';
+      if(mtbInitials) mtbInitials.style.display = 'none';
+    }
 
     // ── DESKTOP sidebar ──
     var sidebarInfo = document.getElementById('userInfoSidebar');
@@ -2323,6 +2491,22 @@ var NAV_PAGES={
   hist:{label:"Histórico"},
   reserva:{label:"Reserva"}
 };
+var MTB_TITLES={
+  dash:"Dashboard",
+  contas:"Contas",
+  lanc:"Lançamentos",
+  agenda:"Agenda do Mês",
+  proj:"Projeção Futura",
+  hist:"Histórico",
+  reserva:"Reserva"
+};
+function getInitials(name){
+  if(!name) return "U";
+  var parts=name.trim().split(/\s+/).filter(Boolean);
+  if(!parts.length) return "U";
+  if(parts.length===1) return parts[0].substring(0,2).toUpperCase();
+  return (parts[0][0]+parts[parts.length-1][0]).toUpperCase();
+}
 
 function openNavSheet(){
   var ov=document.getElementById("navsheetOverlay");
@@ -2361,6 +2545,8 @@ function nav(v){
   document.querySelectorAll("[onclick=\"nav('"+v+"')\"]").forEach(function(b){b.classList.add("on");});
   var nbmTitle=document.getElementById("navbarMiniTitle");
   if(nbmTitle && NAV_PAGES[v])nbmTitle.textContent=NAV_PAGES[v].label;
+  var mtbTitle=document.getElementById("mtbPageTitle");
+  if(mtbTitle && MTB_TITLES[v])mtbTitle.textContent=MTB_TITLES[v];
   document.querySelectorAll(".nbs-item").forEach(function(b){b.classList.toggle("on",b.getAttribute("data-page")===v);});
   try{render();}catch(err){console.warn("render error:",err);}
   if(v=="reserva"){
@@ -2700,74 +2886,42 @@ if(ctxC&&contas.length>0){
       responsive:true,
       maintainAspectRatio:false,
       plugins:{
-        legend:{
-          position:"bottom",
-          labels:{
-            color:gc("--txt"),
-            font:{size:11},
-            padding:12,
-            generateLabels:function(chart){
-              var total=rawData.reduce(function(s,v){return s+v;},0);
-              return chart.data.labels.map(function(l,i){
-                var meta=chart.getDatasetMeta(0);
-                var hidden=meta.data[i]&&meta.data[i].hidden;
-                var pct=total>0?Math.round(rawData[i]/total*100):0;
-                return{
-                  text:l+" — "+fmt(rawData[i])+" ("+pct+"%)",
-                  fillStyle:hidden?"transparent":chart.data.datasets[0].backgroundColor[i],
-                  strokeStyle:chart.data.datasets[0].backgroundColor[i],
-                  fontColor:hidden?gc("--faint"):gc("--txt"),
-                  hidden:hidden,
-                  lineWidth:hidden?0:1,
-                  index:i,
-                  textDecoration:hidden?"line-through":""
-                };
-              });
-            }
-          },
-          onClick:function(e,legendItem,legend){
-            var index=legendItem.index;
-            var meta=legend.chart.getDatasetMeta(0);
-            meta.data[index].hidden=!meta.data[index].hidden;
-            legend.chart.update();
-          }
-        },
+        legend:{display:false},
         tooltip:{callbacks:{label:function(c){
           var total=rawData.reduce(function(s,v){return s+v;},0);
           var pct=total>0?Math.round(rawData[c.dataIndex]/total*100):0;
           return c.label+": "+fmt(rawData[c.dataIndex])+" ("+pct+"%)";
         }}}
       }
-    },
-    plugins:[{
-      id:"sliceLabels",
-      afterDraw:function(chart){
-        var ctx2=chart.ctx;
-        var total=rawData.reduce(function(s,v){return s+v;},0);
-        if(!total)return;
-        var meta=chart.getDatasetMeta(0);
-        meta.data.forEach(function(arc,i){
-          if(arc.hidden)return;
-          var pct=Math.round(rawData[i]/total*100);
-          if(pct<5)return; // não mostra % em fatias muito pequenas
-          var angle=(arc.startAngle+arc.endAngle)/2;
-          var r=(arc.outerRadius+arc.innerRadius)/2;
-          var x=arc.x+Math.cos(angle)*r;
-          var y=arc.y+Math.sin(angle)*r;
-          ctx2.save();
-          ctx2.font="bold 11px Inter,sans-serif";
-          ctx2.fillStyle="#fff";
-          ctx2.textAlign="center";
-          ctx2.textBaseline="middle";
-          ctx2.shadowColor="rgba(0,0,0,.4)";
-          ctx2.shadowBlur=3;
-          ctx2.fillText(pct+"%",x,y);
-          ctx2.restore();
-        });
-      }
-    }]
+    }
   });
+  renderCContasToggles(rawData);
+}else{
+  var toggleHost=document.getElementById("cContasToggles");
+  if(toggleHost)toggleHost.innerHTML="";
 }
+}
+function renderCContasToggles(rawData){
+  var host=document.getElementById("cContasToggles");
+  var ch=window._chContas;
+  if(!host||!ch)return;
+  var total=rawData.reduce(function(s,v){return s+v;},0);
+  host.innerHTML=ch.data.labels.map(function(l,i){
+    var meta=ch.getDatasetMeta(0);
+    var hidden=!!(meta.data[i]&&meta.data[i].hidden);
+    var pct=total>0?Math.round(rawData[i]/total*100):0;
+    var nomeAbrev=l.length>12?l.slice(0,12)+"…":l;
+    return pillHTML(nomeAbrev+" "+fmt(rawData[i])+" "+pct+"%",ch.data.datasets[0].backgroundColor[i]||"#999",hidden,"toggleCContasDataset("+i+")");
+  }).join("");
+}
+function toggleCContasDataset(i){
+  var ch=window._chContas;
+  if(!ch)return;
+  var meta=ch.getDatasetMeta(0);
+  meta.data[i].hidden=!meta.data[i].hidden;
+  ch.update();
+  var rawData=contas.map(function(c){return Math.max(0,saldoConta(c.id));});
+  renderCContasToggles(rawData);
 }
 
 // ===== DIA FIXO RECORRENTE =====
@@ -4920,6 +5074,23 @@ function renderTbls(){
   }).join(""):empty;
 }
 
+// ── Helpers para pílulas de toggle (usadas em cBar, cPie, cContas) ──
+function hexToRgba(hex,a){
+  hex=(hex||"#999999").replace('#','');
+  if(hex.length===3)hex=hex.split('').map(function(c){return c+c;}).join('');
+  var r=parseInt(hex.substring(0,2),16),g=parseInt(hex.substring(2,4),16),b=parseInt(hex.substring(4,6),16);
+  if(isNaN(r)||isNaN(g)||isNaN(b))return "rgba(153,153,153,"+a+")";
+  return "rgba("+r+","+g+","+b+","+a+")";
+}
+function pillHTML(label,color,hidden,onclickAttr){
+  var css=hidden
+    ? "background:transparent;color:var(--muted);border:.5px solid #2a2a2a;"
+    : "background:"+hexToRgba(color,.15)+";color:"+color+";border:.5px solid "+hexToRgba(color,.3)+";";
+  var dot=hidden?"#777":color;
+  return '<button class="chart-toggle-pill'+(hidden?' off':'')+'" style="'+css+'" onclick="'+onclickAttr+'">'+
+    '<span class="ctp-dot" style="background:'+dot+';"></span>'+label+'</button>';
+}
+
 function renderCharts(){try{
   var ls=getLM(cM,cY).filter(function(l){return l.t=="s";});
   var cats={};ls.forEach(function(l){cats[l.cat]=(cats[l.cat]||0)+l.v;});
@@ -4927,31 +5098,12 @@ function renderCharts(){try{
   if(CH.pie)CH.pie.destroy();
   CH.pie=new Chart(document.getElementById("cPie").getContext("2d"),{
     type:"doughnut",
-    data:{labels:cL,datasets:[{data:cD.length?cD:[1],backgroundColor:cD.length?cC:["#eee"],borderWidth:3,borderColor:gc("--surf"),hoverOffset:8}]},
+    data:{labels:cL,datasets:[{data:cD.length?cD:[1],backgroundColor:cD.length?cC:[gc("--surf3")||"#999"],borderWidth:3,borderColor:gc("--surf"),hoverOffset:cD.length?8:0}]},
     options:{
       responsive:true,maintainAspectRatio:false,cutout:"68%",
       plugins:{
-        legend:{
-          position:"right",
-          labels:{font:{size:9.5},color:gc("--txt"),boxWidth:9,padding:6,
-            generateLabels:function(chart){
-              var total=cD.reduce(function(s,v){return s+v;},0);
-              return chart.data.labels.map(function(l,i){
-                var meta=chart.getDatasetMeta(0);
-                var hidden=meta.data[i]&&meta.data[i].hidden;
-                var pct=total>0?Math.round(cD[i]/total*100):0;
-                return{text:l+" "+pct+"%",fillStyle:hidden?"transparent":cC[i],strokeStyle:cC[i],fontColor:hidden?gc("--faint"):gc("--txt"),hidden:hidden,lineWidth:hidden?0:1,index:i,textDecoration:hidden?"line-through":""};
-              });
-            }
-          },
-          onClick:function(e,legendItem,legend){
-            var index=legendItem.index;
-            var meta=legend.chart.getDatasetMeta(0);
-            meta.data[index].hidden=!meta.data[index].hidden;
-            legend.chart.update();
-          }
-        },
-        tooltip:{callbacks:{label:function(c){
+        legend:{display:false},
+        tooltip:{enabled:cD.length>0,callbacks:{label:function(c){
           if(!cD.length)return"";
           var total=cD.reduce(function(s,v){return s+v;},0);
           var pct=total>0?Math.round(c.raw/total*100):0;
@@ -4964,7 +5116,16 @@ function renderCharts(){try{
       afterDraw:function(chart){
         var ctx2=chart.ctx;
         var total=cD.reduce(function(s,v){return s+v;},0);
-        if(!total||!cD.length)return;
+        if(!total||!cD.length){
+          ctx2.save();
+          ctx2.font="600 12px Inter,sans-serif";
+          ctx2.fillStyle=gc("--muted")||"#888";
+          ctx2.textAlign="center";
+          ctx2.textBaseline="middle";
+          ctx2.fillText("Sem gastos no período",chart.width/2,chart.height/2);
+          ctx2.restore();
+          return;
+        }
         var meta=chart.getDatasetMeta(0);
         meta.data.forEach(function(arc,i){
           if(arc.hidden)return;
@@ -4987,11 +5148,53 @@ function renderCharts(){try{
       }
     }]
   });
+  renderCPieToggles();
   var bL=[],bR=[],bD=[];
   for(var i=5;i>=0;i--){var bm=cM-i,by=cY;if(bm<0){bm+=12;by--;}var cm=calcMes(bm,by);bL.push(MN[bm]);bR.push(cm.rec);bD.push(cm.dep);}
   if(CH.bar)CH.bar.destroy();
-  CH.bar=new Chart(document.getElementById("cBar").getContext("2d"),{type:"line",data:{labels:bL,datasets:[{label:"Entradas",data:bR,backgroundColor:"rgba(67,160,71,.2)",borderColor:"#43a047",borderWidth:2.5,pointBackgroundColor:"#43a047",pointRadius:5,pointHoverRadius:8,pointBorderWidth:2,pointBorderColor:"#fff",fill:true,tension:.35},{label:"Saídas",data:bD,backgroundColor:"rgba(229,57,53,.18)",borderColor:"#e53935",borderWidth:2.5,pointBackgroundColor:"#e53935",pointRadius:5,pointHoverRadius:8,pointBorderWidth:2,pointBorderColor:"#fff",fill:true,tension:.4}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},plugins:{legend:{labels:{font:{size:9.5},color:gc("--muted"),boxWidth:9,usePointStyle:true}},tooltip:{backgroundColor:"rgba(0,0,0,.75)",padding:10,cornerRadius:8,callbacks:{label:function(c){return" "+c.dataset.label+": R$"+Number(c.raw).toLocaleString("pt-BR",{minimumFractionDigits:2});}}}},scales:{x:{ticks:{color:gc("--muted"),font:{size:9.5}},grid:{display:false}},y:{ticks:{color:gc("--muted"),font:{size:9.5},callback:function(v){return"R$"+Number(v).toLocaleString("pt-BR");}},grid:{color:gc("--div")}}}}});
+  CH.bar=new Chart(document.getElementById("cBar").getContext("2d"),{type:"line",data:{labels:bL,datasets:[{label:"Entradas",data:bR,backgroundColor:"rgba(34,197,94,.18)",borderColor:"#22c55e",borderWidth:2.5,pointBackgroundColor:"#22c55e",pointRadius:5,pointHoverRadius:8,pointBorderWidth:2,pointBorderColor:"#fff",fill:true,tension:.35},{label:"Saídas",data:bD,backgroundColor:"rgba(239,68,68,.16)",borderColor:"#ef4444",borderWidth:2.5,pointBackgroundColor:"#ef4444",pointRadius:5,pointHoverRadius:8,pointBorderWidth:2,pointBorderColor:"#fff",fill:true,tension:.4}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},plugins:{legend:{display:false},tooltip:{backgroundColor:"rgba(0,0,0,.75)",padding:10,cornerRadius:8,callbacks:{label:function(c){return" "+c.dataset.label+": R$"+Number(c.raw).toLocaleString("pt-BR",{minimumFractionDigits:2});}}}},scales:{x:{ticks:{color:gc("--muted"),font:{size:9.5}},grid:{display:false}},y:{ticks:{color:gc("--muted"),font:{size:9.5},callback:function(v){return"R$"+Number(v).toLocaleString("pt-BR");}},grid:{color:gc("--div")}}}}});
+  renderCBarToggles();
 }catch(e){console.warn("chart err",e);}}
+
+function renderCBarToggles(){
+  var host=document.getElementById("cBarToggles");
+  if(!host||!CH.bar)return;
+  var colors=["#22c55e","#ef4444"];
+  host.innerHTML=CH.bar.data.datasets.map(function(ds,i){
+    var meta=CH.bar.getDatasetMeta(i);
+    var hidden=!!meta.hidden;
+    return pillHTML(ds.label,colors[i]||"#999",hidden,"toggleCBarDataset("+i+")");
+  }).join("");
+}
+function toggleCBarDataset(i){
+  if(!CH.bar)return;
+  var meta=CH.bar.getDatasetMeta(i);
+  meta.hidden=meta.hidden===null?!CH.bar.data.datasets[i].hidden:!meta.hidden;
+  CH.bar.update();
+  renderCBarToggles();
+}
+
+function renderCPieToggles(){
+  var host=document.getElementById("cPieToggles");
+  if(!host||!CH.pie)return;
+  var labels=CH.pie.data.labels;
+  if(!labels||!labels.length){host.innerHTML="";return;}
+  var ds=CH.pie.data.datasets[0];
+  var total=ds.data.reduce(function(s,v){return s+v;},0);
+  host.innerHTML=labels.map(function(l,i){
+    var meta=CH.pie.getDatasetMeta(0);
+    var hidden=!!(meta.data[i]&&meta.data[i].hidden);
+    var pct=total>0?Math.round(ds.data[i]/total*100):0;
+    return pillHTML(l+" "+pct+"%",ds.backgroundColor[i]||"#999",hidden,"toggleCPieDataset("+i+")");
+  }).join("");
+}
+function toggleCPieDataset(i){
+  if(!CH.pie)return;
+  var meta=CH.pie.getDatasetMeta(0);
+  meta.data[i].hidden=!meta.data[i].hidden;
+  CH.pie.update();
+  renderCPieToggles();
+}
 function animN(el,val){var prev=parseFloat(el.dataset.v||0);el.dataset.v=val;var dur=320,t0=performance.now();(function s(now){var p=Math.min((now-t0)/dur,1),c=prev+(val-prev)*p;el.textContent="R$ "+Math.abs(c).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});if(p<1)requestAnimationFrame(s);})(t0);}
 
 
@@ -5112,6 +5315,54 @@ if(mlm) mlm.textContent = document.getElementById('mLbl').textContent;
   if(ksCard)ksCard.className="kpi "+(cm.sal>=0?"g":"r");
   renderTbls();renderCharts();renderProj();renderContas();renderAgenda();refreshContaSelect();renderOrc();
   renderGastoDia();
+  renderHero();
+}
+
+// ── HERO MOBILE (Patrimônio / Hoje-Mês-Ano) ──
+var HERO_RANGE='mes';
+function setHeroRange(r){
+  HERO_RANGE=r;
+  document.querySelectorAll('.hero-pill').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-range')===r);});
+  renderHero();
+}
+function getDiaStats(){
+  var hoje=new Date();
+  var mesAtivo=(cM===hoje.getMonth()&&cY===hoje.getFullYear());
+  var dia=mesAtivo?hoje.getDate():1;
+  var ds=cY+"-"+("0"+(cM+1)).slice(-2)+"-"+("0"+dia).slice(-2);
+  var ls=lancamentos.filter(function(l){return l.dt===ds&&(l.t==="e"||l.t==="s");});
+  var rec=ls.filter(function(l){return l.t==="e";}).reduce(function(s,l){return s+l.v;},0);
+  var dep=ls.filter(function(l){return l.t==="s";}).reduce(function(s,l){return s+l.v;},0);
+  return{rec:rec,dep:dep,sal:rec-dep};
+}
+function getAnoStats(y){
+  var hoje=new Date().toISOString().slice(0,10);
+  var ls=lancamentos.filter(function(l){return l.dt&&l.dt.slice(0,4)===String(y)&&l.dt<=hoje&&(l.t==="e"||l.t==="s");});
+  var rec=ls.filter(function(l){return l.t==="e";}).reduce(function(s,l){return s+l.v;},0);
+  var dep=ls.filter(function(l){return l.t==="s";}).reduce(function(s,l){return s+l.v;},0);
+  return{rec:rec,dep:dep,sal:rec-dep};
+}
+function renderHero(){
+  var elV=document.getElementById('heroPatrimonio');
+  if(!elV)return;
+  elV.textContent=fmt(saldoTotal());
+  var stats;
+  if(HERO_RANGE==='dia')stats=getDiaStats();
+  else if(HERO_RANGE==='ano')stats=getAnoStats(cY);
+  else{var cm=calcMes(cM,cY);stats={rec:cm.rec,dep:cm.dep,sal:cm.sal};}
+  document.getElementById('heroRec').textContent=fmt(stats.rec);
+  document.getElementById('heroDep').textContent=fmt(stats.dep);
+  document.getElementById('heroSal').textContent=fmt(stats.sal);
+  var bars=[];
+  for(var i=5;i>=0;i--){var bm=cM-i,by=cY;if(bm<0){bm+=12;by--;}bars.push(Math.max(0,calcMes(bm,by).rec));}
+  var max=Math.max.apply(null,bars.concat([1]));
+  var wrap=document.getElementById('heroBars');
+  if(wrap){
+    wrap.innerHTML=bars.map(function(v){
+      var h=Math.max(6,Math.round((v/max)*44));
+      return '<div class="hb" style="height:'+h+'px;"></div>';
+    }).join('');
+  }
 }
 function fillCategorySelect(selectId){
   const sel = document.getElementById(selectId);
@@ -5391,32 +5642,32 @@ function renderOrcControls(){
     </div>
 
     ${editing ? `
-      <div style="padding:0 1rem .75rem;">
-        <div class="ttog orc-mode-ttog" style="margin-bottom:.5rem;flex-wrap:wrap;overflow:visible;">
+      <div style="padding:0 1rem .75rem;display:flex;flex-direction:column;">
+        <div class="ttog orc-mode-ttog" style="flex-wrap:wrap;overflow:visible;">
           <button class="${ORC_MODE==='conservador'?'oe':''}" onclick="setOrcMode('conservador')">70-15-10-5</button>
           <button class="${ORC_MODE==='equilibrado'?'oe':''}" onclick="setOrcMode('equilibrado')">60-20-15-5</button>
           <button class="${ORC_MODE==='folgado'?'oe':''}" onclick="setOrcMode('folgado')">65-15-15-5</button>
           <button class="${ORC_MODE==='custom'?'oe':''}" onclick="setOrcMode('custom')">⚙ Personalizado</button>
         </div>
         ${ORC_MODE !== 'custom' ? `
-        <div style="margin-bottom:.5rem;font-size:.8rem;color:var(--muted);">
+        <div class="orc-mode-desc" style="font-size:.8rem;color:var(--muted);">
           <b>${modeInfo.nome}</b> — ${modeInfo.desc}<br>
           <small>Distribuição: ${preset.join('-')}%</small>
         </div>
         ` : `
-        <div style="margin-bottom:.75rem;">
+        <div class="orc-mode-desc">
           ${customInputsHTML}
           <div id="orcCustomTotal" style="font-size:.82rem;font-weight:700;text-align:right;padding:.25rem 0 0;"></div>
         </div>
         `}
-        <div class="ttog orc-base-ttog" style="margin-bottom:.5rem;">
+        <div class="ttog orc-base-ttog">
           <button class="${ORC_BASE==='receita'?'oe':''}" onclick="setOrcBase('receita')">Usar Receita</button>
           <button class="${ORC_BASE==='manual'?'oe':''}" onclick="setOrcBase('manual')">Valor Manual</button>
         </div>
         ${ORC_BASE === 'manual' ? `
-          <input type="number" id="orcManual" placeholder="Digite sua renda" style="width:100%;padding:.5rem;" value="${ORC_MANUAL||''}">
+          <input type="number" id="orcManual" placeholder="Digite sua renda" style="width:100%;margin-top:8px;box-sizing:border-box;" value="${ORC_MANUAL||''}">
         ` : `
-          <div style="padding:.75rem;border-radius:10px;border:1px solid var(--div);background:var(--surf2);color:var(--txt);font-weight:700;">
+          <div class="orc-recebido-box" style="border:1px solid var(--div);color:var(--txt);font-weight:700;">
             Recebido até hoje: R$ ${getRendaOrcamento().toFixed(2)}
           </div>
         `}
