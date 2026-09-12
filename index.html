@@ -69,6 +69,7 @@ tr:last-child td{border-bottom:none;}
 tr:hover td{background:var(--surf2);}
 .bdg{display:inline-flex;align-items:center;padding:.1em .55em;border-radius:9999px;font-size:.65rem;font-weight:700;}
 .bdg.e{background:var(--glight);color:var(--green)}.bdg.s{background:var(--rlight);color:var(--red);}
+.bdg.t{background:var(--plight);color:var(--p);white-space:nowrap;}
 .ap{color:var(--green);font-weight:700;font-variant-numeric:tabular-nums;}
 .an{color:var(--red);font-weight:700;font-variant-numeric:tabular-nums;}
 .cc{background:var(--surf3);color:var(--muted);padding:.1em .45em;border-radius:9999px;font-size:.65rem;font-weight:600;}
@@ -1460,8 +1461,11 @@ input:focus, select:focus {
   .hs-lbl.g{color:#3ecf5c;}.hs-lbl.r{color:#e0554b;}.hs-lbl.y{color:#e0b93e;}
   .hs-val{font-family:'Sora',sans-serif;font-size:.85rem;font-weight:700;color:var(--txt);font-variant-numeric:tabular-nums;}
   .hero-bars{display:flex;align-items:flex-end;gap:5px;height:44px;width:100%;max-width:200px;}
-  .hero-bars .hb{flex:1;background:var(--glight);border-radius:3px 3px 0 0;transition:height .4s ease;}
+  .hero-bars .hb{flex:1;background:var(--glight);border-radius:3px 3px 0 0;transition:height .4s ease;position:relative;cursor:pointer;}
   .hero-bars .hb:last-child{background:var(--green);}
+  .hero-bars .hb.hb-neg{background:var(--red) !important;}
+  .hb-tooltip{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#222;color:#fff;border-radius:4px;padding:3px 7px;font-size:9px;white-space:nowrap;pointer-events:none;z-index:20;}
+  .hb-tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:4px solid transparent;border-top-color:#222;}
 }
 
 /* ── Orçamento mobile: painel de edição sem sobreposição ──
@@ -1577,6 +1581,31 @@ input:focus, select:focus {
 @media(max-width:480px){
   .ttog.ttog-tipo button{font-size:11px !important;padding:8px 2px !important;}
 }
+
+/* ── Simulador "E se?" — toggle Entrada/Gasto extra e pills de duração ── */
+.ttog.sim-tipo-ttog button.sim-entrada-on{background:rgba(34,197,94,.15) !important;border:1px solid rgba(34,197,94,.4) !important;color:#16a34a !important;box-shadow:none !important;}
+.ttog.sim-tipo-ttog button.sim-gasto-on{background:rgba(229,57,53,.15) !important;border:1px solid rgba(229,57,53,.4) !important;color:#e53935 !important;box-shadow:none !important;}
+.sim-pill{padding:.3rem .75rem;border-radius:9999px;font-size:.75rem;font-weight:600;background:var(--surf2);border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:background .15s,color .15s,border-color .15s;}
+.sim-pill.active{background:var(--p);color:#fff;border-color:var(--p);}
+
+/* ── Orçamento: ⓘ de categorias inclusas em cada card ──
+   O tooltip (#orcInfoTooltip) é anexado direto no <body> via JS (portal), então
+   usa position:fixed e nunca fica preso pelo overflow:hidden do card/grid, seja
+   no grid do desktop ou no empilhamento do mobile. Posição/seta calculadas em JS. */
+.orc-info-wrap{position:relative;display:inline-flex;align-items:center;}
+.orc-info-btn{width:16px;height:16px;border-radius:50%;background:var(--border);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+.orc-info-btn i{font-size:12px;color:var(--muted);line-height:1;}
+.orc-info-tip{display:none;position:fixed;--orc-arrow-right:10px;z-index:9999;background:#1a1a1a;border:.5px solid #2a2a2a;border-radius:8px;padding:8px 10px;min-width:170px;max-width:240px;box-shadow:0 8px 24px rgba(0,0,0,.35);cursor:default;}
+.orc-info-tip.show{display:block;}
+.orc-info-tip.tip-arrow-bottom::after{content:'';position:absolute;top:100%;right:var(--orc-arrow-right);border:5px solid transparent;border-top-color:#1a1a1a;}
+.orc-info-tip.tip-arrow-top::after{content:'';position:absolute;bottom:100%;right:var(--orc-arrow-right);border:5px solid transparent;border-bottom-color:#1a1a1a;}
+.orc-info-tip-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#999;margin-bottom:6px;white-space:nowrap;}
+.orc-info-tags{display:flex;flex-wrap:wrap;gap:4px;}
+.orc-info-tag{font-size:11px;padding:2px 7px;border-radius:9999px;white-space:nowrap;}
+
+/* ── Popover do calendário do campo Data (Lançamentos) — vive no <body>, fora do
+   overflow:hidden do card "Novo Lançamento"; posição calculada via JS. ── */
+#lancCalPopover{position:fixed;z-index:9999;width:260px;max-width:calc(100vw - 2rem);box-shadow:0 8px 24px rgba(0,0,0,.3);border-radius:14px;}
 </style>
 <script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
 </head>
@@ -1809,9 +1838,13 @@ input:focus, select:focus {
       <div id="lancGrid">
   <div class="fg"><label>Descrição</label><input type="text" id="iDesc" placeholder="Ex: Salário, Aluguel, Parcela carro…"></div>
   <div class="fg"><label>Valor (R$)</label><input type="number" id="iVal" placeholder="0,00" step="0.01" oninput="updateParcInfo()"></div>
-  <div class="fg" id="fgCat"><label>Categoria</label><select id="iCat"></select></div>
+  <div class="fg" id="fgCat"><label>Categoria</label><select id="iCat" onchange="atualizarIndicadorOrc()"></select><div id="catOrcIndicador" style="font-size:11px;color:var(--muted);margin-top:2px;"></div></div>
   <div class="fg" id="fgConta"><label>Conta</label><select id="iConta"><option value="">— nenhuma —</option></select></div>
-  <div class="fg"><label>Data</label><input type="date" id="iDt" lang="pt-BR" style="width:100%;"></div>
+  <div class="fg">
+    <label>Data</label>
+    <input type="text" id="iDtDisplay" readonly placeholder="DD/MM/AAAA" style="width:100%;cursor:pointer;" onclick="toggleLancCal(event)">
+    <input type="hidden" id="iDt">
+  </div>
   <div class="fg">
     <label style="visibility:hidden;">.</label>
     <button class="btn bp" onclick="addLanc()" style="width:100%;height:36px;">＋ Adicionar</button>
@@ -1898,6 +1931,7 @@ input:focus, select:focus {
   <div class="pcnt">
     <div class="card">
       <div class="ctit">Linha do tempo <small>* = projeção com base em entradas/saídas recorrentes e parcelas ativas</small></div>
+      <div id="simLabel" style="display:none;align-items:center;gap:.4rem;font-size:.78rem;font-weight:700;color:#111;background:#f5c518;padding:.4rem .75rem;border-radius:8px;margin-bottom:.75rem;">⚡ Simulação ativa</div>
       <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
         <div style="min-width:620px;">
           <div class="pt-head"><span>Mês</span><span>Barra</span><span>Saldo/mês</span><span>Acumulado</span><span>Variação</span></div>
@@ -1908,13 +1942,28 @@ input:focus, select:focus {
     <div class="card"><div class="ctit">Evolução do saldo acumulado</div><div style="overflow-x:auto;-webkit-overflow-scrolling:touch;"><div style="min-width:500px;max-width:800px;height:220px;position:relative;"><canvas id="cProj"></canvas></div></div></div>
     <div class="simbox">
       <div class="simtit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Simulador "E se?" — veja como um valor extra por mês afeta sua projeção</div>
+      <div class="ttog sim-tipo-ttog" style="margin-bottom:.75rem;">
+        <button id="simBtnEntrada" class="sim-entrada-on" onclick="setSimTipo('entrada')">↑ Entrada extra</button>
+        <button id="simBtnGasto" onclick="setSimTipo('gasto')">↓ Gasto extra</button>
+      </div>
       <div id="simFormGrid" class="fgrid" style="grid-template-columns:1fr 1fr;align-items:end;gap:.75rem;flex-wrap:wrap;">
-        <div class="fg"><label>+ Entrada extra por mês (R$)</label><input type="number" id="simEntradaExtra" placeholder="Ex: 300" step="0.01" oninput="renderProj()" style="height:36px;"></div>
-        <div class="fg"><label>+ Gasto extra por mês (R$)</label><input type="number" id="simGastoExtra" placeholder="Ex: 200" step="0.01" oninput="renderProj()" style="height:36px;"></div>
+        <div class="fg"><label>Valor (R$) <span style="text-transform:none;font-weight:400;color:var(--faint);">— por mês</span></label><input type="number" id="simValor" placeholder="Ex: 300" step="0.01" oninput="onSimInputChange()" style="height:36px;"></div>
+        <div class="fg"><label>Por quantos meses?</label><input type="number" id="simMeses" placeholder="Ex: 6" min="1" max="24" oninput="onSimInputChange()" style="height:36px;"></div>
+      </div>
+      <div id="simDuracaoPills" style="display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.5rem;">
+        <button type="button" class="sim-pill" data-meses="" onclick="setSimDuracao(null,this)">Indefinido</button>
+        <button type="button" class="sim-pill" data-meses="3" onclick="setSimDuracao(3,this)">3 meses</button>
+        <button type="button" class="sim-pill" data-meses="6" onclick="setSimDuracao(6,this)">6 meses</button>
+        <button type="button" class="sim-pill" data-meses="12" onclick="setSimDuracao(12,this)">12 meses</button>
+        <button type="button" class="sim-pill" data-meses="24" onclick="setSimDuracao(24,this)">24 meses</button>
+      </div>
+      <div id="simResultado" style="display:none;margin-top:.875rem;padding:.75rem .875rem;border-radius:10px;background:var(--surf2);">
+        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);">Impacto em 12 meses</div>
+        <div id="simResumoTxt" style="font-size:.78rem;color:var(--muted);margin-top:.15rem;"></div>
+        <div id="simImpactoVal" style="font-family:'Sora',sans-serif;font-size:1.2rem;font-weight:800;margin-top:.3rem;"></div>
       </div>
       <div id="simFormBtns" style="margin-top:.75rem;display:flex;gap:.75rem;flex-wrap:wrap;align-items:center;">
         <button class="btn" onclick="limparSimulacao()" style="height:36px;padding:0 1rem;background:var(--surf2);color:var(--muted);border:1px solid var(--border);">✕ Limpar simulação</button>
-        <span id="simLabel" style="display:none;font-size:.78rem;font-weight:700;color:var(--warn);align-items:center;gap:.4rem;"></span>
       </div>
     </div>
   </div>
@@ -2428,6 +2477,35 @@ function loadBlogos(container){
 
 var CORES=["#2196F3","#F44336","#4CAF50","#FFC107","#9C27B0","#FF5722","#00BCD4","#E91E63","#795548","#607D8B","#01696f","#437a22","#006494","#f97316","#6366f1","#14b8a6","#ec4899","#a855f7"];
 var EMOJIS={"Essenciais":"🏠","Alimentação":"🛒","Transporte":"🚗","Saúde":"❤️","Lazer":"🎮","Educação":"📚","Renda":"💰","Reserva":"🛡️","Outros":"📌"};
+// Mapeamento fixo: categoria do lançamento → grupo do orçamento
+// Mapeamento categoria -> grupo do orçamento. Só as 9 categorias reais do app
+// (ver var CATS acima) — nada de categorias mockadas que não existem na prática.
+var categoriaParaOrcamento = {
+  "Essenciais": "Essenciais",
+  "Alimentação": "Essenciais",
+  "Transporte": "Essenciais",
+  "Saúde": "Essenciais",
+  "Educação": "Essenciais",
+  "Lazer": "Lazer",
+  "Reserva": "Reserva",
+  "Outros": "Dia a dia",
+  "Renda": null
+};
+function mapCategoriaOrc(cat){
+  cat = (cat || '').trim();
+  if (Object.prototype.hasOwnProperty.call(categoriaParaOrcamento, cat)) return categoriaParaOrcamento[cat];
+  return 'Dia a dia'; // categoria desconhecida cai no grupo genérico
+}
+// Indicação visual: para qual grupo do orçamento a categoria escolhida aponta (só em Saída)
+function atualizarIndicadorOrc(){
+  var el=document.getElementById('catOrcIndicador');
+  if(!el)return;
+  if(tipoAtual!=='s'){el.textContent='';return;}
+  var catEl=document.getElementById('iCat');
+  var cat=catEl?catEl.value:'';
+  var grupo=mapCategoriaOrc(cat);
+  el.textContent=grupo?('→ Conta para: '+grupo):'';
+}
 
 // SVG paths por categoria (subset do Lucide)
 var CAT_ICONS={
@@ -2469,9 +2547,71 @@ function getLM(m,y){var k=y+"-"+("0"+(m+1)).slice(-2);var hoje=new Date().toISOS
   return true;
 });}
 function getAgendaLM(m,y){var k=y+"-"+("0"+(m+1)).slice(-2);return lancamentos.filter(function(l){return l.dt.startsWith(k)&&l.t==="agenda";});}
+// Mesma lista de getLM(), mas incluindo as duas pernas de transferência (transf_s/transf_e)
+// — usada só para EXIBIÇÃO em listas/histórico, nunca para somar receita/despesa do mês.
+function getLMFull(m,y){
+  var k=y+"-"+("0"+(m+1)).slice(-2);
+  var transf=lancamentos.filter(function(l){return(l.t==="transf_s"||l.t==="transf_e")&&l.dt&&l.dt.startsWith(k);});
+  return getLM(m,y).concat(transf);
+}
+function isEntradaLike(l){return l.t==="e"||l.t==="transf_e";}
+function lancTipoLabel(l){
+  if(l.t==="transf_s"){var d=contas.find(function(c){return c.id===l.contaDestino;});return"Transferência → "+(d?d.nome:"?");}
+  if(l.t==="transf_e"){var o=contas.find(function(c){return c.id===l.contaOrigem;});return"Transferência ← "+(o?o.nome:"?");}
+  return l.t==="e"?"Entrada":"Saída";
+}
+function lancBadgeHTML(l){
+  if(l.t==="transf")return'<span class="bdg t">Transferência</span>';
+  if(l.t==="transf_s"||l.t==="transf_e")return'<span class="bdg t">'+lancTipoLabel(l)+'</span>';
+  return'<span class="bdg '+(l.t==="e"?"e":"s")+'">'+(l.t==="e"?"Entrada":"Saída")+'</span>';
+}
+// Agrupa as duas pernas de uma mesma transferência (mesmo grupoTransfId) em UMA linha só,
+// pra exibição em listas/histórico. Itens que não são transferência passam direto.
+function groupTransfPairs(list){
+  var vistos={};
+  var out=[];
+  list.forEach(function(l){
+    if(l.t!=="transf_s"&&l.t!=="transf_e"){out.push(l);return;}
+    var gid=l.grupoTransfId||("solo_"+l.id);
+    if(vistos[gid])return; // a outra perna já gerou a linha combinada
+    vistos[gid]=true;
+    var saida=l.t==="transf_s"?l:list.find(function(x){return x.grupoTransfId===gid&&x.t==="transf_s";});
+    var entrada=l.t==="transf_e"?l:list.find(function(x){return x.grupoTransfId===gid&&x.t==="transf_e";});
+    var base=saida||entrada;
+    var origemC=saida?contas.find(function(c){return c.id===saida.conta;}):(entrada?contas.find(function(c){return c.id===entrada.contaOrigem;}):null);
+    var destC=entrada?contas.find(function(c){return c.id===entrada.conta;}):(saida?contas.find(function(c){return c.id===saida.contaDestino;}):null);
+    out.push({
+      id:(saida?saida.id:"")+"_"+(entrada?entrada.id:""),
+      t:"transf",
+      desc:base.desc,
+      cat:base.cat,
+      v:base.v,
+      dt:base.dt,
+      contaOrigemNome:origemC?origemC.nome:"?",
+      contaDestinoNome:destC?destC.nome:"?",
+      _saidaId:saida?saida.id:null,
+      _entradaId:entrada?entrada.id:null,
+      grupoTransfId:gid
+    });
+  });
+  return out;
+}
+function lancContaCellHTML(l){
+  if(l.t==="transf"){
+    return'<span style="display:inline-flex;align-items:center;gap:.3rem;white-space:nowrap;">'+l.contaOrigemNome+'<span style="opacity:.5;">→</span>'+l.contaDestinoNome+'</span>';
+  }
+  var c=contas.find(function(x){return x.id==l.conta;});
+  if(!c)return"—";
+  return'<span style="display:inline-flex;align-items:center;gap:.25rem;"><span style="width:7px;height:7px;border-radius:50%;background:'+c.cor+';flex-shrink:0;"></span>'+c.nome+'</span>';
+}
+function lancValorCellHTML(l){
+  if(l.t==="transf")return'<td style="color:var(--p);font-weight:700;">→ '+fmt(l.v)+'</td>';
+  var isE=isEntradaLike(l);
+  return'<td class="'+(isE?"ap":"an")+'">'+(isE?"+":"−")+fmt(l.v)+'</td>';
+}
 function calcMes(m,y){var ls=getLM(m,y);var rec=ls.filter(function(l){return l.t=="e";}).reduce(function(s,l){return s+l.v;},0);var dep=ls.filter(function(l){return l.t=="s";}).reduce(function(s,l){return s+l.v;},0);return{rec:rec,dep:dep,sal:rec-dep,cnt:ls.length};}
 function addMeses(dt,n){var p=dt.split("-");var y=parseInt(p[0]),m=parseInt(p[1])-1,d=parseInt(p[2]);var nd=new Date(y,m+n,1);return nd.getFullYear()+"-"+("0"+(nd.getMonth()+1)).slice(-2)+"-"+("0"+Math.min(d,28)).slice(-2);}
-function saldoConta(id){var c=contas.find(function(x){return x.id==id;});if(!c)return 0;var hoje=new Date().toISOString().slice(0,10);var mesHoje=hoje.slice(0,7);function _naoRep(l){if(!l.rec)return true;var mk=l.dt.slice(0,7);var confirmed=(l.paidMeses&&l.paidMeses.indexOf(mk)!==-1)||lancamentos.some(function(x){return String(x.origemRecId)===String(l.id)&&x.dt.startsWith(mk)&&x.dt<=hoje;});if(confirmed)return false;// original excluído quando há cópia confirmada
+function saldoConta(id,ate){var c=contas.find(function(x){return x.id==id;});if(!c)return 0;var hoje=ate||new Date().toISOString().slice(0,10);var mesHoje=hoje.slice(0,7);function _naoRep(l){if(!l.rec)return true;var mk=l.dt.slice(0,7);var confirmed=(l.paidMeses&&l.paidMeses.indexOf(mk)!==-1)||lancamentos.some(function(x){return String(x.origemRecId)===String(l.id)&&x.dt.startsWith(mk)&&x.dt<=hoje;});if(confirmed)return false;// original excluído quando há cópia confirmada
 if(mk===mesHoje)return false;// mês atual: exige confirmação
 return true;}var ent=lancamentos.filter(function(l){return l.t=="e"&&l.conta==id&&l.dt<=hoje&&_naoRep(l);}).reduce(function(s,l){return s+l.v;},0);var sai=lancamentos.filter(function(l){return l.t=="s"&&l.conta==id&&l.dt<=hoje&&_naoRep(l);}).reduce(function(s,l){return s+l.v;},0);
 // Entradas de transferência (transf_e)
@@ -2483,15 +2623,15 @@ var saiTransf=lancamentos.filter(function(l){
   return l.t=="transf_s"&&l.conta==id&&l.dt<=hoje;
 }).reduce(function(s,l){return s+l.v;},0);
 return c.si+ent-sai+entTransf-saiTransf;}
-function saldoTotal(){
-  var hoje=new Date().toISOString().slice(0,10);
+function saldoTotal(ate){
+  var hoje=ate||new Date().toISOString().slice(0,10);
   if(contas.length==0){
     var r=lancamentos.filter(function(l){return l.t=="e"&&l.dt<=hoje;}).reduce(function(s,l){return s+l.v;},0);
     var d=lancamentos.filter(function(l){return l.t=="s"&&l.dt<=hoje;}).reduce(function(s,l){return s+l.v;},0);
     return r-d;
   }
   // Soma TODAS as contas (consumo + reserva + investimento)
-  return contas.reduce(function(s,c){return s+saldoConta(c.id);},0);
+  return contas.reduce(function(s,c){return s+saldoConta(c.id,ate);},0);
 }
 
 function saldoConsumo(){
@@ -2628,6 +2768,7 @@ function setTipo(t){
   if(btnT) btnT.className=t=="t"?"ot":"";
 
   var isTransf=(t==="t");
+  atualizarIndicadorOrc();
 
   // Mostra/esconde campos de transferência (De/Para)
   var tWrap=document.getElementById("transferenciaWrap");
@@ -3103,7 +3244,8 @@ var _dfCalSelParcela=null,_dfCalSelMensal=null,_dfCalSelRecMensal=null;
 var _calState={
   Parcela:{mes:null,ano:null,sel:null,hiddenId:'iDtParcelaHidden'},
   Mensal: {mes:null,ano:null,sel:null,hiddenId:'iDtMensalHidden'},
-  RecMensal: {mes:null,ano:null,sel:null,hiddenId:'iDtRecMensalHidden'}
+  RecMensal: {mes:null,ano:null,sel:null,hiddenId:'iDtRecMensalHidden'},
+  Lanc: {mes:null,ano:null,sel:null,hiddenId:'iDt'}
 };
 
 function initSimpleCal(ctx,dtBase){
@@ -3166,6 +3308,13 @@ function simpleCalSelect(ctx,dtStr){
   if(ctx==='Parcela')_dfCalSelParcela=dtStr;
   else if(ctx==='Mensal')_dfCalSelMensal=dtStr;
   else if(ctx==='RecMensal'){_dfCalSelRecMensal=dtStr;updateRecMensalInfo(dtStr);}
+  else if(ctx==='Lanc'){
+    var disp=document.getElementById('iDtDisplay');
+    if(disp)disp.value=fmtDt(dtStr);
+    var pop=document.getElementById('lancCalPopover');
+    if(pop)pop.style.display='none';
+    if(typeof atualizarPreviewTransf==='function')atualizarPreviewTransf();
+  }
   var hEl=document.getElementById(st.hiddenId);
   if(hEl)hEl.value=dtStr;
   renderSimpleCal(ctx);
@@ -3176,6 +3325,58 @@ function simpleCalSelect(ctx,dtStr){
     if(selEl){selEl.classList.add('selecionado');selEl.style.background='#16a34a';selEl.style.color='#fff';}
   }
 }
+
+// ── Popover do mini calendário no campo Data de Lançamentos ──
+// O popover (#lancCalPopover) vive como filho direto do <body> (fora do card "Novo
+// Lançamento", que tem overflow:hidden pras bordas arredondadas) e usa position:fixed.
+// A posição é calculada via getBoundingClientRect do campo Data, com detecção de
+// colisão: abre pra baixo por padrão, ou pra cima se não houver espaço suficiente
+// embaixo até o fim da viewport.
+function positionLancCal(anchorEl,pop){
+  var rect=anchorEl.getBoundingClientRect();
+  var gap=4,pad=8;
+  pop.style.top='-9999px';
+  pop.style.left='-9999px';
+  pop.style.display='block';
+  var popRect=pop.getBoundingClientRect();
+  var espacoAbaixo=window.innerHeight-rect.bottom;
+  var espacoAcima=rect.top;
+  var abreAcima=espacoAbaixo<(popRect.height+gap+pad)&&espacoAcima>espacoAbaixo;
+  var top=abreAcima?(rect.top-popRect.height-gap):(rect.bottom+gap);
+  top=Math.max(pad,Math.min(top,window.innerHeight-popRect.height-pad));
+  var left=Math.max(pad,Math.min(rect.left,window.innerWidth-popRect.width-pad));
+  pop.style.top=top+'px';
+  pop.style.left=left+'px';
+}
+function toggleLancCal(e){
+  if(e)e.stopPropagation();
+  var pop=document.getElementById('lancCalPopover');
+  var anchor=document.getElementById('iDtDisplay');
+  if(!pop||!anchor)return;
+  if(pop.style.display==='block'){pop.style.display='none';return;}
+  var cur=document.getElementById('iDt').value||new Date().toISOString().slice(0,10);
+  var st=_calState.Lanc;
+  st.sel=cur;
+  var d=new Date(cur+'T12:00:00');
+  st.mes=d.getMonth();
+  st.ano=d.getFullYear();
+  renderSimpleCal('Lanc');
+  positionLancCal(anchor,pop);
+}
+document.addEventListener('click',function(e){
+  var pop=document.getElementById('lancCalPopover');
+  if(!pop||pop.style.display!=='block')return;
+  if(pop.contains(e.target)||e.target.id==='iDtDisplay')return;
+  pop.style.display='none';
+});
+window.addEventListener('resize',function(){
+  var pop=document.getElementById('lancCalPopover');
+  if(pop)pop.style.display='none';
+});
+window.addEventListener('scroll',function(){
+  var pop=document.getElementById('lancCalPopover');
+  if(pop)pop.style.display='none';
+},true);
 
 function ultimoDiaMes(y,m){
   // m é 0-based
@@ -3450,15 +3651,22 @@ function delLanc(id){
   if(!l)return;
   var desc=l?l.desc:'este lançamento';
 
-  // Excluir apenas este
+  // Excluir apenas este (transferência: exclui as duas pernas juntas, senão fica desbalanceada)
   var doDeleteSo=function(){
-    _deletedIds.add(String(id));
-    if(currentUser&&db){
-      db.collection('users').doc(currentUser.uid).collection('lancamentos').doc(String(id)).delete()
-        .then(function(){setTimeout(function(){_deletedIds.delete(String(id));},5000);})
-        .catch(function(e){_deletedIds.delete(String(id));console.error(e);});
+    var idsParaExcluir=[String(id)];
+    if(l.t==='transf_s'||l.t==='transf_e'){
+      var par=lancamentos.find(function(x){return x.grupoTransfId&&x.grupoTransfId===l.grupoTransfId&&String(x.id)!==String(id);});
+      if(par)idsParaExcluir.push(String(par.id));
     }
-    lancamentos=lancamentos.filter(function(x){return String(x.id)!==String(id);});
+    idsParaExcluir.forEach(function(did){
+      _deletedIds.add(did);
+      if(currentUser&&db){
+        db.collection('users').doc(currentUser.uid).collection('lancamentos').doc(did).delete()
+          .then(function(){setTimeout(function(){_deletedIds.delete(did);},5000);})
+          .catch(function(e){_deletedIds.delete(did);console.error(e);});
+      }
+    });
+    lancamentos=lancamentos.filter(function(x){return idsParaExcluir.indexOf(String(x.id))===-1;});
     render();
   };
 
@@ -4369,32 +4577,93 @@ function getRecInfo(extraEntrada,extraGasto){
   return{entradas:entradas,saidas:saidas,sobra:entradas-saidas};
 }
 
-function getProj(extraEntrada,extraGasto){
-  var info=getRecInfo(extraEntrada,extraGasto);
-  var acc=saldoTotal();
-  var res=[];
-  for(var i=0;i<12;i++){
+// acc do mês atual = saldo real das contas hoje (sem projeção); meses futuros somam a
+// "sobra" recorrente a cada passo. duracaoMeses limita quantos meses futuros recebem o
+// extra do simulador (null = todos os meses restantes da janela de 12 meses).
+function getProj(extraEntrada,extraGasto,duracaoMeses){
+  var infoBase=getRecInfo(0,0);
+  var infoExtra=(extraEntrada||extraGasto)?getRecInfo(extraEntrada,extraGasto):infoBase;
+  var temExtra=!!(extraEntrada||extraGasto);
+  var saldoInicial=saldoTotal();
+  var cmAtual=calcMes(cM,cY);
+  var res=[{m:cM,y:cY,lbl:MN[cM]+'/'+String(cY).slice(2),sal:cmAtual.sal,acc:saldoInicial,proj:false,simAplicada:false}];
+  var acc=saldoInicial;
+  for(var i=1;i<12;i++){
     var m=cM+i,y=cY;while(m>11){m-=12;y++;}
-    acc=acc+info.sobra;
-    res.push({m:m,y:y,lbl:MN[m]+'/'+String(y).slice(2),sal:info.sobra,acc:acc,proj:true});
+    var dentroJanela=(duracaoMeses==null)||(i<=duracaoMeses);
+    var sobra=dentroJanela?infoExtra.sobra:infoBase.sobra;
+    acc=acc+sobra;
+    res.push({m:m,y:y,lbl:MN[m]+'/'+String(y).slice(2),sal:sobra,acc:acc,proj:true,simAplicada:temExtra&&dentroJanela});
   }
   return res;
 }
 
-function renderProj(){try{
-  var elE=document.getElementById('simEntradaExtra'),elG=document.getElementById('simGastoExtra');
-  var extraEntrada=elE?(parseFloat(elE.value)||0):0;
-  var extraGasto=elG?(parseFloat(elG.value)||0):0;
-  var simAtivo=extraEntrada>0||extraGasto>0;
+var SIM_TIPO='entrada'; // 'entrada' | 'gasto'
+var SIM_DURACAO=null;   // null = indefinido (resto da janela de 12 meses) ou nº de meses
 
-  var projReal=getProj(0,0);
-  var projSim=simAtivo?getProj(extraEntrada,extraGasto):null;
+function setSimTipo(tipo){
+  SIM_TIPO=tipo;
+  var be=document.getElementById('simBtnEntrada'),bg=document.getElementById('simBtnGasto');
+  if(be)be.className=tipo==='entrada'?'sim-entrada-on':'';
+  if(bg)bg.className=tipo==='gasto'?'sim-gasto-on':'';
+  renderProj();
+}
+function syncSimDuracaoPills(){
+  document.querySelectorAll('.sim-pill').forEach(function(b){
+    var raw=b.getAttribute('data-meses');
+    var isMatch=(raw===''&&SIM_DURACAO==null)||(raw!==''&&parseInt(raw)===SIM_DURACAO);
+    b.classList.toggle('active',isMatch);
+  });
+}
+function setSimDuracao(n,btn){
+  SIM_DURACAO=n;
+  var mEl=document.getElementById('simMeses');
+  if(mEl)mEl.value=n==null?'':n;
+  syncSimDuracaoPills();
+  renderProj();
+}
+function onSimInputChange(){
+  var mEl=document.getElementById('simMeses');
+  var raw=mEl?mEl.value:'';
+  if(raw===''){SIM_DURACAO=null;}
+  else{var v=parseInt(raw);if(!isNaN(v)&&v>0)SIM_DURACAO=v;}
+  syncSimDuracaoPills();
+  renderProj();
+}
+
+function renderProj(){try{
+  var valEl=document.getElementById('simValor');
+  var valor=valEl?(parseFloat(valEl.value)||0):0;
+  var simAtivo=valor>0;
+  var extraEntrada=simAtivo&&SIM_TIPO==='entrada'?valor:0;
+  var extraGasto=simAtivo&&SIM_TIPO==='gasto'?valor:0;
+
+  var projReal=getProj(0,0,null);
+  var projSim=simAtivo?getProj(extraEntrada,extraGasto,SIM_DURACAO):null;
   var projTabela=simAtivo?projSim:projReal;
 
   var lbl=document.getElementById('simLabel');
-  if(lbl){
-    if(simAtivo){lbl.style.display='inline-flex';lbl.innerHTML='⚡ Simulação ativa — resultado com ajustes';}
-    else{lbl.style.display='none';lbl.innerHTML='';}
+  if(lbl)lbl.style.display=simAtivo?'flex':'none';
+
+  var resBox=document.getElementById('simResultado');
+  if(resBox){
+    if(simAtivo){
+      resBox.style.display='block';
+      var ultimoReal=projReal[projReal.length-1].acc;
+      var ultimoSim=projSim[projSim.length-1].acc;
+      var impacto=ultimoSim-ultimoReal;
+      var duracaoTxt=SIM_DURACAO==null?'pelo resto da projeção':('por '+SIM_DURACAO+' mes'+(SIM_DURACAO>1?'es':''));
+      var sinalTxt=SIM_TIPO==='entrada'?'+':'−';
+      var resumoEl=document.getElementById('simResumoTxt');
+      if(resumoEl)resumoEl.textContent=sinalTxt+'R$ '+valor.toLocaleString('pt-BR',{minimumFractionDigits:2})+'/mês '+duracaoTxt;
+      var impactoEl=document.getElementById('simImpactoVal');
+      if(impactoEl){
+        impactoEl.textContent=(impacto>=0?'+':'−')+'R$ '+Math.abs(impacto).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+' no acumulado';
+        impactoEl.style.color=SIM_TIPO==='entrada'?'var(--green)':'var(--red)';
+      }
+    } else {
+      resBox.style.display='none';
+    }
   }
 
   var maxAbs=projTabela.reduce(function(m,p){return Math.max(m,Math.abs(p.acc));},1);
@@ -4402,7 +4671,7 @@ function renderProj(){try{
   for(var i=0;i<projTabela.length;i++){
     var p=projTabela[i];var pct=Math.min(100,Math.abs(p.acc)/maxAbs*100);var cor=p.acc>=0?"#437a22":"#c0392b";
     var delta=p.sal>=0?"↑ +"+fmt(p.sal):"↓ "+fmt(Math.abs(p.sal));
-    h+='<div class="pt-row'+(p.acc<0?" neg":"")+'"><div class="pt-mes">'+p.lbl+"*"+'</div><div class="pt-bw"><div class="pt-bf" style="width:'+pct+'%;background:'+cor+';"></div></div><div class="pt-v '+(p.sal>=0?"ap":"an")+'">'+fmt(p.sal)+'</div><div class="pt-v '+(p.acc>=0?"ap":"an")+'">'+fmt(p.acc)+'</div><div class="pt-d">'+delta+'</div></div>';
+    h+='<div class="pt-row'+(p.acc<0?" neg":"")+(i===0?" atual":"")+'"><div class="pt-mes">'+p.lbl+(p.proj?"*":"")+'</div><div class="pt-bw"><div class="pt-bf" style="width:'+pct+'%;background:'+cor+';"></div></div><div class="pt-v '+(p.sal>=0?"ap":"an")+'">'+fmt(p.sal)+'</div><div class="pt-v '+(p.acc>=0?"ap":"an")+'">'+fmt(p.acc)+'</div><div class="pt-d">'+delta+'</div></div>';
   }
   document.getElementById("projTL").innerHTML=h;
 
@@ -4411,9 +4680,13 @@ function renderProj(){try{
   var labels=projReal.map(function(p){return p.lbl;});
   var datasets;
   if(simAtivo){
+    var simColor=SIM_TIPO==='entrada'?'#22c55e':'#e53935';
     datasets=[
-      {label:"Real",data:projReal.map(function(p){return p.acc;}),borderColor:"#01696f",borderDash:[6,4],borderWidth:2,pointRadius:3,pointHoverRadius:6,fill:false,tension:.35},
-      {label:"Simulado",data:projSim.map(function(p){return p.acc;}),borderColor:"#d97706",backgroundColor:"rgba(217,119,6,.08)",borderWidth:2.5,pointRadius:4,pointHoverRadius:7,pointBorderWidth:2,pointBorderColor:"#fff",fill:true,tension:.35}
+      {label:"Sem simulação",data:projReal.map(function(p){return p.acc;}),borderColor:gc('--muted')||'#999',borderDash:[6,4],borderWidth:2,pointRadius:2,pointHoverRadius:5,fill:false,tension:.35},
+      {label:"Com simulação",data:projSim.map(function(p){return p.acc;}),borderColor:simColor,backgroundColor:hexToRgba(simColor,.08),borderWidth:2.5,
+        pointRadius:projSim.map(function(p){return p.simAplicada?5:3;}),
+        pointBackgroundColor:projSim.map(function(p){return p.simAplicada?"#eab308":simColor;}),
+        pointBorderColor:"#fff",pointBorderWidth:2,pointHoverRadius:7,fill:true,tension:.35}
     ];
   } else {
     datasets=[{label:"Saldo acumulado",data:projReal.map(function(p){return p.acc;}),borderColor:"#01696f",backgroundColor:"rgba(1,105,111,.07)",borderWidth:2.5,pointRadius:5,pointHoverRadius:8,pointBorderWidth:2,pointBorderColor:"#fff",pointBackgroundColor:projReal.map(function(p){return p.acc>=0?"#437a22":"#c0392b";}),fill:true,tension:.35}];
@@ -4421,9 +4694,11 @@ function renderProj(){try{
   CH.proj=new Chart(ctx,{type:"line",data:{labels:labels,datasets:datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:simAtivo,labels:{color:gc("--muted"),font:{size:10}}},tooltip:{callbacks:{label:function(c){return c.dataset.label+": "+fmt(c.raw);}}}},scales:{x:{ticks:{color:gc("--muted"),font:{size:9},maxRotation:45},grid:{display:false}},y:{ticks:{color:gc("--muted"),font:{size:9},callback:function(v){return "R$"+Number(v).toLocaleString("pt-BR");}},grid:{color:gc("--div")}}}}});
 }catch(e){console.warn("proj err",e);}}
 function limparSimulacao(){
-  var elE=document.getElementById('simEntradaExtra'),elG=document.getElementById('simGastoExtra');
-  if(elE)elE.value='';
-  if(elG)elG.value='';
+  var vEl=document.getElementById('simValor'),mEl=document.getElementById('simMeses');
+  if(vEl)vEl.value='';
+  if(mEl)mEl.value='';
+  SIM_DURACAO=null;
+  syncSimDuracaoPills();
   renderProj();
 }
 
@@ -4880,7 +5155,7 @@ function renderHist(){
   }
 
   // ── RANKING DO MÊS ──
-  var lsAll=getLM(m,y); // lista completa sem filtros extras
+  var lsAll=getLMFull(m,y); // lista completa (inclui as duas pernas de transferência) sem filtros extras
   renderRanking(m, y, lsAll, cm);
 
   var ls=lsAll;
@@ -4936,23 +5211,23 @@ function renderHist(){
   if(!ls.length){
     tabela.innerHTML='<p style="color:var(--muted);padding:1rem;">Nenhum lançamento encontrado.</p>';
   } else {
-    function cNomeHist(id){var c=contas.find(function(x){return x.id==id;});if(!c)return'<span style="color:var(--faint);">—</span>';return'<span style="display:inline-flex;align-items:center;gap:.25rem;"><span style="width:7px;height:7px;border-radius:50%;background:'+c.cor+';flex-shrink:0;"></span>'+c.nome+'</span>';}
+    var totEnt=ls.filter(function(l){return l.t==="e";}).reduce(function(s,l){return s+l.v;},0);
+    var totSai=ls.filter(function(l){return l.t==="s";}).reduce(function(s,l){return s+l.v;},0);
+    var lsShow=groupTransfPairs(ls);
     var h='<div class="tw"><table><thead><tr><th>Data</th><th>Descrição</th><th>Cat.</th><th>Conta</th><th>Tipo</th><th>Valor</th></tr></thead><tbody>';
-    ls.sort(function(a,b){return a.dt>b.dt?1:-1;}).forEach(function(l){
+    lsShow.sort(function(a,b){return a.dt>b.dt?1:-1;}).forEach(function(l){
       h+='<tr>';
       h+='<td>'+fmtDt(l.dt)+'</td>';
       h+='<td>'+l.desc+(l.rec?'<span style="font-size:.58rem;color:var(--faint);margin-left:3px;">↺</span>':"")+(l.parc?'<span style="font-size:.58rem;color:var(--warn);margin-left:3px;">✂</span>':"")+'</td>';
       h+='<td><span class="cc">'+l.cat+'</span></td>';
-      h+='<td>'+cNomeHist(l.conta)+'</td>';
-      h+='<td><span class="bdg '+(l.t=="e"?"e":"s")+'">'+(l.t=="e"?"Entrada":"Saída")+'</span></td>';
-      h+='<td class="'+(l.t=="e"?"ap":"an")+'">'+(l.t=="e"?"+":"−")+fmt(l.v)+'</td>';
+      h+='<td>'+lancContaCellHTML(l)+'</td>';
+      h+='<td>'+lancBadgeHTML(l)+'</td>';
+      h+=lancValorCellHTML(l);
       h+='</tr>';
     });
     h+='</tbody></table></div>';
-    var totEnt=ls.filter(function(l){return l.t==="e";}).reduce(function(s,l){return s+l.v;},0);
-    var totSai=ls.filter(function(l){return l.t==="s";}).reduce(function(s,l){return s+l.v;},0);
     h+='<div style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:flex-end;padding:.625rem .25rem 0;font-size:.76rem;color:var(--muted);">';
-    h+='<span>'+ls.length+' lançamento'+(ls.length!==1?'s':'')+'</span>';
+    h+='<span>'+lsShow.length+' lançamento'+(lsShow.length!==1?'s':'')+'</span>';
     if(totEnt>0)h+='<span style="color:var(--green);">↑ Entradas: '+fmt(totEnt)+'</span>';
     if(totSai>0)h+='<span style="color:var(--red);">↓ Saídas: '+fmt(totSai)+'</span>';
     h+='</div>';
@@ -5096,15 +5371,16 @@ function renderRanking(m, y, ls, cm){
 function selCen(i){cenSel=i;calcR();}
 // ── TABELAS ──
 function renderTbls(){
-  var ls=getLM(cM,cY).sort(function(a,b){return b.dt.localeCompare(a.dt);});
-  function cNome(id){var c=contas.find(function(x){return x.id==id;});if(!c)return"—";return'<span style="display:inline-flex;align-items:center;gap:.25rem;"><span style="width:7px;height:7px;border-radius:50%;background:'+c.cor+';flex-shrink:0;"></span>'+c.nome+'</span>';}
-  function row(l){return'<tr><td>'+fmtDt(l.dt)+'</td><td>'+l.desc+(l.rec?'<span style="font-size:.58rem;color:var(--faint);margin-left:3px;">↺</span>':"")+(l.parc?'<span style="font-size:.58rem;color:var(--warn);margin-left:3px;">✂</span>':"")+'</td><td><span class="cc">'+l.cat+'</span></td><td>'+cNome(l.conta)+'</td><td><span class="bdg '+(l.t=="e"?"e":"s")+'">'+(l.t=="e"?"Entrada":"Saída")+'</span></td><td class="'+(l.t=="e"?"ap":"an")+'">'+(l.t=="e"?"+":"−")+fmt(l.v)+'</td>';}
+  var ls=groupTransfPairs(getLMFull(cM,cY)).sort(function(a,b){return b.dt.localeCompare(a.dt);});
+  function row(l){return'<tr><td>'+fmtDt(l.dt)+'</td><td>'+l.desc+(l.rec?'<span style="font-size:.58rem;color:var(--faint);margin-left:3px;">↺</span>':"")+(l.parc?'<span style="font-size:.58rem;color:var(--warn);margin-left:3px;">✂</span>':"")+'</td><td><span class="cc">'+l.cat+'</span></td><td>'+lancContaCellHTML(l)+'</td><td>'+lancBadgeHTML(l)+'</td>'+lancValorCellHTML(l);}
   var empty='<tr><td colspan="7"><div class="etbl">Nenhum lançamento. Adicione acima.</div></td></tr>';
   document.getElementById("tRec").innerHTML=ls.length?ls.slice(0,6).map(function(l){return row(l)+'<td></td></tr>';}).join(""):empty.replace("7","6");
   document.getElementById("tLanc").innerHTML=ls.length?ls.map(function(l){
+    var isTransf=(l.t==='transf');
+    var delId=isTransf?(l._saidaId||l._entradaId):l.id;
     return row(l)+'<td style="display:flex;gap:.3rem;justify-content:flex-end;">'+
-      '<button class="btn" style="padding:.2rem .5rem;font-size:.75rem;background:var(--surf2);border:1px solid var(--border);color:var(--txt);border-radius:8px;" onclick="abrirEditarLanc(\''+l.id+'\')">✏️</button>'+
-      '<button class="btn bd" onclick="delLanc(\''+l.id+'\')">✕</button>'+
+      (isTransf?'':'<button class="btn" style="padding:.2rem .5rem;font-size:.75rem;background:var(--surf2);border:1px solid var(--border);color:var(--txt);border-radius:8px;" onclick="abrirEditarLanc(\''+l.id+'\')">✏️</button>')+
+      '<button class="btn bd" onclick="delLanc(\''+delId+'\')">✕</button>'+
     '</td></tr>';
   }).join(""):empty;
 }
@@ -5389,16 +5665,37 @@ function renderHero(){
   document.getElementById('heroDep').textContent=fmt(stats.dep);
   document.getElementById('heroSal').textContent=fmt(stats.sal);
   var bars=[];
-  for(var i=5;i>=0;i--){var bm=cM-i,by=cY;if(bm<0){bm+=12;by--;}bars.push(Math.max(0,calcMes(bm,by).rec));}
-  var max=Math.max.apply(null,bars.concat([1]));
+  for(var i=5;i>=0;i--){
+    var bm=cM-i,by=cY;
+    if(bm<0){bm+=12;by--;}
+    bars.push({mes:MN[bm],valor:calcMes(bm,by).sal});
+  }
+  // altura proporcional ao MAIOR valor ABSOLUTO de saldo entre os meses exibidos
+  var maxAbs=Math.max.apply(null,bars.map(function(b){return Math.abs(b.valor);}).concat([1]));
   var wrap=document.getElementById('heroBars');
   if(wrap){
-    wrap.innerHTML=bars.map(function(v){
-      var h=Math.max(6,Math.round((v/max)*44));
-      return '<div class="hb" style="height:'+h+'px;"></div>';
+    wrap.innerHTML=bars.map(function(b){
+      var h=Math.max(6,Math.round((Math.abs(b.valor)/maxAbs)*44));
+      var neg=b.valor<0?' hb-neg':'';
+      return '<div class="hb'+neg+'" style="height:'+h+'px;" data-mes="'+b.mes+'" data-valor="'+fmt(b.valor)+'" onclick="toggleHeroBarTooltip(event)"></div>';
     }).join('');
   }
 }
+function toggleHeroBarTooltip(e){
+  e.stopPropagation();
+  var bar=e.currentTarget;
+  var existing=bar.querySelector('.hb-tooltip');
+  document.querySelectorAll('.hb-tooltip').forEach(function(t){t.remove();});
+  if(existing)return; // já estava aberto: só fecha (removido acima)
+  var tip=document.createElement('div');
+  tip.className='hb-tooltip';
+  tip.textContent=bar.getAttribute('data-mes')+' — '+bar.getAttribute('data-valor');
+  bar.appendChild(tip);
+}
+document.addEventListener('click',function(e){
+  if(e.target.closest&&e.target.closest('.hero-bars .hb'))return;
+  document.querySelectorAll('.hb-tooltip').forEach(function(t){t.remove();});
+});
 function fillCategorySelect(selectId){
   const sel = document.getElementById(selectId);
   if(!sel) return;
@@ -5412,6 +5709,7 @@ fillCategorySelect('iCat');
   var _today=new Date();
   cM=_today.getMonth();cY=_today.getFullYear();
   document.getElementById("iDt").value=_today.toISOString().slice(0,10);
+  document.getElementById("iDtDisplay").value=fmtDt(_today.toISOString().slice(0,10));
   setTipo("e");
   // Live clock
   function tickClock(){
@@ -5783,6 +6081,7 @@ function renderOrc(){
   try{
     var grid=document.getElementById('orcGrid');
     if(!grid)return;
+    if(typeof hideOrcInfo==='function')hideOrcInfo(); // evita tooltip "fantasma" apontando pra um card recriado
 
     var dados=getOrcReal();
     var preset=getOrcPreset();
@@ -5799,7 +6098,13 @@ function renderOrc(){
       var emoji=emojis[nome]||'📊';
       var pct=preset[index]||0;
       h+='<div class="orc-item">';
-      h+='<div class="orc-label"><span>'+emoji+' '+nome+' - '+pct+'%</span><span style="color:'+cor+';">'+Math.min(perc,100).toFixed(0)+'%</span></div>';
+      h+='<div class="orc-label"><span>'+emoji+' '+nome+' - '+pct+'%</span>'
+        +'<div style="display:flex;align-items:center;gap:6px;">'
+        +'<div class="orc-info-wrap" data-grupo="'+nome+'" onclick="toggleOrcInfoClick(event)" onmouseenter="onOrcHoverEnter(this)" onmouseleave="onOrcHoverLeave()">'
+        +'<span class="orc-info-btn"><i class="ti ti-info-circle"></i></span>'
+        +'</div>'
+        +'<span style="color:'+cor+';">'+Math.min(perc,100).toFixed(0)+'%</span>'
+        +'</div></div>';
       h+='<div class="orc-bar"><div style="width:'+Math.min(perc,100)+'%;height:100%;background:'+cor+';transition:width 0.4s ease;border-radius:6px;"></div></div>';
       h+='<div style="margin-top:6px;font-size:.75rem;color:var(--muted);display:flex;justify-content:space-between;">';
       h+='<span>'+fmt(info.gasto)+' / '+fmt(info.limite)+'</span>';
@@ -5809,6 +6114,93 @@ function renderOrc(){
     grid.innerHTML=h;
   }catch(e){console.warn('renderOrc err',e);}
 }
+// ── ⓘ Categorias incluídas em cada grupo do orçamento ──
+// Mesmo agrupamento usado no cálculo real (categoriaParaOrcamento), só que invertido
+// (grupo -> categorias) e só com as 9 categorias que existem de fato no app (var CATS).
+var ORC_CATS_INFO={
+  'Essenciais':{cor:'#1D9E75',cats:['Essenciais','Alimentação','Transporte','Saúde','Educação']},
+  'Lazer':{cor:'#a78bfa',cats:['Lazer']},
+  'Reserva':{cor:'#60a5fa',cats:['Reserva']},
+  'Dia a dia':{cor:'#fbbf24',cats:['Outros']}
+};
+// Tooltip renderizado direto no <body> ("portal"): assim ele nunca fica preso pelo
+// overflow:hidden do card/grid do orçamento, seja no grid do desktop ou no empilhamento
+// do mobile. Posição é calculada via getBoundingClientRect do ⓘ clicado/focado, com
+// detecção de colisão pra abrir pra cima ou pra baixo conforme o espaço disponível.
+var _orcTipOpenFor=null;
+function getOrcTooltipEl(){
+  var el=document.getElementById('orcInfoTooltip');
+  if(!el){
+    el=document.createElement('div');
+    el.id='orcInfoTooltip';
+    el.className='orc-info-tip';
+    document.body.appendChild(el);
+  }
+  return el;
+}
+function fillOrcTooltip(tipEl,grupo){
+  var info=ORC_CATS_INFO[grupo];
+  var tagsHTML=info?info.cats.map(function(c){
+    return '<span class="orc-info-tag" style="background:'+hexToRgba(info.cor,.15)+';color:'+info.cor+';border:1px solid '+hexToRgba(info.cor,.35)+';">'+c+'</span>';
+  }).join(''):'';
+  tipEl.innerHTML='<div class="orc-info-tip-title">Categorias incluídas</div><div class="orc-info-tags">'+tagsHTML+'</div>';
+}
+function positionOrcTooltip(iconEl,tipEl){
+  var rect=iconEl.getBoundingClientRect();
+  var gap=8,pad=8;
+  // mede o tooltip já visível (mas ainda sem posição certa) pra saber a altura real dele
+  tipEl.style.top='-9999px';
+  tipEl.style.left='-9999px';
+  tipEl.style.display='block';
+  var tipRect=tipEl.getBoundingClientRect();
+  var espacoAcima=rect.top;
+  var espacoAbaixo=window.innerHeight-rect.bottom;
+  var abreEmbaixo=espacoAcima<(tipRect.height+gap+pad)&&espacoAbaixo>=espacoAcima;
+  var top=abreEmbaixo?(rect.bottom+gap):(rect.top-tipRect.height-gap);
+  top=Math.max(pad,Math.min(top,window.innerHeight-tipRect.height-pad));
+  var left=rect.right-tipRect.width;
+  left=Math.max(pad,Math.min(left,window.innerWidth-tipRect.width-pad));
+  tipEl.style.top=top+'px';
+  tipEl.style.left=left+'px';
+  tipEl.classList.toggle('tip-arrow-bottom',!abreEmbaixo);
+  tipEl.classList.toggle('tip-arrow-top',abreEmbaixo);
+  // seta sempre apontando pro ⓘ, mesmo se o tooltip teve que ser empurrado horizontalmente
+  var arrowRight=Math.max(10,Math.min(tipRect.width-14,(rect.left+rect.width/2)-left-5));
+  tipEl.style.setProperty('--orc-arrow-right',arrowRight+'px');
+}
+function showOrcInfoFor(wrapEl){
+  var grupo=wrapEl.getAttribute('data-grupo');
+  var tip=getOrcTooltipEl();
+  fillOrcTooltip(tip,grupo);
+  positionOrcTooltip(wrapEl,tip);
+  tip.classList.add('show');
+  _orcTipOpenFor=wrapEl;
+}
+function hideOrcInfo(){
+  var tip=document.getElementById('orcInfoTooltip');
+  if(tip){tip.classList.remove('show');tip.style.display='none';}
+  _orcTipOpenFor=null;
+}
+function toggleOrcInfoClick(e){
+  e.stopPropagation();
+  var wrap=e.currentTarget;
+  if(_orcTipOpenFor===wrap){hideOrcInfo();return;}
+  showOrcInfoFor(wrap);
+}
+function onOrcHoverEnter(el){
+  if(!(window.matchMedia&&window.matchMedia('(hover:hover)').matches))return;
+  showOrcInfoFor(el);
+}
+function onOrcHoverLeave(){
+  if(!(window.matchMedia&&window.matchMedia('(hover:hover)').matches))return;
+  hideOrcInfo();
+}
+document.addEventListener('click',function(e){
+  if(e.target.closest&&(e.target.closest('.orc-info-wrap')||e.target.closest('.orc-info-tip')))return;
+  hideOrcInfo();
+});
+window.addEventListener('resize',function(){if(_orcTipOpenFor)hideOrcInfo();});
+window.addEventListener('scroll',function(){if(_orcTipOpenFor)hideOrcInfo();},true);
 function getRendaOrcamento(){
   if (typeof ORC_BASE !== 'undefined' && ORC_BASE === 'manual') return ORC_MANUAL||0;
   var hoje = new Date().toISOString().slice(0,10);
@@ -5822,13 +6214,66 @@ function getGastosPorCategoria(){
   const k = cY + "-" + ("0"+(cM+1)).slice(-2); // ex: "2026-04"
 
   lancamentos
-    .filter(l => l.t === 's' && l.dt && l.dt.startsWith(k) && !(l.rec && _temAdiantadoMes(l, k)))
+    .filter(l => l.dt && l.dt.startsWith(k) && !(l.rec && _temAdiantadoMes(l, k)))
     .forEach(l => {
-      const cat = mapCategoriaOrc(l.cat);
-      res[cat] = (res[cat] || 0) + l.v;
+      const grupo = mapCategoriaOrc(l.cat);
+      if (!grupo) return; // categorias mapeadas para null (ex: Renda) não entram no orçamento de gastos
+
+      // Reserva conta pelo que É (categoria), não pelo tipo do lançamento: saída, entrada
+      // manual ou a perna de saída de uma transferência (transf_s) — tudo é "guardado".
+      const tipoValido = grupo === 'Reserva'
+        ? (l.t === 's' || l.t === 'e' || l.t === 'transf_s')
+        : (l.t === 's');
+      if (!tipoValido) return;
+
+      res[grupo] = (res[grupo] || 0) + l.v;
     });
 
   return res;
+}
+
+// ── DEBUG TEMPORÁRIO — investigação do valor de "Dia a dia" no orçamento ──
+// Só investigação, não altera nada. Rode no console do navegador: debugOrcamentoDiaADia()
+// Pode apagar essa função depois de confirmar a causa raiz.
+function debugOrcamentoDiaADia(){
+  var k = cY + "-" + ("0"+(cM+1)).slice(-2);
+  var candidatos = lancamentos.filter(function(l){
+    return l.dt && l.dt.startsWith(k) && l.t === 's' && !(l.rec && _temAdiantadoMes(l, k));
+  });
+  var linhas = [];
+  var total = 0;
+  candidatos.forEach(function(l){
+    var grupo = mapCategoriaOrc(l.cat);
+    if (grupo !== 'Dia a dia') return;
+    var catBruta = l.cat;
+    var motivo =
+      catBruta === undefined ? 'campo "cat" ausente no lançamento (undefined)' :
+      catBruta === null ? 'campo "cat" é null' :
+      String(catBruta).trim() === '' ? 'campo "cat" é string vazia' :
+      !Object.prototype.hasOwnProperty.call(categoriaParaOrcamento, catBruta) ? ('cat="' + catBruta + '" não existe no mapeamento atual (categoria antiga/desconhecida)') :
+      'cat="Outros" — mapeamento correto, categoria escolhida de fato';
+    total += l.v;
+    linhas.push({
+      id: l.id,
+      descricao: l.desc,
+      valor: l.v,
+      valorFmt: fmt(l.v),
+      data: l.dt,
+      categoriaSalva: JSON.stringify(catBruta), // JSON.stringify pra distinguir "" de null de undefined no log
+      grupoCalculado: grupo,
+      motivoFallback: motivo,
+      rec: !!l.rec,
+      parc: !!l.parc,
+      origemRecId: l.origemRecId || null,
+      grupoId: l.grupoId || null,
+      conta: l.conta || null
+    });
+  });
+  console.log('=== DEBUG: lançamentos contados em "Dia a dia" no mês ' + k + ' ===');
+  console.table(linhas);
+  console.log('Total somado: ' + fmt(total) + '  (bruto: ' + total + ')');
+  console.log('Quantidade de lançamentos:', linhas.length);
+  return linhas;
 }
 function getOrcReal() {
   console.log("Mês Atual: ", cM, "Ano Atual: ", cY); // Verifique se os valores estão corretos
@@ -5856,22 +6301,6 @@ function getOrcReal() {
       gasto: gastos["Dia a dia"] || 0
     }
   };
-}
-function mapCategoriaOrc(cat){
-  cat = (cat || '').trim();
-
-  if (cat === 'Essenciais') return 'Essenciais';
-  if (cat === 'Alimentação') return 'Essenciais';
-  if (cat === 'Transporte') return 'Essenciais';
-  if (cat === 'Saúde') return 'Essenciais';
-
-  if (cat === 'Lazer') return 'Lazer';
-  if (cat === 'Educação') return 'Reserva';
-
-  if (cat === 'Reserva') return 'Reserva';
-  if (cat === 'Renda') return 'Reserva';
-
-  return 'Dia a dia';
 }
 function setMes(m, y) {
   cM = m;
@@ -5961,20 +6390,25 @@ function renderHistDia(ls, dia){
   var totalS=filtrados.filter(function(l){return l.t==="s";}).reduce(function(s,l){return s+l.v;},0);
   var saldo=totalE-totalS;
   var h='<div style="padding:.875rem 1rem .5rem;"><div style="font-size:.8rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);">Dia '+dia+' — detalhes</div></div>';
-  filtrados.sort(function(a,b){return a.t===b.t?0:a.t==="e"?-1:1;}).forEach(function(l){
+  groupTransfPairs(filtrados).sort(function(a,b){return a.t===b.t?0:a.t==="e"?-1:1;}).forEach(function(l){
     var cor=CATS[l.cat]||"#607D8B";
     var ico=EMOJIS[l.cat]||"📌";
-    var banco = "";
-var _c = contas.find(function(x){ return String(x.id) === String(l.conta); });
-if(_c) banco = _c.nome;
-    var isE=l.t==="e";
+    var isTransf=(l.t==="transf");
+    var banco="";
+    if(isTransf){
+      banco=l.contaOrigemNome+" → "+l.contaDestinoNome;
+    } else {
+      var _c=contas.find(function(x){return String(x.id)===String(l.conta);});
+      if(_c)banco=_c.nome;
+    }
+    var isE=isTransf?false:isEntradaLike(l);
     h+='<div class="dia-item" style="padding:.5rem 1rem;">';
     h+='<div class="dia-cat-dot" style="background:'+cor+'22;color:'+cor+';">'+ico+'</div>';
     h+='<div style="flex:1;min-width:0;">';
     h+='<div class="dia-desc">'+l.desc+'</div>';
     h+='<div class="dia-sub">'+(banco?banco+" · ":"")+l.cat+(l.parc?' · Parcela '+l.pn+'/'+l.pt:"")+''+(l.rec?" · Recorrente":"")+'</div>';
     h+='</div>';
-    h+='<div class="dia-val" style="color:'+(isE?"var(--green)":"var(--red)")+';">'+(isE?"+":"−")+fmt(l.v)+'</div>';
+    h+='<div class="dia-val" style="color:'+(isTransf?"var(--p)":(isE?"var(--green)":"var(--red)"))+';">'+(isTransf?"→ ":(isE?"+":"−"))+fmt(l.v)+'</div>';
     h+='</div>';
   });
   var saldoStr=(saldo>=0?"+":"-")+"R$ "+Math.abs(saldo).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -6191,6 +6625,10 @@ if(_c) banco = _c.nome;
     </div>
   </div>
 </div>
+
+<!-- Popover do mini calendário do campo Data (Lançamentos) — vive fora de qualquer
+     card com overflow:hidden, posicionado via JS (getBoundingClientRect + position:fixed) -->
+<div id="lancCalPopover" style="display:none;"><div id="dfCalLanc"></div></div>
 
 </body>
   </html> 
