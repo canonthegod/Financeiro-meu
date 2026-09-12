@@ -1542,6 +1542,41 @@ input:focus, select:focus {
 @media(max-width:480px){
   .orc-custom-row > div{flex-wrap:wrap;row-gap:.3rem;}
 }
+
+/* ── Lançamentos: toggle Entrada/Saída/Transferência — sempre em 1 linha ── */
+.ttog.ttog-tipo{
+  display:flex !important;
+  flex-direction:row !important;
+  flex-wrap:nowrap !important;
+  gap:6px !important;
+  width:100% !important;
+  height:auto !important;
+}
+.ttog.ttog-tipo button{
+  flex:1 !important;
+  min-width:0 !important;
+  width:auto !important;
+  height:44px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:4px !important;
+  padding:10px 4px !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  box-sizing:border-box !important;
+}
+.ttog.ttog-tipo button:not(.oe):not(.os):not(.ot){
+  background:var(--card-bg) !important;
+  color:var(--muted) !important;
+}
+@media(max-width:768px){
+  .ttog.ttog-tipo button{font-size:12px !important;}
+}
+@media(max-width:480px){
+  .ttog.ttog-tipo button{font-size:11px !important;padding:8px 2px !important;}
+}
 </style>
 <script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
 </head>
@@ -1745,7 +1780,7 @@ input:focus, select:focus {
   <div class="pcnt">
     <div class="card">
       <div class="ctit">Novo Lançamento</div>
-      <div class="ttog">
+      <div class="ttog ttog-tipo">
         <button id="btnE" class="oe" onclick="setTipo('e')">↑ Entrada</button>
         <button id="btnS" onclick="setTipo('s')">↓ Saída</button>
         <button id="btnT" onclick="setTipo('t')">⇄ Transferência</button>
