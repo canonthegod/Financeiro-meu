@@ -5639,11 +5639,6 @@ function renderMetas(){
     } else {
       var media=objMediaGastos();
       if(!o.alvoProprio) h+='<div>💡 Alvo sugerido: '+(o.mesesRes||6)+' × sua média de despesas ('+fmt(media)+'/mês)</div>';
-      if(media>0){
-        var meses=total/media;
-        var cob=meses>=1?(Math.floor(meses)+' '+(Math.floor(meses)>1?'meses':'mês')+(Math.round((meses%1)*30)>0?' e '+Math.round((meses%1)*30)+' dias':'')):(Math.round(meses*30)+' dias');
-        h+='<div>🛟 Hoje cobre <strong>'+cob+'</strong> dos seus gastos</div>';
-      }
       var apM=objMovMes(o,_hojeLocal().slice(0,7),'aporte');
       if(apM>0) h+='<div>📆 Aportado este mês: '+fmt(apM)+'</div>';
     }
