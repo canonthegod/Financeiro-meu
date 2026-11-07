@@ -117,6 +117,21 @@ input[type="number"]{-moz-appearance:textfield;appearance:textfield;}
 .pt-bf{height:100%;border-radius:9999px;transition:width .5s ease;}
 .pt-v{font-family:'Sora',sans-serif;font-size:.84rem;font-weight:800;text-align:right;font-variant-numeric:tabular-nums;}
 .pt-d{font-size:.71rem;text-align:right;color:var(--muted);}
+.pt-click{cursor:pointer;}
+.pt-click:hover{border-color:var(--muted);}
+.pt-base{font-size:.76rem;color:var(--muted);padding:.5rem .75rem;margin-bottom:.5rem;background:var(--surf2);border:1px dashed var(--border);border-radius:.5rem;line-height:1.6;}
+.pt-base strong{color:var(--txt);}
+.ptd{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;padding:.7rem .85rem;margin:-.1rem 0 .45rem;border:1px solid var(--border);border-top:none;border-radius:0 0 .5rem .5rem;background:var(--surf);font-size:.76rem;}
+.ptd-tit{font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);display:flex;justify-content:space-between;margin-bottom:.3rem;}
+.ptd-it{display:flex;justify-content:space-between;gap:.5rem;padding:.18rem 0;border-bottom:1px solid var(--div);}
+.ptd-it span:last-child{font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums;}
+.ptd .ap{color:var(--green);} .ptd .an{color:var(--red);}
+.ptd-tag{font-size:.6rem;padding:0 5px;border-radius:5px;background:var(--surf3);color:var(--muted);font-weight:600;}
+.ptd-tag.ok{background:#22c55e22;color:#16a34a;}
+.ptd-vazio{color:var(--faint);padding:.2rem 0;}
+.ptd-dia{display:inline-block;min-width:3.2rem;font-size:.68rem;color:var(--muted);}
+.ptd-conta{grid-column:1/-1;padding-top:.4rem;border-top:1px dashed var(--border);color:var(--txt);line-height:1.6;}
+@media(max-width:600px){.ptd{grid-template-columns:1fr;}}
 /* SIMULADOR */
 .simbox{background:var(--wlight);border:1.5px solid rgba(217,119,6,.2);border-radius:1rem;padding:1rem;}
 .simtit{font-size:.82rem;font-weight:800;color:var(--warn);margin-bottom:.75rem;display:flex;align-items:center;gap:.375rem;}
@@ -730,6 +745,64 @@ input:focus, select:focus {
   .ag-panel-aside{width:100%;}
   .ag-panel-aside>div{flex-direction:column!important;width:100%;}
   .ag-panel-aside>div button{width:100%;box-sizing:border-box;}
+}
+/* ===== RESERVAS / METAS ===== */
+.obj-form{margin-bottom:1rem;padding:.875rem;background:var(--surf2);border-radius:.75rem;border:1px solid var(--border);}
+.obj-form-tit{font-weight:700;font-size:.9rem;margin-bottom:.6rem;}
+.obj-tipo-tog{margin-bottom:.6rem;max-width:320px;}
+.obj-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.5rem;}
+.obj-hint{font-size:.75rem;color:var(--p);padding:.4rem .6rem;background:var(--plight);border-radius:8px;margin-bottom:.5rem;line-height:1.5;}
+.obj-opt{border-top:1px dashed var(--border);padding-top:.55rem;margin-top:.55rem;}
+.obj-ck{display:flex;align-items:center;gap:.45rem;font-size:.82rem;cursor:pointer;margin-bottom:.45rem;}
+.obj-vazio{text-align:center;color:var(--faint);font-size:.8rem;padding:1.5rem;line-height:1.6;}
+.obj-resumo{display:flex;gap:1.5rem;flex-wrap:wrap;padding:.6rem .85rem;background:var(--surf2);border:1px solid var(--border);border-radius:.75rem;margin-bottom:.75rem;}
+.obj-card{border:1px solid var(--border);border-radius:.85rem;padding:.85rem 1rem;margin-bottom:.6rem;background:var(--surf2);}
+.obj-card.ok{border-color:var(--green);background:var(--glight);}
+.obj-head{display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;}
+.obj-ico{width:36px;height:36px;border-radius:50%;background:var(--surf3);display:flex;align-items:center;justify-content:center;font-size:1.05rem;flex-shrink:0;}
+.obj-nome{font-weight:700;font-size:.92rem;display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;}
+.obj-sub{font-size:.72rem;color:var(--muted);}
+.obj-tag{font-size:.64rem;border-radius:6px;padding:1px 6px;font-weight:700;}
+.obj-tag.ok{background:#22c55e22;color:#16a34a;}
+.obj-acts-top{display:flex;gap:.25rem;}
+.obj-acts-top button{background:none;border:1px solid var(--border);color:var(--muted);border-radius:8px;width:30px;height:28px;cursor:pointer;font-size:.8rem;}
+.obj-valores{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:.35rem;}
+.obj-l{font-size:.62rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;}
+.obj-v{font-family:'Sora',sans-serif;font-size:1.15rem;font-weight:800;}
+.obj-v2{font-family:'Sora',sans-serif;font-size:.92rem;font-weight:700;color:var(--muted);}
+.obj-bar{height:8px;background:var(--surf3);border-radius:9999px;overflow:hidden;}
+.obj-bar>div{height:100%;border-radius:9999px;transition:width .5s;}
+.obj-linha{display:flex;justify-content:space-between;font-size:.7rem;color:var(--muted);margin:.25rem 0 .5rem;}
+.obj-info{font-size:.76rem;color:var(--txt);display:flex;flex-direction:column;gap:.25rem;margin-bottom:.6rem;}
+.obj-rend{margin-top:.2rem;padding:.4rem .6rem;background:var(--surf);border:1px solid var(--border);border-radius:8px;}
+.obj-mini{font-size:.65rem;color:var(--faint);margin-top:.15rem;}
+.obj-btns{display:flex;gap:.35rem;flex-wrap:wrap;}
+.obj-b{font-size:.74rem;padding:.3rem .7rem;border-radius:8px;cursor:pointer;font-weight:600;border:1px solid var(--border);background:var(--surf);color:var(--txt);}
+.obj-b.ap{background:var(--plight);color:var(--p);border-color:var(--p);}
+.obj-b.rs{background:var(--wlight);color:var(--warn);border-color:var(--warn);}
+@media(max-width:600px){
+  .obj-grid{grid-template-columns:1fr;}
+  .obj-b{flex:1;}
+}
+/* Painel compacto (Paguei antes / Pagar / Recebi) — uma linha só */
+.ag-panel-compact{display:flex;flex-wrap:wrap;align-items:flex-end;gap:8px;max-width:640px;padding:.55rem .65rem;}
+.ag-panel-compact .agp-f{display:flex;flex-direction:column;gap:2px;flex:0 0 auto;}
+.ag-panel-compact .agp-f label{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);}
+.ag-panel-compact input,.ag-panel-compact select{font-size:.8rem;padding:.3rem .45rem;border-radius:8px;border:1.5px solid var(--border);background:var(--surf);color:var(--txt);height:32px;box-sizing:border-box;}
+.ag-panel-compact .dp-disp{width:120px;}
+.ag-panel-compact .agp-conta{flex:1 1 120px;min-width:110px;}
+.ag-panel-compact .agp-conta select{width:100%;}
+.ag-panel-compact .agp-val input{width:110px;}
+.ag-panel-compact .agp-btns{display:flex;gap:6px;}
+.ag-panel-compact .agp-btns button{height:32px;color:#fff;font-size:.78rem;padding:0 .8rem;border-radius:8px;font-weight:700;border:none;cursor:pointer;white-space:nowrap;}
+.ag-panel-compact .agp-btns .agp-cancel{background:transparent;color:var(--muted);border:1px solid var(--div);padding:0 .65rem;}
+.ag-panel-compact .agp-dif{flex-basis:100%;font-size:.7rem;color:var(--muted);}
+.ag-panel-compact .agp-dif:empty{display:none;}
+@media(max-width:600px){
+  .ag-panel-compact .agp-f{flex:1 1 45%;}
+  .ag-panel-compact .dp-disp,.ag-panel-compact .agp-val input{width:100%;}
+  .ag-panel-compact .agp-btns{flex:1 1 100%;}
+  .ag-panel-compact .agp-btns button:first-child{flex:1;}
 }
 
 
@@ -1605,6 +1678,50 @@ input:focus, select:focus {
 
 /* ── Popover do calendário do campo Data (Lançamentos) — vive no <body>, fora do
    overflow:hidden do card "Novo Lançamento"; posição calculada via JS. ── */
+#dpPopover{position:fixed;z-index:9999;width:260px;max-width:calc(100vw - 2rem);box-shadow:0 8px 24px rgba(0,0,0,.3);border-radius:14px;}
+.dp-disp{cursor:pointer;}
+#undoToast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,140%);z-index:10000;display:flex;align-items:center;gap:.6rem;max-width:calc(100vw - 32px);
+  background:var(--surf);color:var(--txt);border:1px solid var(--border);border-radius:12px;padding:.55rem .6rem .55rem .9rem;box-shadow:0 10px 30px rgba(0,0,0,.45);font-size:.84rem;transition:transform .25s ease;opacity:.98;}
+#undoToast.on{transform:translate(-50%,0);}
+#undoToast span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+#undoToast button{background:#16a34a;color:#fff;border:none;border-radius:8px;padding:.4rem .8rem;font-weight:700;font-size:.8rem;cursor:pointer;white-space:nowrap;}
+#undoToast button:hover{background:#15803d;}
+#undoToast button.ut-x{background:none;color:var(--muted);padding:.35rem .45rem;}
+#undoToast button.ut-x:hover{background:var(--surf2);color:var(--txt);}
+
+/* Lista suspensa moderna (substitui o visual do <select>) */
+select.cs-native{display:none!important;}
+.cs-btn{display:flex;align-items:center;gap:.5rem;width:100%;height:40px;padding:0 .7rem 0 .75rem;background:var(--surf2);border:1.5px solid var(--border);border-radius:12px;color:var(--txt);font:inherit;font-size:.85rem;text-align:left;cursor:pointer;transition:border-color .15s,box-shadow .15s;box-sizing:border-box;min-width:0;}
+.cs-btn:hover{border-color:var(--muted);}
+.cs-btn.open{border-color:var(--txt);box-shadow:0 0 0 3px rgba(127,127,127,.15);}
+.cs-btn:disabled{opacity:.5;cursor:not-allowed;}
+.cs-btn .cs-txt,.cs-opt .cs-txt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.cs-btn .cs-chev{flex-shrink:0;color:var(--muted);transition:transform .2s;}
+.cs-btn.open .cs-chev{transform:rotate(180deg);}
+.cs-ph{color:var(--muted)!important;}
+.cs-extra{flex-shrink:0;font-size:.76rem;color:var(--muted);font-variant-numeric:tabular-nums;}
+.cs-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-left:2px;}
+#csPop{position:fixed;z-index:10001;max-height:300px;overflow-y:auto;padding:5px;background:var(--surf);border:1px solid var(--border);border-radius:14px;box-shadow:0 14px 40px rgba(0,0,0,.45);box-sizing:border-box;}
+.cs-opt{display:flex;align-items:center;gap:.55rem;padding:.55rem .6rem;border-radius:9px;font-size:.85rem;color:var(--txt);cursor:pointer;transition:background .12s;}
+.cs-opt:hover{background:var(--surf2);}
+.cs-opt.on{background:#16a34a1f;}
+.cs-opt.on .cs-txt{font-weight:700;}
+.cs-opt.dis{opacity:.45;cursor:default;}
+.cs-ck{width:16px;flex-shrink:0;text-align:center;color:#16a34a;font-weight:800;}
+.cs-grp{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:.5rem .6rem .25rem;}
+.ag-panel-compact .cs-btn{height:32px;border-radius:8px;font-size:.8rem;}
+
+/* Interruptores (toggle) no lugar das caixinhas de marcar */
+.ckr,.obj-ck{display:flex;align-items:center;gap:.6rem;padding:.5rem .7rem;border:1px solid var(--border);border-radius:10px;background:var(--surf2);cursor:pointer;transition:border-color .15s,background .15s;}
+.ckr:hover,.obj-ck:hover{border-color:var(--muted);}
+.ckr label,.obj-ck{text-transform:none!important;letter-spacing:0!important;font-size:.82rem!important;font-weight:500!important;color:var(--txt)!important;cursor:pointer;}
+.ckr input[type=checkbox],.obj-ck input[type=checkbox]{-webkit-appearance:none;appearance:none;width:36px!important;height:20px;min-width:36px;margin:0;padding:0;border-radius:999px;background:var(--surf3);border:1px solid var(--border);position:relative;cursor:pointer;transition:background .2s,border-color .2s;flex-shrink:0;}
+.ckr input[type=checkbox]::before,.obj-ck input[type=checkbox]::before{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:var(--muted);transition:transform .2s,background .2s;}
+.ckr input[type=checkbox]:checked,.obj-ck input[type=checkbox]:checked{background:#16a34a;border-color:#16a34a;}
+.ckr input[type=checkbox]:checked::before,.obj-ck input[type=checkbox]:checked::before{transform:translateX(16px);background:#fff;}
+.ckr:has(input:checked),.obj-ck:has(input:checked){border-color:#16a34a66;background:#16a34a14;}
+.ckr label{flex:1;padding:.1rem 0;}
+@media(max-width:768px){#undoToast{bottom:84px;}}
 #lancCalPopover{position:fixed;z-index:9999;width:260px;max-width:calc(100vw - 2rem);box-shadow:0 8px 24px rgba(0,0,0,.3);border-radius:14px;}
 </style>
 <script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
@@ -1667,7 +1784,7 @@ input:focus, select:focus {
     <button class="ni" onclick="nav('lanc')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Lançamentos</button>
     <button class="ni" onclick="nav('proj')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Projeção Futura</button>
     <button class="ni" onclick="nav('agenda')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Agenda do Mês</button>
-    <button class="ni" onclick="nav('reserva')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Reserva</button>
+    <button class="ni" onclick="nav('reserva')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Reserva / Metas</button>
     <button class="ni" onclick="nav('hist')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span>Histórico</span></button>
   </nav>
 
@@ -1817,7 +1934,7 @@ input:focus, select:focus {
 
 <!-- Campos de transferência (aparecem só quando tipo = 't') -->
 <div id="transferenciaWrap" class="transf-wrap" style="display:none;margin-bottom:.75rem;width:100%;max-width:100%;box-sizing:border-box;">
-  <div class="transf-de-para-row" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;margin-bottom:.5rem;">
+  <div class="transf-de-para-row" style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.5rem;">
     <div class="fg">
       <label>De (conta origem)</label>
       <select id="iTransfDe"><option value="">— selecione —</option></select>
@@ -1826,17 +1943,13 @@ input:focus, select:focus {
       <label>Para (conta destino)</label>
       <select id="iTransfPara"><option value="">— selecione —</option></select>
     </div>
-    <div class="fg">
-      <label>Categoria</label>
-      <select id="iTransfCat" onchange="atualizarPreviewTransf()"></select>
-    </div>
   </div>
   <div id="transferenciaPreview" style="background:var(--glight);border:1px solid var(--green);border-radius:.5rem;padding:.5rem .75rem;font-size:.75rem;color:var(--green);display:none;"></div>
 </div>
 
       <!-- GRID RESPONSIVO -->
       <div id="lancGrid">
-  <div class="fg"><label>Descrição</label><input type="text" id="iDesc" placeholder="Ex: Salário, Aluguel, Parcela carro…"></div>
+  <div class="fg" id="fgDesc"><label>Descrição</label><input type="text" id="iDesc" placeholder="Ex: Salário, Aluguel, Parcela carro…"></div>
   <div class="fg"><label>Valor (R$)</label><input type="number" id="iVal" placeholder="0,00" step="0.01" oninput="updateParcInfo()"></div>
   <div class="fg" id="fgCat"><label>Categoria</label><select id="iCat" onchange="atualizarIndicadorOrc()"></select><div id="catOrcIndicador" style="font-size:11px;color:var(--muted);margin-top:2px;"></div></div>
   <div class="fg" id="fgConta"><label>Conta</label><select id="iConta"><option value="">— nenhuma —</option></select></div>
@@ -1898,7 +2011,8 @@ input:focus, select:focus {
 </div>
         <!-- Recorrente -->
         <div id="recWrap" style="display:flex;flex-direction:column;gap:.5rem;">
-          <div class="ckr"><input type="checkbox" id="iRec" onchange="toggleDiaFixo()"><label for="iRec">↺ Recorrente (repete todo mês indefinidamente)</label></div>
+          <div class="ckr"><input type="checkbox" id="iRec" onchange="toggleDiaFixo();document.getElementById('agendaAvWrap').style.display=this.checked?'none':''"><label for="iRec">↺ Recorrente (repete todo mês indefinidamente)</label></div>
+          <div class="ckr" id="agendaAvWrap"><input type="checkbox" id="iAgendaAv"><label for="iAgendaAv">📅 Mostrar na Agenda do Mês (entrada que não se repete)</label></div>
           <div id="diaFixoWrap" style="display:none;flex-direction:column;gap:.5rem;margin-top:.3rem;">
             <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;">
               <label style="font-size:.8rem;color:var(--muted);white-space:nowrap;">Tipo de recorrência:</label>
@@ -1930,11 +2044,11 @@ input:focus, select:focus {
   <div class="phdr"><h1>Projeção Futura</h1><p>Linha do tempo — próximos 12 meses</p></div>
   <div class="pcnt">
     <div class="card">
-      <div class="ctit">Linha do tempo <small>* = projeção com base em entradas/saídas recorrentes e parcelas ativas</small></div>
+      <div class="ctit">Linha do tempo <small>* = previsão · usa os mesmos itens da Agenda do Mês · clique num mês para ver o detalhe</small></div>
       <div id="simLabel" style="display:none;align-items:center;gap:.4rem;font-size:.78rem;font-weight:700;color:#111;background:#f5c518;padding:.4rem .75rem;border-radius:8px;margin-bottom:.75rem;">⚡ Simulação ativa</div>
       <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
         <div style="min-width:620px;">
-          <div class="pt-head"><span>Mês</span><span>Barra</span><span>Saldo/mês</span><span>Acumulado</span><span>Variação</span></div>
+          <div class="pt-head"><span>Mês</span><span>Barra</span><span>Sobra do mês</span><span>Saldo previsto</span><span></span></div>
           <div id="projTL"></div>
         </div>
       </div>
@@ -1997,45 +2111,72 @@ input:focus, select:focus {
 
 <!-- RESERVA -->
 <section class="page" id="p-reserva">
-  <div class="phdr"><h1>Reserva & Patrimônio</h1><p>Metas, reserva e independência financeira</p></div>
+  <div class="phdr"><h1>Reserva / Metas</h1><p>Reservas, metas e independência financeira</p></div>
   <div class="pcnt">
 
-    <!-- SEÇÃO 1: METAS -->
+    <!-- SEÇÃO 1: RESERVAS E METAS -->
     <div class="card">
-      <div class="ctit">Minhas Metas <button class="btn bg bsm" onclick="toggleMetaForm()">+ Nova Meta</button></div>
+      <div class="ctit">Reservas e Metas <button class="btn bg bsm" onclick="objAbrirForm()">+ Nova</button></div>
 
-      <!-- Form nova meta (oculto por padrão) -->
-      <div id="metaForm" style="display:none;margin-bottom:1rem;padding:.875rem;background:var(--surf2);border-radius:.75rem;border:1px solid var(--border);">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.5rem;">
-          <div class="fg"><label>Nome da meta</label><input type="text" id="metaNome" placeholder="Ex: Video game, Viagem..."></div>
-          <div class="fg"><label>Valor alvo (R$)</label><input type="number" id="metaValor" placeholder="5000" step="0.01" oninput="calcPreviewMeta()"></div>
+      <div id="objResumo"></div>
+
+      <!-- Form nova/editar reserva ou meta (oculto por padrão) -->
+      <div id="objForm" class="obj-form" style="display:none;">
+        <div class="obj-form-tit" id="objFormTit">Nova reserva / meta</div>
+        <div class="ttog obj-tipo-tog">
+          <button id="objTipoReserva" class="oe" type="button" onclick="objSetTipo('reserva')">🛡️ Reserva</button>
+          <button id="objTipoMeta" type="button" onclick="objSetTipo('meta')">🎯 Meta</button>
         </div>
-        <div style="display:flex;gap:1.25rem;align-items:center;margin-bottom:.5rem;font-size:.82rem;flex-wrap:wrap;">
-          <label style="display:flex;align-items:center;gap:.35rem;cursor:pointer;">
-            <input type="radio" name="metaMode" value="aporte" checked onchange="switchMetaMode('aporte')"> Definir aporte mensal
-          </label>
-          <label style="display:flex;align-items:center;gap:.35rem;cursor:pointer;">
-            <input type="radio" name="metaMode" value="prazo" onchange="switchMetaMode('prazo')"> Definir prazo em meses
-          </label>
+        <div class="obj-grid">
+          <div class="fg"><label>Nome</label><input type="text" id="objNome" placeholder="Ex: Reserva de emergência, Celular…"></div>
+          <div class="fg"><label>Onde o dinheiro fica (conta)</label><select id="objConta" onchange="objPreview()"></select></div>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.5rem;">
-          <div id="metaAporteWrap" class="fg"><label>Aporte mensal (R$)</label><input type="number" id="metaAporte" placeholder="300" step="0.01" oninput="calcPreviewMeta()"></div>
-          <div id="metaPrazoWrap" class="fg" style="display:none;"><label>Prazo (meses)</label><input type="number" id="metaPrazo" min="1" placeholder="12" oninput="calcPreviewMeta()"></div>
-          <div class="fg"><label>Conta vinculada</label>
-            <select id="metaConta" onchange="metaContaChange()">
-              <option value="">— nenhuma —</option>
-            </select>
+
+        <!-- Só META -->
+        <div id="objMetaWrap" class="obj-grid" style="display:none;">
+          <div class="fg"><label>Valor da meta (R$)</label><input type="number" id="objAlvoMeta" placeholder="3000" step="0.01" min="0" oninput="objPreview()"></div>
+          <div class="fg"><label>Até quando? (mês)</label><input type="month" id="objPrazo" oninput="objPreview()"></div>
+        </div>
+
+        <!-- Só RESERVA -->
+        <div id="objReservaWrap">
+          <div class="obj-grid">
+            <div class="fg"><label>Cobrir quantos meses de gastos?</label>
+              <select id="objMesesRes" onchange="objPreview()">
+                <option value="3">3 meses</option><option value="6" selected>6 meses</option><option value="9">9 meses</option><option value="12">12 meses</option>
+              </select>
+            </div>
+            <div class="fg"><label>Valor alvo próprio (opcional)</label><input type="number" id="objAlvoRes" placeholder="vazio = usa a sugestão" step="0.01" min="0" oninput="objPreview()"></div>
           </div>
-          <div class="fg"><label>Saldo atual (R$)</label><input type="number" id="metaSaldoAtual" placeholder="0" step="0.01"></div>
         </div>
-        <div id="metaPreview" style="font-size:.75rem;color:var(--p);padding:.35rem .6rem;background:var(--plight);border-radius:8px;margin-bottom:.5rem;display:none;"></div>
-        <div style="display:flex;gap:.375rem;">
-          <button class="btn bp" onclick="addMeta()">Salvar meta</button>
-          <button class="btn bg" onclick="toggleMetaForm()">Cancelar</button>
+
+        <div id="objPreviewBox" class="obj-hint" style="display:none;"></div>
+
+        <!-- Rendimento -->
+        <div class="obj-opt">
+          <label class="obj-ck"><input type="checkbox" id="objRendAtivo" onchange="objToggleOpts()"> 📈 Rende CDI (CDB, cofrinho…) — calcular rendimento automático</label>
+          <div id="objRendWrap" class="obj-grid" style="display:none;">
+            <div class="fg"><label>% do CDI</label><input type="number" id="objRendPct" value="100" step="1" min="1"></div>
+            <div class="fg"><label>Rendendo desde</label><input type="date" id="objRendDesde"></div>
+          </div>
+        </div>
+
+        <!-- Lembrete na Agenda -->
+        <div class="obj-opt">
+          <label class="obj-ck"><input type="checkbox" id="objLembAtivo" onchange="objToggleOpts()"> 📅 Lembrete mensal de aporte na Agenda</label>
+          <div id="objLembWrap" class="obj-grid" style="display:none;">
+            <div class="fg"><label>Dia do mês</label><input type="number" id="objLembDia" value="10" min="1" max="31"></div>
+            <div class="obj-hint" style="margin:0;align-self:end;">O valor é só uma sugestão — na hora você aporta quanto quiser ou pula o mês.</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:.375rem;margin-top:.75rem;">
+          <button class="btn bp" onclick="objSalvar()">Salvar</button>
+          <button class="btn bg" onclick="objFecharForm()">Cancelar</button>
         </div>
       </div>
 
-      <!-- Lista de metas -->
+      <!-- Lista -->
       <div id="metasLista"></div>
     </div>
 
@@ -2176,7 +2317,7 @@ input:focus, select:focus {
       <button class="nbs-item" data-page="agenda" onclick="navFromSheet('agenda')"><i class="ti ti-calendar"></i><span>Agenda</span></button>
       <button class="nbs-item" data-page="proj" onclick="navFromSheet('proj')"><i class="ti ti-chart-line"></i><span>Projeção</span></button>
       <button class="nbs-item" data-page="hist" onclick="navFromSheet('hist')"><i class="ti ti-history"></i><span>Histórico</span></button>
-      <button class="nbs-item" data-page="reserva" onclick="navFromSheet('reserva')"><i class="ti ti-shield"></i><span>Reserva</span></button>
+      <button class="nbs-item" data-page="reserva" onclick="navFromSheet('reserva')"><i class="ti ti-shield"></i><span>Reserva / Metas</span></button>
       <button class="nbs-item" onclick="logout()"><i class="ti ti-logout"></i><span>Sair</span></button>
     </div>
   </div>
@@ -2305,6 +2446,7 @@ function initFirestore(){
         if(!_deletedIds.has(d.id)) // ignora IDs já deletados localmente
           lancamentos.push(Object.assign({id:d.id},d.data()));
       });
+      _shadowAll();
       setSyncStatus("ok");
       render();
       renderOrc();
@@ -2322,9 +2464,14 @@ function initFirestore(){
   unsubMetas=db.collection("users").doc(currentUser.uid).collection("metas")
     .onSnapshot(function(snap){
       metas=[];
-      snap.forEach(function(d){metas.push(Object.assign({id:d.id},d.data()));});
-      localStorage.setItem('metas_v1', JSON.stringify(metas));
+      snap.forEach(function(d){
+        var o=Object.assign({id:d.id},d.data());
+        if(o.v2) metas.push(o);
+        else deleteMetaFS(d.id); // metas do formato antigo são removidas (o usuário recria no novo formato)
+      });
+      try{ localStorage.setItem('metas_v2', JSON.stringify(metas)); }catch(e){}
       if(typeof renderMetas==='function') renderMetas();
+      if(typeof renderAgenda==='function'&&document.getElementById('p-agenda')&&document.getElementById('p-agenda').classList.contains('on')) renderAgenda();
     }, function(e){console.error(e);});
   // Listen perfil de orçamento — sincroniza entre mobile e desktop
   unsubOrc=db.collection("users").doc(currentUser.uid).collection("config").doc("orcamento")
@@ -2399,14 +2546,63 @@ function userDoc(){return db.collection("users").doc(currentUser.uid);}
 
 // ── OVERRIDE SAVE FUNCTIONS ──
 function saveLanc(l){
+  _shadowSet(l);
   if(!currentUser||!db)return;
   setSyncStatus("syncing");
   userDoc().collection("lancamentos").doc(String(l.id)).set(l)
     .then(function(){setSyncStatus("ok");})
     .catch(function(e){setSyncStatus("error");console.error(e);});
 }
+// ── DESFAZER EXCLUSÃO ──
+// _lancShadow guarda a última versão salva/sincronizada de cada lançamento. Ao excluir
+// (ou "excluir só este mês"), a versão anterior vai para a lixeira e aparece um aviso
+// com "Desfazer" por alguns segundos; desfazer grava de volta no Firebase.
+var _lancShadow={}, _lixeira=[], _lixeiraTimer=null;
+function _shadowSet(l){ if(l&&l.id!=null) try{ _lancShadow[String(l.id)]=JSON.stringify(l); }catch(e){} }
+function _shadowAll(){ _lancShadow={}; lancamentos.forEach(_shadowSet); }
+function _lixeiraAdd(id, alteracao){
+  id=String(id);
+  if(_lixeira.some(function(x){return x.id===id;}))return;
+  var raw=_lancShadow[id];
+  if(!raw){ var l=lancamentos.find(function(x){return String(x.id)===id;}); if(l) raw=JSON.stringify(l); }
+  if(!raw)return;
+  _lixeira.push({id:id, obj:JSON.parse(raw), alt:!!alteracao});
+  clearTimeout(_lixeiraTimer);
+  _lixeiraTimer=setTimeout(_lixeiraMostrar,30); // agrupa exclusões feitas juntas
+}
+function _lixeiraMostrar(){
+  var t=document.getElementById('undoToast');
+  if(!t){
+    t=document.createElement('div'); t.id='undoToast'; document.body.appendChild(t);
+  }
+  var dels=_lixeira.filter(function(x){return !x.alt;});
+  var nome=_lixeira.length?_lixeira[0].obj.desc:'';
+  var txt=dels.length>1?(dels.length+' lançamentos excluídos'):dels.length===1?('"'+nome+'" excluído'):('"'+nome+'" removido deste mês');
+  t.innerHTML='<span>🗑️ '+_oe(txt)+'</span><button onclick="desfazerExclusao()">↩ Desfazer</button><button class="ut-x" onclick="_lixeiraLimpar()">✕</button>';
+  t.className='on';
+  clearTimeout(_lixeiraTimer);
+  _lixeiraTimer=setTimeout(_lixeiraLimpar,10000);
+}
+function _lixeiraLimpar(){
+  _lixeira=[];
+  var t=document.getElementById('undoToast'); if(t) t.className='';
+}
+function desfazerExclusao(){
+  var itens=_lixeira.slice();
+  _lixeiraLimpar();
+  itens.forEach(function(x){
+    _deletedIds.delete(x.id);
+    var i=lancamentos.findIndex(function(l){return String(l.id)===x.id;});
+    if(i!==-1) lancamentos[i]=x.obj; else lancamentos.push(x.obj);
+    saveLanc(x.obj);
+  });
+  render();
+  if(typeof renderAgenda==='function'&&document.getElementById('p-agenda')&&document.getElementById('p-agenda').classList.contains('on')) renderAgenda();
+}
+
 function deleteLancRemote(id){
   if(!currentUser||!db)return;
+  _lixeiraAdd(id);
   _deletedIds.add(String(id)); // marca como deletado localmente
   userDoc().collection("lancamentos").doc(String(id)).delete()
     .then(function(){
@@ -2664,7 +2860,7 @@ var NAV_PAGES={
   agenda:{label:"Agenda"},
   proj:{label:"Projeção"},
   hist:{label:"Histórico"},
-  reserva:{label:"Reserva"}
+  reserva:{label:"Reserva / Metas"}
 };
 var MTB_TITLES={
   dash:"Dashboard",
@@ -2673,7 +2869,7 @@ var MTB_TITLES={
   agenda:"Agenda do Mês",
   proj:"Projeção Futura",
   hist:"Histórico",
-  reserva:"Reserva"
+  reserva:"Reserva / Metas"
 };
 function getInitials(name){
   if(!name) return "U";
@@ -2777,8 +2973,10 @@ function setTipo(t){
   // Oculta Categoria e Conta no lancGrid quando for transferência
   var fgCat=document.getElementById("fgCat");
   var fgConta=document.getElementById("fgConta");
+  var fgDesc=document.getElementById("fgDesc");
   if(fgCat) fgCat.style.display=isTransf?"none":"";
   if(fgConta) fgConta.style.display=isTransf?"none":"";
+  if(fgDesc) fgDesc.style.display=isTransf?"none":"";
 
   // Oculta todo o bloco extra (tipo, parcela, recorrente, parcInfo) quando for transferência
   var extras=document.getElementById("lancCamposExtra");
@@ -2798,7 +2996,6 @@ function setTipo(t){
     }).join('');
     document.getElementById('iTransfDe').innerHTML=opts;
     document.getElementById('iTransfPara').innerHTML=opts;
-    fillCategorySelect('iTransfCat');
     ['iTransfDe','iTransfPara'].forEach(function(id){
       document.getElementById(id).onchange=atualizarPreviewTransf;
     });
@@ -3378,6 +3575,223 @@ window.addEventListener('scroll',function(){
   if(pop)pop.style.display='none';
 },true);
 
+// ── Seletor de data padrão do app (substitui o <input type="date"/"month"> nativo) ──
+// Qualquer input date/month da página é convertido automaticamente: o input original vira
+// hidden (mantém o id e o .value em ISO), e um campo de texto "DD/MM/AAAA" ao lado abre o
+// mesmo calendário visual de Lançamentos num popover. Atribuir .value via JS atualiza o texto.
+var _dp={el:null,disp:null,mode:'date',mes:0,ano:0};
+function _dpFmt(v,mode){
+  if(!v)return '';
+  if(mode==='month')return v.slice(5,7)+'/'+v.slice(0,4);
+  return v.slice(8,10)+'/'+v.slice(5,7)+'/'+v.slice(0,4);
+}
+function dpEnhance(el){
+  if(el._dp)return;
+  var mode=el.type==='month'?'month':'date';
+  el._dp=true;
+  var val=el.value;
+  var disp=document.createElement('input');
+  disp.type='text'; disp.readOnly=true; disp.className='dp-disp';
+  disp.placeholder=mode==='month'?'MM/AAAA':'DD/MM/AAAA';
+  if(el.getAttribute('style'))disp.setAttribute('style',el.getAttribute('style'));
+  el.parentNode.insertBefore(disp,el.nextSibling);
+  el.type='hidden';
+  el._dpMode=mode; el._dpDisp=disp;
+  var proto=Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value');
+  Object.defineProperty(el,'value',{configurable:true,
+    get:function(){return proto.get.call(el);},
+    set:function(v){proto.set.call(el,v);disp.value=_dpFmt(v,mode);}});
+  el.value=val;
+  disp.addEventListener('click',function(e){e.stopPropagation();dpToggle(el);});
+}
+function dpEnhanceAll(root){
+  (root||document).querySelectorAll('input[type=date],input[type=month]').forEach(dpEnhance);
+}
+function _dpPop(){
+  var p=document.getElementById('dpPopover');
+  if(!p){p=document.createElement('div');p.id='dpPopover';p.style.display='none';document.body.appendChild(p);
+    p.addEventListener('click',function(e){e.stopPropagation();});}
+  return p;
+}
+function dpToggle(el){
+  var pop=_dpPop();
+  if(pop.style.display==='block'&&_dp.el===el){pop.style.display='none';return;}
+  _dp.el=el; _dp.mode=el._dpMode;
+  var cur=el.value||new Date().toISOString().slice(0,10);
+  if(_dp.mode==='month')cur=cur.slice(0,7)+'-01';
+  var d=new Date(cur+'T12:00:00');
+  _dp.mes=d.getMonth(); _dp.ano=d.getFullYear();
+  dpRender();
+  positionLancCal(el._dpDisp,pop);
+}
+function dpNav(dir){
+  if(_dp.mode==='month'){_dp.ano+=dir;}
+  else{_dp.mes+=dir;if(_dp.mes>11){_dp.mes=0;_dp.ano++;}if(_dp.mes<0){_dp.mes=11;_dp.ano--;}}
+  dpRender();
+}
+function dpRender(){
+  var pop=_dpPop(), el=_dp.el, m=_dp.mes, y=_dp.ano;
+  var sel=el?el.value:'';
+  var h='<div class="dfcal" style="margin-top:0;max-width:none;">';
+  h+='<div class="dfcal-nav"><button type="button" onclick="dpNav(-1)">&#x2039;</button><span>'+(_dp.mode==='month'?y:_MN_CAL[m]+' '+y)+'</span><button type="button" onclick="dpNav(1)">&#x203a;</button></div>';
+  if(_dp.mode==='month'){
+    h+='<div class="dfcal-grid" style="grid-template-columns:repeat(3,1fr);gap:4px;">';
+    for(var i=0;i<12;i++){
+      var ym=y+'-'+('0'+(i+1)).slice(-2);
+      h+='<div class="dfcal-day'+(sel===ym?' selecionado':'')+'" data-dt="'+ym+'" style="padding:.5rem .1rem;">'+_MN_CAL[i].slice(0,3)+'</div>';
+    }
+  } else {
+    h+='<div class="dfcal-grid">';
+    ['D','S','T','Q','Q','S','S'].forEach(function(d){h+='<div class="dfcal-dow">'+d+'</div>';});
+    var pd=new Date(y,m,1).getDay(), ud=new Date(y,m+1,0).getDate();
+    for(var j=0;j<pd;j++)h+='<div class="dfcal-day vazio"></div>';
+    for(var d=1;d<=ud;d++){
+      var ds=y+'-'+('0'+(m+1)).slice(-2)+'-'+('0'+d).slice(-2);
+      h+='<div class="dfcal-day'+(sel===ds?' selecionado':'')+'" data-dt="'+ds+'">'+d+'</div>';
+    }
+  }
+  h+='</div></div>';
+  pop.innerHTML=h;
+  pop.querySelectorAll('.dfcal-day[data-dt]').forEach(function(c){
+    c.addEventListener('click',function(){dpSelect(this.getAttribute('data-dt'));});
+  });
+}
+function dpSelect(v){
+  var el=_dp.el;
+  _dpPop().style.display='none';
+  if(!el)return;
+  el.value=v;
+  el.dispatchEvent(new Event('input',{bubbles:true}));
+  el.dispatchEvent(new Event('change',{bubbles:true}));
+}
+document.addEventListener('click',function(e){
+  var p=document.getElementById('dpPopover');
+  if(!p||p.style.display!=='block')return;
+  if(p.contains(e.target)||(_dp.el&&e.target===_dp.el._dpDisp))return;
+  p.style.display='none';
+},true);
+window.addEventListener('resize',function(){var p=document.getElementById('dpPopover');if(p)p.style.display='none';});
+window.addEventListener('scroll',function(e){var p=document.getElementById('dpPopover');if(p&&!p.contains(e.target))p.style.display='none';},true);
+(function(){
+  function start(){
+    dpEnhanceAll();
+    new MutationObserver(function(muts){
+      muts.forEach(function(mu){mu.addedNodes.forEach(function(n){
+        if(n.nodeType!==1)return;
+        if(n.matches&&n.matches('input[type=date],input[type=month]'))dpEnhance(n);
+        else if(n.querySelectorAll)dpEnhanceAll(n);
+      });});
+    }).observe(document.body,{childList:true,subtree:true});
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
+})();
+
+// ── Lista suspensa padrão do app (substitui o visual do <select> nativo) ──
+// O <select> original continua existindo (escondido) com id, value e onchange — o código
+// do app não muda. Um botão mostra a opção escolhida e abre uma lista moderna; se a opção
+// for uma conta, mostra o logo do banco e o saldo alinhado à direita.
+var _cs={sel:null};
+var _CS_CHEV='<svg class="cs-chev" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
+function _csInfo(opt){
+  var txt=(opt&&opt.text)||'', val=opt?opt.value:'';
+  var mm=txt.match(/^(.*?)\s*\((-?R\$\s?[^)]*)\)\s*$/);
+  var nome=mm?mm[1]:txt, extra=mm?mm[2]:'';
+  var c=(val&&typeof contas!=='undefined')?contas.find(function(x){return String(x.id)===String(val);}):null;
+  var ico=c?'<span class="cs-dot" style="background:'+(c.cor||'#607D8B')+'"></span>':'';
+  return {nome:nome, extra:extra, ico:ico, vazio:val===''};
+}
+function _csEsc(s){return String(s).replace(/[&<>"]/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch];});}
+function csRefresh(sel){
+  var btn=sel&&sel._csBtn; if(!btn)return;
+  var opt=sel.options[sel.selectedIndex];
+  var inf=_csInfo(opt);
+  btn.innerHTML=inf.ico+'<span class="cs-txt'+(inf.vazio?' cs-ph':'')+'">'+_csEsc(inf.nome||'—')+'</span>'+
+    (inf.extra?'<span class="cs-extra">'+_csEsc(inf.extra)+'</span>':'')+_CS_CHEV;
+  btn.disabled=sel.disabled;
+  btn.style.display=(sel.style.display==='none')?'none':'';
+}
+function csEnhance(sel){
+  if(sel._cs||sel.multiple||sel.hasAttribute('data-native'))return;
+  sel._cs=true;
+  var btn=document.createElement('button');
+  btn.type='button'; btn.className='cs-btn';
+  if(sel.getAttribute('style'))btn.setAttribute('style',sel.getAttribute('style'));
+  sel.parentNode.insertBefore(btn,sel.nextSibling);
+  sel.classList.add('cs-native');
+  sel._csBtn=btn;
+  ['value','selectedIndex'].forEach(function(prop){
+    var d=Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype,prop);
+    Object.defineProperty(sel,prop,{configurable:true,get:function(){return d.get.call(sel);},set:function(v){d.set.call(sel,v);csRefresh(sel);}});
+  });
+  sel.addEventListener('change',function(){csRefresh(sel);});
+  new MutationObserver(function(){csRefresh(sel);}).observe(sel,{childList:true,subtree:true,attributes:true,attributeFilter:['style','disabled']});
+  btn.addEventListener('click',function(e){e.stopPropagation();csToggle(sel);});
+  csRefresh(sel);
+}
+function _csPop(){
+  var p=document.getElementById('csPop');
+  if(!p){p=document.createElement('div');p.id='csPop';p.style.display='none';document.body.appendChild(p);
+    p.addEventListener('click',function(e){e.stopPropagation();});}
+  return p;
+}
+function csFechar(){var p=document.getElementById('csPop');if(p)p.style.display='none';if(_cs.sel&&_cs.sel._csBtn)_cs.sel._csBtn.classList.remove('open');_cs.sel=null;}
+function csToggle(sel){
+  var pop=_csPop();
+  if(pop.style.display==='block'&&_cs.sel===sel){csFechar();return;}
+  csFechar();
+  _cs.sel=sel;
+  var h='', grupo=null;
+  Array.prototype.forEach.call(sel.options,function(opt,i){
+    var g=opt.parentNode&&opt.parentNode.tagName==='OPTGROUP'?opt.parentNode.label:null;
+    if(g&&g!==grupo){h+='<div class="cs-grp">'+_csEsc(g)+'</div>';grupo=g;}
+    if(opt.hidden)return;
+    var inf=_csInfo(opt), on=i===sel.selectedIndex;
+    h+='<div class="cs-opt'+(on?' on':'')+(opt.disabled?' dis':'')+(inf.vazio?' cs-ph':'')+'" data-i="'+i+'">'+inf.ico+
+      '<span class="cs-txt">'+_csEsc(inf.nome)+'</span>'+(inf.extra?'<span class="cs-extra">'+_csEsc(inf.extra)+'</span>':'')+
+      '<span class="cs-ck">'+(on?'✓':'')+'</span></div>';
+  });
+  pop.innerHTML=h||'<div class="cs-opt dis">Nenhuma opção</div>';
+  pop.querySelectorAll('.cs-opt[data-i]').forEach(function(el){
+    if(el.classList.contains('dis'))return;
+    el.addEventListener('click',function(){
+      var i=parseInt(this.getAttribute('data-i'));
+      csFechar();
+      if(sel.selectedIndex!==i){
+        sel.selectedIndex=i;
+        sel.dispatchEvent(new Event('input',{bubbles:true}));
+        sel.dispatchEvent(new Event('change',{bubbles:true}));
+      }
+    });
+  });
+  var btn=sel._csBtn;
+  btn.classList.add('open');
+  pop.style.width=Math.max(btn.getBoundingClientRect().width,180)+'px';
+  positionLancCal(btn,pop);
+  var sOn=pop.querySelector('.cs-opt.on'); if(sOn) sOn.scrollIntoView({block:'nearest'});
+}
+document.addEventListener('click',function(e){
+  var p=document.getElementById('csPop');
+  if(!p||p.style.display!=='block')return;
+  if(p.contains(e.target)||(_cs.sel&&_cs.sel._csBtn.contains(e.target)))return;
+  csFechar();
+},true);
+document.addEventListener('keydown',function(e){if(e.key==='Escape')csFechar();});
+window.addEventListener('resize',csFechar);
+window.addEventListener('scroll',function(e){var p=document.getElementById('csPop');if(p&&p.style.display==='block'&&!p.contains(e.target))csFechar();},true);
+(function(){
+  function start(){
+    document.querySelectorAll('select').forEach(csEnhance);
+    new MutationObserver(function(muts){
+      muts.forEach(function(mu){mu.addedNodes.forEach(function(n){
+        if(n.nodeType!==1)return;
+        if(n.tagName==='SELECT')csEnhance(n);
+        else if(n.querySelectorAll)n.querySelectorAll('select').forEach(csEnhance);
+      });});
+    }).observe(document.body,{childList:true,subtree:true});
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
+})();
+
 function ultimoDiaMes(y,m){
   // m é 0-based
   return new Date(y, m+1, 0).getDate();
@@ -3450,51 +3864,29 @@ function atualizarPreviewTransf(){
     (dtVal?' &nbsp;·&nbsp; 📅 '+fmtDt(dtVal):'');
 }
 
-// Atualiza o saldo da meta vinculada à conta destino quando a transferência é categorizada como "Reserva"
-function syncMetasAposTransferencia(paraId, cat){
-  if(cat!=='Reserva')return;
-  var meta=metas.find(function(m){return m.conta===paraId;});
-  if(!meta)return;
-  meta.atual=saldoConta(paraId);
-  if(meta.atual>=meta.valor){meta.concluida=true;meta.excedente=meta.atual-meta.valor;meta.atual=meta.valor;}
-  else{meta.concluida=false;}
-  saveMetas();
-  renderMetas();
-}
-
 function addTransferencia(){
   var deId=document.getElementById('iTransfDe').value;
   var paraId=document.getElementById('iTransfPara').value;
   var v=parseFloat(document.getElementById('iVal').value)||0;
   var dt=document.getElementById('iDt').value;
-  var desc=document.getElementById('iDesc').value.trim()||'Transferência';
-  var cat=document.getElementById('iTransfCat').value||'Outros';
   if(!deId||!paraId||!v||!dt){alert('Preencha todos os campos!');return;}
   if(deId===paraId){alert('Conta de origem e destino não podem ser iguais!');return;}
-  var gid='transf_'+Date.now();
-  var lSaida={
-    id:String(Date.now()+Math.random()),
-    desc:desc,v:v,cat:cat,t:'transf_s',
-    dt:dt,rec:false,conta:deId,grupoTransfId:gid,
-    contaDestino:paraId
-  };
-  var lEntrada={
-    id:String(Date.now()+Math.random()+1),
-    desc:desc,v:v,cat:cat,t:'transf_e',
-    dt:dt,rec:false,conta:paraId,grupoTransfId:gid,
-    contaOrigem:deId
-  };
-  lancamentos.push(lSaida);
-  lancamentos.push(lEntrada);
-  saveLanc(lSaida);
-  saveLanc(lEntrada);
-  syncMetasAposTransferencia(paraId, cat);
+  // Transferência não tem categoria nem descrição manual — só move dinheiro entre contas
+  var cDeT=contas.find(function(c){return c.id===deId;});
+  var cParaT=contas.find(function(c){return c.id===paraId;});
+  var desc='Transferência '+(cDeT?cDeT.nome:'?')+' → '+(cParaT?cParaT.nome:'?');
+  // Se a conta for de uma reserva/meta, a transferência conta como aporte/resgate dela
+  var objPara=metas.find(function(o){return o.conta===paraId;});
+  var objDe=metas.find(function(o){return o.conta===deId;});
+  var extra=objPara?{objetivoId:objPara.id,objMov:'aporte'}:objDe?{objetivoId:objDe.id,objMov:'resgate'}:null;
+  criarTransferencia(deId,paraId,v,dt,desc,extra);
   document.getElementById('iDesc').value='';
   document.getElementById('iVal').value='';
   document.getElementById('iTransfDe').value='';
   document.getElementById('iTransfPara').value='';
   document.getElementById('transferenciaPreview').style.display='none';
   render();
+  if(extra) renderMetas();
 }
 
 function addLanc(){
@@ -3609,6 +4001,8 @@ function addLanc(){
       diaFixoTipo: rec && diaFixoCfg ? diaFixoCfg.tipo : null,
       diaFixoNum:  rec && diaFixoCfg ? diaFixoCfg.diaNum : null
     };
+    var agAvEl=document.getElementById("iAgendaAv");
+    if(tipoAtual==="e"&&!rec&&agAvEl&&agAvEl.checked) nl.agenda=true;
     lancamentos.push(nl);
     saveLanc(nl);
   }
@@ -3617,6 +4011,8 @@ function addLanc(){
   document.getElementById("iDesc").value = "";
   document.getElementById("iVal").value = "";
   document.getElementById("iRec").checked = false;
+  var _agAv=document.getElementById("iAgendaAv"); if(_agAv) _agAv.checked=false;
+  var _agAvW=document.getElementById("agendaAvWrap"); if(_agAvW) _agAvW.style.display="";
   document.getElementById("iParcelas").value = "";
   document.getElementById("parcInfo").className = "parc-info";
   document.getElementById("iTipoLanc").value = "normal";
@@ -3659,6 +4055,7 @@ function delLanc(id){
       if(par)idsParaExcluir.push(String(par.id));
     }
     idsParaExcluir.forEach(function(did){
+      _lixeiraAdd(did);
       _deletedIds.add(did);
       if(currentUser&&db){
         db.collection('users').doc(currentUser.uid).collection('lancamentos').doc(did).delete()
@@ -3679,6 +4076,7 @@ function delLanc(id){
     });
     var removeIds=toRemove.map(function(x){return String(x.id);});
     removeIds.forEach(function(did){
+      _lixeiraAdd(did);
       _deletedIds.add(did);
       if(currentUser&&db){
         db.collection('users').doc(currentUser.uid).collection('lancamentos').doc(did).delete()
@@ -3956,7 +4354,7 @@ function confirmarPagamento(id){
 function excluirItemAgenda(id, tipo){
   if(tipo==='fixo'){
     abrirExcluirFixo(id);
-  } else if(tipo==='entrada'){
+  } else if(tipo==='entrada'||tipo==='pago'){
     delLanc(id);
   } else {
     // Parcela, débito, compromisso → usa abrirExcluirAgenda
@@ -3970,6 +4368,7 @@ function abrirExcluirFixo(id){
   var mesAlvo=(agY!==null?agY:cY)+'-'+('0'+((agM!==null?agM:cM)+1)).slice(-2);
 
   var doSoEsteMes=function(){
+    _lixeiraAdd(l.id,true);
     if(!l.paidMeses)l.paidMeses=[];
     if(l.paidMeses.indexOf(mesAlvo)===-1)l.paidMeses.push(mesAlvo);
     saveLanc(l);
@@ -4067,6 +4466,7 @@ function openAgPanel(id, initDt) {
 
 function closeAgPanel(id) {
   delete _agPanelOpen[id];
+  delete _agPanelCalState[id];
   renderAgenda();
 }
 
@@ -4117,23 +4517,50 @@ function renderAgPanelCalInEl(id, container) {
 }
 
 function _mkAgPanelHtml(id, t, contaOpts) {
+  // Painel compacto: Data · Conta · Valor (editável — juros/desconto) · Confirmar/Cancelar
   var st = _agPanelCalState[id];
-  var dtDisp = (st && st.sel) ? fmtDt(st.sel) : 'Selecione uma data';
+  var dtSel = (st && st.sel) ? st.sel : new Date().toISOString().slice(0,10);
+  var l = lancamentos.find(function(x){ return String(x.id)===String(id); });
+  var vPadrao = (st && st.v!=null) ? st.v : (l ? l.v : 0);
   var confirmBg = (t==='e') ? '#16a34a' : '#d97706';
   var confirmCall = (t==='agenda-item') ? 'confirmAgPanelAgendaItem(\''+id+'\')' : 'confirmAgPanelFixo(\''+id+'\',\''+t+'\')';
-  var h = '<div class="ag-panel">';
-  h += '<div class="ag-panel-row">';
-  h += '<div class="ag-panel-cal" id="agcal_'+id+'" data-agpanelcal="'+id+'"></div>';
-  h += '<div class="ag-panel-aside">';
-  h += '<select id="agpanelconta_'+id+'">'+contaOpts+'</select>';
-  h += '<div style="display:flex;flex-direction:row;gap:8px;justify-content:flex-start;">';
-  h += '<button onclick="'+confirmCall+'" style="background:'+confirmBg+';color:#fff;font-size:13px;padding:6px 16px;border-radius:6px;font-weight:700;border:none;cursor:pointer;">✅ Confirmar</button>';
-  h += '<button onclick="closeAgPanel(\''+id+'\')" style="background:transparent;color:var(--muted);font-size:13px;padding:6px 12px;border-radius:6px;border:1px solid var(--div);cursor:pointer;">✗ Cancelar</button>';
+  var h = '<div class="ag-panel ag-panel-compact">';
+  h += '<div class="agp-f"><label>Data</label><input type="date" id="agpaneldtin_'+id+'" value="'+dtSel+'" onchange="agPanelSetDt(\''+id+'\',this.value)"></div>';
+  h += '<div class="agp-f agp-conta"><label>Conta</label><select id="agpanelconta_'+id+'">'+contaOpts+'</select></div>';
+  h += '<div class="agp-f agp-val"><label>Valor (R$)</label><input type="number" step="0.01" min="0" id="agpanelval_'+id+'" value="'+(Math.round(vPadrao*100)/100)+'" oninput="agPanelSetVal(\''+id+'\',this.value)"></div>';
+  h += '<div class="agp-btns">';
+  h += '<button onclick="'+confirmCall+'" style="background:'+confirmBg+';">✅ Confirmar</button>';
+  h += '<button onclick="closeAgPanel(\''+id+'\')" class="agp-cancel">✗</button>';
   h += '</div>';
-  h += '</div></div>';
-  h += '<div id="agpaneldt_'+id+'" style="font-size:.7rem;color:var(--p);font-weight:600;margin-top:.3rem;">📅 '+dtDisp+'</div>';
+  h += '<div class="agp-dif" id="agpaneldif_'+id+'">'+_agPanelDifHtml(l, vPadrao)+'</div>';
   h += '</div>';
   return h;
+}
+
+function _agPanelDifHtml(l, v){
+  if(!l || !(v>0) || Math.abs(v-l.v)<0.005) return '';
+  var dif=v-l.v;
+  return '<span style="color:'+(dif>0?'var(--red)':'var(--green)')+';">'+(dif>0?'+':'−')+fmt(Math.abs(dif))+'</span> em relação ao previsto ('+fmt(l.v)+')';
+}
+
+function agPanelSetDt(id, dt){
+  if(!_agPanelCalState[id]) _agPanelCalState[id]={};
+  _agPanelCalState[id].sel = dt;
+}
+
+function agPanelSetVal(id, val){
+  if(!_agPanelCalState[id]) _agPanelCalState[id]={};
+  var v=parseFloat(val);
+  _agPanelCalState[id].v = isNaN(v)?null:v;
+  var l = lancamentos.find(function(x){ return String(x.id)===String(id); });
+  var el=document.getElementById('agpaneldif_'+id);
+  if(el) el.innerHTML=_agPanelDifHtml(l, isNaN(v)?0:v);
+}
+
+function _agPanelValor(id, fallback){
+  var el=document.getElementById('agpanelval_'+id);
+  var v=el?parseFloat(el.value):NaN;
+  return (v>0)?Math.round(v*100)/100:fallback;
 }
 
 function confirmAgPanelFixo(id, t) {
@@ -4144,12 +4571,13 @@ function confirmAgPanelFixo(id, t) {
   var conta = contaEl ? contaEl.value : '';
   var l = lancamentos.find(function(x){ return String(x.id)===String(id); });
   if(!l) return;
+  var vFinal = _agPanelValor(id, l.v);
   var mesAlvo = dt.slice(0,7);
   var jaExiste = lancamentos.some(function(x){ return String(x.origemRecId)===String(id)&&x.dt.startsWith(mesAlvo); });
   if(!jaExiste) {
     var nl = {
       id: String(Date.now()+Math.random()),
-      desc: l.desc, v: l.v, cat: l.cat,
+      desc: l.desc, v: vFinal, cat: l.cat,
       t: t, dt: dt, conta: conta||l.conta,
       rec: false, origemRecId: String(id)
     };
@@ -4174,15 +4602,17 @@ function confirmAgPanelAgendaItem(id) {
   var l = lancamentos.find(function(x){ return String(x.id)===String(id); });
   if(!l) return;
   if(!l.dtOriginal) l.dtOriginal = l.dt;
+  var vFinal = _agPanelValor(id, l.v);
   l.paid = true; l.dtPago = dt; l.contaPago = conta||l.conta;
+  if(Math.abs(vFinal-l.v)>=0.005) l.vPago = vFinal; else delete l.vPago;
   var despExist=lancamentos.find(function(x){return String(x.origemAgendaId)===String(id);});
   if(despExist){
-    despExist.dt=dt; despExist.conta=conta||l.conta;
+    despExist.dt=dt; despExist.conta=conta||l.conta; despExist.v=vFinal;
     saveLanc(despExist);
   } else {
     var novaDespesa={
       id:String(Date.now()+Math.random()),
-      desc:l.desc, v:l.v, cat:l.cat, t:'s',
+      desc:l.desc, v:vFinal, cat:l.cat, t:'s',
       dt:dt, rec:false, conta:conta||l.conta,
       origemAgendaId:String(l.id)
     };
@@ -4211,6 +4641,103 @@ function confirmAgPanelAgendaItem(id) {
   renderAgenda();
 }
 
+// ══════════════════════════════════════════════════════════════════
+// ITENS DO MÊS (Agenda + Projeção usam a MESMA regra)
+// Retorna a lista de compromissos de um mês: entradas/saídas fixas (recorrentes),
+// parcelas, compromissos e lembretes de aporte. O que já foi pago/recebido no mês
+// CONTINUA na lista (marcado paid:true) — só some o que foi excluído "só este mês".
+// opts.projetar: para meses futuros, projeta débitos automáticos que ainda não
+// têm ocorrência criada (eles são gerados um mês por vez).
+// ══════════════════════════════════════════════════════════════════
+function agendaItensMes(m,y,opts){
+  opts=opts||{};
+  var items=[];
+  var ym=y+'-'+('0'+(m+1)).slice(-2);
+  var ultimoDia=ym+'-'+('0'+new Date(y,m+1,0).getDate()).slice(-2);
+  var recIdsComAvulso={};
+
+  // 1. Fixos recorrentes (entrada/saída)
+  lancamentos.forEach(function(l){
+    if(!(l.rec&&(l.t==="e"||l.t==="s")&&l.tipoLanc!=="debito"))return;
+    if(l.dt && l.dt > ultimoDia) return; // ainda não existia neste mês
+    var day;
+    if(l.diaFixoTipo){ day=parseInt(calcDiaFixo(y,m,l.diaFixoTipo,l.diaFixoNum).slice(8,10)); }
+    else { day=l.dt?parseInt(l.dt.slice(8,10)):1; }
+    var avulso=lancamentos.find(function(x){return String(x.origemRecId)===String(l.id)&&x.dt&&x.dt.startsWith(ym);});
+    if(avulso){ recIdsComAvulso[String(l.id)]=true; return; } // pago/recebido → entra no passo 1b com o valor real
+    if(l.paidMeses&&l.paidMeses.indexOf(ym)!==-1) return;   // excluído "só este mês"
+    items.push({day:day,desc:l.desc,v:l.v,t:l.t,cat:l.cat,tipo:'fixo',id:l.id,conta:l.conta,diaFixoTipo:l.diaFixoTipo,diaFixoNum:l.diaFixoNum});
+  });
+
+  // 1b. Fixos já pagos/recebidos no mês (lançamento gerado pela confirmação, com valor e data reais)
+  lancamentos.forEach(function(l){
+    if(l.rec||!l.origemRecId||!l.dt||!l.dt.startsWith(ym))return;
+    if(l.t!=='e'&&l.t!=='s')return;
+    var day=parseInt(l.dt.slice(8,10))||1;
+    items.push({day:day,desc:l.desc,v:l.v,t:l.t,cat:l.cat,tipo:l.t==='e'?'entrada':'pago',id:l.id,conta:l.conta,paid:true});
+  });
+
+  // 1c. Entradas avulsas marcadas "📅 Mostrar na Agenda" (recebida quando a data já chegou)
+  var hojeIso=new Date().toISOString().slice(0,10);
+  lancamentos.forEach(function(l){
+    if(l.t!=='e'||l.rec||l.origemRecId||!l.agenda||!l.dt||!l.dt.startsWith(ym))return;
+    items.push({day:parseInt(l.dt.slice(8,10))||1,desc:l.desc,v:l.v,t:'e',cat:l.cat,tipo:'entrada',id:l.id,conta:l.conta,paid:l.dt<=hojeIso});
+  });
+
+  // 2. Itens da agenda deste mês (parcelas, parcelado fixo, débitos)
+  getAgendaLM(m,y).forEach(function(l){
+    var day=parseInt(l.dt.slice(8,10))||1;
+    var vItem=(l.paid&&l.vPago!=null)?l.vPago:l.v;
+    items.push({day:day,desc:l.desc,v:vItem,t:'s',cat:l.cat,tipo:'parcela',id:l.id,conta:l.conta,pn:l.pn,pt:l.pt,paid:l.paid,agendaItem:true,tipoLanc:l.tipoLanc});
+  });
+
+  // 2b. (Projeção) débitos automáticos recorrentes ainda não gerados para este mês
+  if(opts.projetar){
+    var ultimos={};
+    lancamentos.forEach(function(l){
+      if(l.t!=='agenda'||l.tipoLanc!=='debito'||!l.rec)return;
+      var g=String(l.grupoId||l.id);
+      if(!ultimos[g]||l.dt>ultimos[g].dt)ultimos[g]=l;
+    });
+    Object.keys(ultimos).forEach(function(g){
+      var l=ultimos[g];
+      if(l.dt.slice(0,7)>=ym)return;
+      items.push({day:parseInt(l.dt.slice(8,10))||1,desc:l.desc,v:l.v,t:'s',cat:l.cat,tipo:'parcela',id:'proj_'+g,conta:l.conta,paid:false,projetado:true});
+    });
+  }
+
+  // 3. Compromissos (tipo antigo) e débitos legados
+  lancamentos.forEach(function(l){
+    if(l.t==='compromisso'&&l.dt&&l.dt.startsWith(ym)){
+      items.push({day:parseInt(l.dt.slice(8,10)),desc:l.desc,v:l.v,t:'s',cat:l.cat,tipo:'compromisso',id:l.id,conta:l.conta,paid:l.paid});
+    }
+    if(l.tipoLanc==='debito'&&l.t==='s'&&l.dt&&(l.rec?l.dt<=ultimoDia:l.dt.startsWith(ym))){
+      items.push({day:l.diaDebito||parseInt(l.dt.slice(8,10)),desc:l.desc,v:l.v,t:'s',cat:l.cat,tipo:'normal',id:l.id,conta:l.conta,paid:l.paid});
+    }
+  });
+
+  // 4. Lembretes de aporte das Reservas/Metas (não são despesa — ficam fora da sobra)
+  if(typeof objItensAgenda==='function') objItensAgenda(m,y).forEach(function(it){items.push(it);});
+  return items;
+}
+
+// Resumo do mês a partir dos itens: o mesmo número aparece na Agenda e na Projeção
+function agendaResumo(items){
+  var saidas=items.filter(function(x){return x.t!=='e'&&x.tipo!=='aporte';});
+  var entradas=items.filter(function(x){return x.t==='e';});
+  var soma=function(arr){return arr.reduce(function(s,x){return s+x.v;},0);};
+  var r={
+    entradas:soma(entradas), saidas:soma(saidas),
+    entradasPagas:soma(entradas.filter(function(x){return x.paid;})),
+    saidasPagas:soma(saidas.filter(function(x){return x.paid;})),
+    itensEntrada:entradas, itensSaida:saidas
+  };
+  r.sobra=r.entradas-r.saidas;
+  r.entradasPend=r.entradas-r.entradasPagas;
+  r.saidasPend=r.saidas-r.saidasPagas;
+  return r;
+}
+
 function renderAgenda(m,y){
   if(m===undefined){m=(agM!==null?agM:cM);}
   if(y===undefined){y=(agM!==null?agY:cY);}
@@ -4219,74 +4746,9 @@ function renderAgenda(m,y){
   var grid=document.getElementById("agContent");
   if(!grid)return;
 
-  // Collect all items for this month
-  var items=[];
+  // Itens do mês — mesma função usada pela Projeção Futura (os números batem nas duas telas)
+  var items=agendaItensMes(m,y);
   var hoje=new Date();
-  var hojeD=hoje.getDate(), hojeM=hoje.getMonth(), hojeA=hoje.getFullYear();
-
-  // 1. Normal recorrentes (fixos) já lançados como t:"s" ou t:"e"
-  lancamentos.forEach(function(l){
-    if(l.rec&&(l.t==="e"||l.t==="s")&&l.tipoLanc!=="debito"){
-      // Calcular dia correto para este mês usando diaFixo
-      var day;
-      if(l.diaFixoTipo){
-        var dtCorreta=calcDiaFixo(y,m,l.diaFixoTipo,l.diaFixoNum);
-        day=parseInt(dtCorreta.slice(8,10));
-      } else {
-        day=l.dt?parseInt(l.dt.slice(8,10)):1;
-      }
-
-      // Retroativo: só mostra se o lançamento foi criado antes ou durante o mês visualizado
-      var ultimoDiaMes=new Date(y,m+1,0).toISOString().slice(0,10);
-      if(l.dt && l.dt > ultimoDiaMes) return;
-
-      // Verificar confirmação antes de decidir se mostra
-      var mesDaAgenda = y + '-' + ('0'+(m+1)).slice(-2);
-      var dtEsperada = mesDaAgenda + '-' + ('0'+day).slice(-2);
-      var avulsoMes = lancamentos.find(function(x){
-        return String(x.origemRecId)===String(l.id) && x.dt.startsWith(mesDaAgenda);
-      });
-      var foiAdiantado = avulsoMes && avulsoMes.dt !== dtEsperada;
-      var foiConfirmado = (avulsoMes && avulsoMes.dt === dtEsperada)
-        || (!foiAdiantado && l.paidMeses && l.paidMeses.indexOf(mesDaAgenda) !== -1);
-
-      // Confirmado na data esperada → não mostrar
-      if(foiConfirmado) return;
-
-      var adiantadoDia = foiAdiantado ? parseInt(avulsoMes.dt.slice(8,10)) : null;
-      items.push({day:day,desc:l.desc,v:l.v,t:l.t,cat:l.cat,tipo:'fixo',id:l.id,conta:l.conta,diaFixoTipo:l.diaFixoTipo,diaFixoNum:l.diaFixoNum,adiantadoDia:adiantadoDia});
-    }
-  });
-
-  // 1b. Entradas confirmadas do mês (não recorrentes — evita duplicar)
-  getLM(m,y).filter(function(l){return l.t==='e'&&!l.rec;}).forEach(function(l){
-    var day=l.dt?parseInt(l.dt.slice(8,10)):1;
-    items.push({day:day,desc:l.desc,v:l.v,t:'e',cat:l.cat,tipo:'entrada',id:l.id,conta:l.conta,paid:true});
-  });
-
-  // 2. Itens da agenda deste mês (parcelas, parcelado fixo, débitos pendentes)
-  var agItems=getAgendaLM(m,y);
-  agItems.forEach(function(l){
-    var day=parseInt(l.dt.slice(8,10))||1;
-    var tipo='parcela';
-    items.push({day:day,desc:l.desc,v:l.v,t:'s',cat:l.cat,tipo:tipo,id:l.id,conta:l.conta,pn:l.pn,pt:l.pt,paid:l.paid,agendaItem:true,tipoLanc:l.tipoLanc});
-  });
-
-  // 3. Compromissos do mês (tipo antigo)
-  lancamentos.forEach(function(l){
-    if(l.t==='compromisso'){
-      var dt=new Date(l.dt+'T12:00:00');
-      if(dt.getMonth()===m&&dt.getFullYear()===y){
-        var day=parseInt(l.dt.slice(8,10));
-        items.push({day:day,desc:l.desc,v:l.v,t:'s',cat:l.cat,tipo:'compromisso',id:l.id,conta:l.conta,paid:l.paid});
-      }
-    }
-    // Débitos automáticos antigos (registros legados) — tratados como pagamento normal
-    if(l.tipoLanc==='debito'&&l.t==='s'){
-      var day=l.diaDebito||parseInt(l.dt.slice(8,10));
-      items.push({day:day,desc:l.desc,v:l.v,t:'s',cat:l.cat,tipo:'normal',id:l.id,conta:l.conta,paid:l.paid});
-    }
-  });
 
   if(!items.length){
     grid.innerHTML='<p style="color:var(--muted);padding:2rem;text-align:center;">Nenhum item neste m\u00eas.</p>';
@@ -4315,6 +4777,7 @@ function renderAgenda(m,y){
     h+='</div>';
 
     byDay[day].forEach(function(it){
+      if(it.tipo==='aporte'){h+=objAgendaItemHtml(it);return;}
       var catCor=getCatCor(it.cat)||'#607D8B';
       var catIco=getCatIcon(it.cat)||'M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z';
       var tipoTag='';var tipoBtn='';
@@ -4416,8 +4879,14 @@ function renderAgenda(m,y){
             }
           }
         }
+      } else if(it.tipo==='entrada'&&!isPaid){
+        tipoTag='<span style="font-size:.64rem;background:#22c55e11;color:#16a34a99;border-radius:6px;padding:1px 6px;font-weight:600;">⏰ Previsto dia '+day+'</span>';
+        borderColor='#22c55e22';
       } else if(it.tipo==='entrada'){
         tipoTag='<span style="font-size:.64rem;background:#22c55e22;color:#16a34a;border-radius:6px;padding:1px 6px;font-weight:600;">💰 Recebido</span>';
+        borderColor='#22c55e44';
+      } else if(it.tipo==='pago'){
+        tipoTag='<span style="font-size:.64rem;background:#22c55e22;color:#16a34a;border-radius:6px;padding:1px 6px;font-weight:600;">✅ Pago</span>';
         borderColor='#22c55e44';
       }
 
@@ -4454,7 +4923,8 @@ function renderAgenda(m,y){
   // ── KPIs da Agenda ──
   // Calculados EXCLUSIVAMENTE a partir de items[] deste mês — nunca busca
   // lançamentos/recorrentes fora da lista de compromissos exibida acima.
-  var itensSaida=items.filter(function(x){return x.t!=='e';});
+  // Lembretes de aporte não são despesa — ficam fora dos KPIs
+  var itensSaida=items.filter(function(x){return x.t!=='e'&&x.tipo!=='aporte';});
   var itensEntrada=items.filter(function(x){return x.t==='e';});
   var totalPend=itensSaida.filter(function(x){return !x.paid;}).reduce(function(s,x){return s+x.v;},0);
   var totalPago=itensSaida.filter(function(x){return x.paid;}).reduce(function(s,x){return s+x.v;},0);
@@ -4550,54 +5020,27 @@ function agendaNav(dir){
   renderAgenda(agM,agY);
 }
 
-function getRecInfo(extraEntrada,extraGasto){
-  extraEntrada=extraEntrada||0;extraGasto=extraGasto||0;
-  var entradasRec=lancamentos.filter(function(l){return l.rec&&l.t==='e';}).reduce(function(s,l){return s+l.v;},0);
-  var saidasRecBase=lancamentos.filter(function(l){return l.rec&&l.t==='s';}).reduce(function(s,l){return s+l.v;},0);
-
-  // Parcelas da agenda ainda ativas: agrupa por plano e reduz a 1 valor mensal (soma dos meses restantes / qtd de meses restantes)
-  var hojeKey=cY+'-'+("0"+(cM+1)).slice(-2);
-  var grupos={};
-  lancamentos.filter(function(l){return l.t==='agenda'&&l.parc;}).forEach(function(l){
-    var baseDesc=(l.desc||'').replace(/\s*\(\d+\/\d+\)\s*$/,'');
-    var gid=l.grupoId||(baseDesc+'|'+l.pt+'|'+l.cat+'|'+l.conta);
-    (grupos[gid]=grupos[gid]||[]).push(l);
-  });
-  var parcelasAtivas=0;
-  Object.keys(grupos).forEach(function(gid){
-    var restantes=grupos[gid].filter(function(l){return !l.paid&&l.dt.slice(0,7)>=hojeKey;});
-    if(restantes.length){
-      var soma=restantes.reduce(function(s,l){return s+l.v;},0);
-      parcelasAtivas+=soma/restantes.length;
-    }
-  });
-
-  var entradas=entradasRec+extraEntrada;
-  var saidas=saidasRecBase+parcelasAtivas+extraGasto;
-  return{entradas:entradas,saidas:saidas,sobra:entradas-saidas};
-}
-
-// acc do mês atual = saldo real das contas hoje (sem projeção); meses futuros somam a
-// "sobra" recorrente a cada passo. duracaoMeses limita quantos meses futuros recebem o
-// extra do simulador (null = todos os meses restantes da janela de 12 meses).
+// Projeção mês a mês usando a MESMA regra da Agenda (agendaItensMes + agendaResumo):
+// - Sobra do mês = entradas do mês − saídas do mês (igual à "Sobra" da Agenda).
+// - Saldo previsto no fim do mês atual = saldo de hoje nas contas + o que ainda vai entrar − o que ainda vai sair.
+// - Meses seguintes: saldo anterior + sobra daquele mês (cada parcela só conta no mês em que cai).
+// duracaoMeses limita quantos meses futuros recebem o extra do simulador (null = todos).
 function getProj(extraEntrada,extraGasto,duracaoMeses){
-  var infoBase=getRecInfo(0,0);
-  var infoExtra=(extraEntrada||extraGasto)?getRecInfo(extraEntrada,extraGasto):infoBase;
   var temExtra=!!(extraEntrada||extraGasto);
-  var saldoInicial=saldoTotal();
-  var cmAtual=calcMes(cM,cY);
-  var res=[{m:cM,y:cY,lbl:MN[cM]+'/'+String(cY).slice(2),sal:cmAtual.sal,acc:saldoInicial,proj:false,simAplicada:false}];
-  var acc=saldoInicial;
-  for(var i=1;i<12;i++){
+  var saldoHoje=saldoTotal();
+  var res=[], acc=saldoHoje;
+  for(var i=0;i<12;i++){
     var m=cM+i,y=cY;while(m>11){m-=12;y++;}
-    var dentroJanela=(duracaoMeses==null)||(i<=duracaoMeses);
-    var sobra=dentroJanela?infoExtra.sobra:infoBase.sobra;
-    acc=acc+sobra;
-    res.push({m:m,y:y,lbl:MN[m]+'/'+String(y).slice(2),sal:sobra,acc:acc,proj:true,simAplicada:temExtra&&dentroJanela});
+    var r=agendaResumo(agendaItensMes(m,y,{projetar:i>0}));
+    var dentro=i>0&&temExtra&&((duracaoMeses==null)||(i<=duracaoMeses));
+    var extra=dentro?(extraEntrada||0)-(extraGasto||0):0;
+    var sal=r.sobra+extra;
+    if(i===0) acc=saldoHoje+r.entradasPend-r.saidasPend;
+    else acc+=sal;
+    res.push({m:m,y:y,lbl:MN[m]+'/'+String(y).slice(2),sal:sal,acc:acc,proj:i>0,simAplicada:dentro,resumo:r,extra:extra,saldoHoje:i===0?saldoHoje:null});
   }
   return res;
 }
-
 var SIM_TIPO='entrada'; // 'entrada' | 'gasto'
 var SIM_DURACAO=null;   // null = indefinido (resto da janela de 12 meses) ou nº de meses
 
@@ -4629,6 +5072,30 @@ function onSimInputChange(){
   else{var v=parseInt(raw);if(!isNaN(v)&&v>0)SIM_DURACAO=v;}
   syncSimDuracaoPills();
   renderProj();
+}
+
+// Detalhe de um mês da Projeção: de onde vem cada número
+var _projAberto={};
+function projToggle(lbl){_projAberto[lbl]=!_projAberto[lbl];renderProj();}
+function projDetalheHtml(p,atual){
+  var r=p.resumo;
+  var linha=function(it,sinal){
+    var tag=it.paid?(it.t==='e'?' <span class="ptd-tag ok">recebido</span>':' <span class="ptd-tag ok">pago</span>'):
+      it.projetado?' <span class="ptd-tag">previsto</span>':'';
+    return '<div class="ptd-it"><span>'+(it.day?'<span class="ptd-dia">dia '+('0'+it.day).slice(-2)+'</span>':'')+_oe(it.desc)+tag+'</span><span class="'+(sinal>0?'ap':'an')+'">'+(sinal>0?'+':'−')+fmt(it.v)+'</span></div>';
+  };
+  var ord=function(a,b){return (a.day||0)-(b.day||0);};
+  var h='<div class="ptd">';
+  h+='<div class="ptd-col"><div class="ptd-tit">Entradas <span class="ap">+'+fmt(r.entradas)+'</span></div>';
+  h+=r.itensEntrada.length?r.itensEntrada.slice().sort(ord).map(function(it){return linha(it,1);}).join(''):'<div class="ptd-vazio">Nenhuma entrada programada</div>';
+  h+='</div>';
+  h+='<div class="ptd-col"><div class="ptd-tit">Saídas <span class="an">−'+fmt(r.saidas)+'</span></div>';
+  h+=r.itensSaida.length?r.itensSaida.slice().sort(ord).map(function(it){return linha(it,-1);}).join(''):'<div class="ptd-vazio">Nenhuma saída programada</div>';
+  h+='</div>';
+  h+='<div class="ptd-conta">Sobra do mês: '+fmt(r.entradas)+' − '+fmt(r.saidas)+(p.extra?(p.extra>0?' + ':' − ')+fmt(Math.abs(p.extra))+' (simulação)':'')+' = <strong>'+fmt(p.sal)+'</strong>'+
+     (atual?'<br>Mesmo valor da "Sobra" na Agenda do Mês.':'')+'</div>';
+  h+='</div>';
+  return h;
 }
 
 function renderProj(){try{
@@ -4668,10 +5135,21 @@ function renderProj(){try{
 
   var maxAbs=projTabela.reduce(function(m,p){return Math.max(m,Math.abs(p.acc));},1);
   var h="";
+  var p0=projTabela[0];
+  h+='<div class="pt-base">💼 Saldo hoje nas suas contas: <strong>'+fmt(p0.saldoHoje)+'</strong>'+
+     ' · ainda vai entrar em '+MF[p0.m]+': <strong style="color:var(--green)">+'+fmt(p0.resumo.entradasPend)+'</strong>'+
+     ' · ainda vai sair: <strong style="color:var(--red)">−'+fmt(p0.resumo.saidasPend)+'</strong>'+
+     ' → fim de '+MF[p0.m]+': <strong>'+fmt(p0.acc)+'</strong></div>';
   for(var i=0;i<projTabela.length;i++){
     var p=projTabela[i];var pct=Math.min(100,Math.abs(p.acc)/maxAbs*100);var cor=p.acc>=0?"#437a22":"#c0392b";
-    var delta=p.sal>=0?"↑ +"+fmt(p.sal):"↓ "+fmt(Math.abs(p.sal));
-    h+='<div class="pt-row'+(p.acc<0?" neg":"")+(i===0?" atual":"")+'"><div class="pt-mes">'+p.lbl+(p.proj?"*":"")+'</div><div class="pt-bw"><div class="pt-bf" style="width:'+pct+'%;background:'+cor+';"></div></div><div class="pt-v '+(p.sal>=0?"ap":"an")+'">'+fmt(p.sal)+'</div><div class="pt-v '+(p.acc>=0?"ap":"an")+'">'+fmt(p.acc)+'</div><div class="pt-d">'+delta+'</div></div>';
+    var aberto=!!_projAberto[p.lbl];
+    h+='<div class="pt-row pt-click'+(p.acc<0?" neg":"")+(i===0?" atual":"")+'" onclick="projToggle(\''+p.lbl+'\')">'+
+       '<div class="pt-mes">'+p.lbl+(p.proj?"*":"")+'</div>'+
+       '<div class="pt-bw"><div class="pt-bf" style="width:'+pct+'%;background:'+cor+';"></div></div>'+
+       '<div class="pt-v '+(p.sal>=0?"ap":"an")+'">'+(p.sal>=0?'+':'−')+fmt(Math.abs(p.sal))+'</div>'+
+       '<div class="pt-v '+(p.acc>=0?"ap":"an")+'">'+fmt(p.acc)+'</div>'+
+       '<div class="pt-d">'+(aberto?'▴ fechar':'▾ detalhes')+'</div></div>';
+    if(aberto) h+=projDetalheHtml(p,i===0);
   }
   document.getElementById("projTL").innerHTML=h;
 
@@ -4710,286 +5188,491 @@ var INDFIN_MODE = localStorage.getItem('indfin_mode') || 'auto';
 var INDFIN_TAXA = parseFloat(localStorage.getItem('indfin_taxa')) || 6;
 var INDFIN_VALOR_MANUAL = parseFloat(localStorage.getItem('indfin_valor_manual')) || 0;
 
-// Carrega do localStorage (cache offline) — quando logado, o Firestore sincroniza e sobrescreve
+// ══════════════════════════════════════════════════════════════════
+// RESERVAS / METAS (v2)
+// Cada reserva/meta fica vinculada a UMA conta (ex: "Inter CDB", "Nubank cofrinho celular").
+// O saldo dela é o saldo dessa conta. Aportar/Resgatar = transferência entre contas.
+// Campos: {id, v2:true, tipo:'reserva'|'meta', nome, conta, criado, criadoMes, saldoInicial,
+//          alvo (meta) | alvoProprio/mesesRes/aporteMensal (reserva), prazo:'YYYY-MM' (meta),
+//          rend:{ativo,pct,inicio,base}, lembrete:{ativo,dia}, pulados:['YYYY-MM']}
+// ══════════════════════════════════════════════════════════════════
 function loadMetas(){
-  try{ metas=JSON.parse(localStorage.getItem('metas_v1')||'[]'); }catch(e){ metas=[]; }
+  try{ metas=JSON.parse(localStorage.getItem('metas_v2')||'[]'); }catch(e){ metas=[]; }
+  try{ localStorage.removeItem('metas_v1'); }catch(e){}
 }
-function saveMetas(){
-  localStorage.setItem('metas_v1', JSON.stringify(metas));
-  metas.forEach(saveMetaFS);
+function saveMeta(o){
+  try{ localStorage.setItem('metas_v2', JSON.stringify(metas)); }catch(e){}
+  if(o) saveMetaFS(o);
 }
 loadMetas();
 
-function toggleMetaForm(){
-  var f=document.getElementById('metaForm');
-  if(!f)return;
-  f.style.display=f.style.display==='none'?'block':'none';
-  if(f.style.display==='block'){
-    document.querySelectorAll('input[name="metaMode"]').forEach(function(r){r.checked=r.value==='aporte';});
-    switchMetaMode('aporte');
-    var sel=document.getElementById('metaConta');
-    if(sel){
-      sel.innerHTML='<option value="">— nenhuma —</option>'+
-        contas.map(function(c){return '<option value="'+c.id+'">'+c.nome+'</option>';}).join('');
-      sel.value='';
+function _oe(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function _hojeLocal(){var d=new Date();return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
+function _mesIdx(ym){return parseInt(ym.slice(0,4))*12+parseInt(ym.slice(5,7))-1;}
+function _mesLabel(ym){var i=_mesIdx(ym);return MF[i%12]+' '+Math.floor(i/12);}
+function _diasEntre(a,b){return Math.round((new Date(b+'T12:00:00')-new Date(a+'T12:00:00'))/86400000);}
+function _nomeConta(id){var c=contas.find(function(x){return x.id==id;});return c?c.nome:'(conta removida)';}
+
+// ── Transferência genérica (usada por Lançamentos e por Aportar/Resgatar) ──
+function criarTransferencia(deId, paraId, v, dt, desc, extra){
+  var gid='transf_'+Date.now();
+  var base={v:v,cat:'Transferência',dt:dt,rec:false,grupoTransfId:gid,desc:desc};
+  if(extra) Object.keys(extra).forEach(function(k){base[k]=extra[k];});
+  var lS=Object.assign({},base,{id:String(Date.now()+Math.random()),t:'transf_s',conta:deId,contaDestino:paraId});
+  var lE=Object.assign({},base,{id:String(Date.now()+Math.random()+1),t:'transf_e',conta:paraId,contaOrigem:deId});
+  lancamentos.push(lS); lancamentos.push(lE);
+  saveLanc(lS); saveLanc(lE);
+}
+
+// ── Cálculos ──
+function objSaldo(o){return saldoConta(o.conta);}
+function objMediaGastos(){return getMediaGastos6Meses();}
+function objAlvo(o){
+  if(o.tipo==='meta') return o.alvo||0;
+  if(o.alvoProprio>0) return o.alvoProprio;
+  return objMediaGastos()*(o.mesesRes||6);
+}
+// Soma dos aportes (ou resgates) desta reserva/meta num mês 'YYYY-MM'
+function objMovMes(o, ym, mov){
+  return lancamentos.filter(function(l){
+    return l.objetivoId===o.id&&l.objMov===mov&&l.t==='transf_e'&&l.dt&&l.dt.slice(0,7)===ym;
+  }).reduce(function(s,l){return s+l.v;},0);
+}
+// Meta: quanto aportar neste mês para chegar no prazo (recalcula com o que já foi guardado)
+function objSugestaoMes(o, ym){
+  ym=ym||_hojeLocal().slice(0,7);
+  if(o.tipo!=='meta') return 0; // reserva: sem valor sugerido, você aporta o que quiser
+  if(!o.prazo) return 0;
+  var restantes=Math.max(1,_mesIdx(o.prazo)-_mesIdx(ym)+1);
+  var aportadoMes=objMovMes(o, ym, 'aporte');
+  var saldoInicioMes=Math.max(0,objSaldo(o)-aportadoMes);
+  var falta=Math.max(0,objAlvo(o)-saldoInicioMes);
+  return Math.round(falta/restantes*100)/100;
+}
+// Meta: está em dia com o plano linear? (compara com onde deveria estar no início deste mês)
+function objStatusMeta(o){
+  if(o.tipo!=='meta'||!o.prazo||!o.criadoMes) return null;
+  var tot=Math.max(1,_mesIdx(o.prazo)-_mesIdx(o.criadoMes)+1);
+  var dec=Math.min(tot,Math.max(0,_mesIdx(_hojeLocal().slice(0,7))-_mesIdx(o.criadoMes)));
+  var ini=o.saldoInicial||0;
+  var esperado=ini+(objAlvo(o)-ini)*(dec/tot);
+  var atual=objSaldo(o)+((objRendimento(o)||{}).bruto||0);
+  return {esperado:esperado, emDia:atual>=esperado-0.01, atraso:Math.max(0,esperado-atual)};
+}
+
+// ── CDI (Banco Central, série SGS 12 — taxa diária em %) ──
+var CDI_FALLBACK_AA = 13.65; // usado só se a API do BC não responder
+var _cdiCache=null, _cdiCarregando=false, _cdiFalhou=false;
+try{ _cdiCache=JSON.parse(localStorage.getItem('cdi_cache_v1')||'null'); }catch(e){ _cdiCache=null; }
+function _brDt(iso){return iso.slice(8,10)+'/'+iso.slice(5,7)+'/'+iso.slice(0,4);}
+function cdiGarantir(desde){
+  var hoje=_hojeLocal();
+  if(_cdiCarregando||_cdiFalhou) return;
+  if(_cdiCache&&_cdiCache.from<=desde&&_cdiCache.fetched===hoje) return;
+  // Pede sempre a partir de 15 dias antes: o BC responde 404 ("Value(s) not found") quando o
+  // intervalo não tem nenhum dia útil publicado (ex: começou a render hoje / fim de semana).
+  var d15=new Date(desde+'T12:00:00'); d15.setDate(d15.getDate()-15);
+  var desdeSeguro=d15.getFullYear()+'-'+('0'+(d15.getMonth()+1)).slice(-2)+'-'+('0'+d15.getDate()).slice(-2);
+  var from=(_cdiCache&&_cdiCache.from<desdeSeguro)?_cdiCache.from:desdeSeguro;
+  _cdiCarregando=true;
+  var url='https://api.bcb.gov.br/dados/serie/bcdata.sgs.12/dados?formato=json&dataInicial='+_brDt(from)+'&dataFinal='+_brDt(hoje);
+  fetch(url).then(function(r){
+    if(r.status===404) return []; // sem dias úteis no intervalo — não é erro de conexão
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    return r.json();
+  }).then(function(arr){
+    var serie=arr.map(function(x){var p=x.data.split('/');return {d:p[2]+'-'+p[1]+'-'+p[0],r:parseFloat(x.valor)};}).filter(function(x){return !isNaN(x.r);});
+    _cdiCache={from:from,fetched:hoje,serie:serie};
+    try{ localStorage.setItem('cdi_cache_v1', JSON.stringify(_cdiCache)); }catch(e){}
+    _cdiCarregando=false; _objRendMemo={};
+    renderMetas();
+  }).catch(function(e){
+    console.warn('CDI: falha ao buscar no Banco Central — usando taxa fixa de '+CDI_FALLBACK_AA+'% a.a.',e);
+    _cdiCarregando=false; _cdiFalhou=true; _objRendMemo={};
+    renderMetas();
+  });
+}
+// Rendimento estimado desde rend.base (último ajuste/início), dia útil a dia útil, sobre o saldo da conta
+var _objRendMemo={};
+function objRendimento(o){
+  if(!o.rend||!o.rend.ativo) return null;
+  var hoje=_hojeLocal();
+  var base=o.rend.base||o.rend.inicio||o.criado||hoje;
+  var pct=(o.rend.pct||100)/100;
+  var memoKey=o.id+'|'+base+'|'+pct+'|'+lancamentos.length+'|'+objSaldo(o)+'|'+(_cdiCache?_cdiCache.fetched+_cdiCache.serie.length:'x');
+  if(_objRendMemo[memoKey]) return _objRendMemo[memoKey];
+  var dias=[], fallback=false;
+  if(_cdiCache&&_cdiCache.from<=base){
+    dias=_cdiCache.serie.filter(function(x){return x.d>=base&&x.d<hoje;});
+  } else {
+    fallback=true;
+    var rDia=(Math.pow(1+CDI_FALLBACK_AA/100,1/252)-1)*100;
+    var d=new Date(base+'T12:00:00'), fim=new Date(hoje+'T12:00:00');
+    while(d<fim){var wd=d.getDay();if(wd!==0&&wd!==6)dias.push({d:d.toISOString().slice(0,10),r:rDia});d.setDate(d.getDate()+1);}
+  }
+  var rend=0;
+  dias.forEach(function(x){var B=saldoConta(o.conta,x.d)+rend;if(B>0)rend+=B*(x.r/100)*pct;});
+  var corridos=_diasEntre(o.rend.inicio||base,hoje);
+  var ir=corridos<=180?0.225:corridos<=360?0.20:corridos<=720?0.175:0.15;
+  var res={bruto:rend, ir:ir, liquido:rend*(1-ir), desde:base, fallback:fallback, carregando:!_cdiCache&&_cdiCarregando};
+  _objRendMemo[memoKey]=res;
+  return res;
+}
+
+// ── Formulário (criar/editar) ──
+var _objEditId=null, _objTipo='reserva';
+function objContaOpts(sel){
+  return '<option value="">— selecione —</option>'+contas.map(function(c){
+    return '<option value="'+c.id+'"'+(c.id===sel?' selected':'')+'>'+_oe(c.nome)+' ('+fmt(saldoConta(c.id))+')</option>';
+  }).join('');
+}
+function objSetTipo(t){
+  _objTipo=t;
+  document.getElementById('objTipoReserva').className=t==='reserva'?'oe':'';
+  document.getElementById('objTipoMeta').className=t==='meta'?'oe':'';
+  document.getElementById('objReservaWrap').style.display=t==='reserva'?'':'none';
+  document.getElementById('objMetaWrap').style.display=t==='meta'?'':'none';
+  objPreview();
+}
+function objToggleOpts(){
+  document.getElementById('objRendWrap').style.display=document.getElementById('objRendAtivo').checked?'':'none';
+  document.getElementById('objLembWrap').style.display=document.getElementById('objLembAtivo').checked?'':'none';
+}
+function objAbrirForm(id){
+  var o=id?metas.find(function(x){return x.id===id;}):null;
+  _objEditId=o?o.id:null;
+  document.getElementById('objFormTit').textContent=o?'Editar: '+o.nome:'Nova reserva / meta';
+  document.getElementById('objConta').innerHTML=objContaOpts(o?o.conta:'');
+  document.getElementById('objNome').value=o?o.nome:'';
+  document.getElementById('objAlvoMeta').value=o&&o.tipo==='meta'?o.alvo:'';
+  document.getElementById('objPrazo').value=o&&o.prazo?o.prazo:'';
+  document.getElementById('objMesesRes').value=String(o&&o.mesesRes?o.mesesRes:6);
+  document.getElementById('objAlvoRes').value=o&&o.alvoProprio?o.alvoProprio:'';
+  document.getElementById('objRendAtivo').checked=!!(o&&o.rend&&o.rend.ativo);
+  document.getElementById('objRendPct').value=o&&o.rend&&o.rend.pct?o.rend.pct:100;
+  document.getElementById('objRendDesde').value=o&&o.rend&&o.rend.inicio?o.rend.inicio:_hojeLocal();
+  document.getElementById('objLembAtivo').checked=!!(o&&o.lembrete&&o.lembrete.ativo);
+  document.getElementById('objLembDia').value=o&&o.lembrete&&o.lembrete.dia?o.lembrete.dia:10;
+  objSetTipo(o?o.tipo:'reserva');
+  objToggleOpts();
+  document.getElementById('objForm').style.display='block';
+  document.getElementById('objForm').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function objFecharForm(){document.getElementById('objForm').style.display='none';_objEditId=null;}
+function objPreview(){
+  var box=document.getElementById('objPreviewBox');
+  if(!box)return;
+  var txt='';
+  if(_objTipo==='meta'){
+    var alvo=parseFloat(document.getElementById('objAlvoMeta').value)||0;
+    var prazo=document.getElementById('objPrazo').value;
+    var contaId=document.getElementById('objConta').value;
+    if(alvo>0&&prazo){
+      var meses=Math.max(1,_mesIdx(prazo)-_mesIdx(_hojeLocal().slice(0,7))+1);
+      var ja=contaId?Math.max(0,saldoConta(contaId)):0;
+      var falta=Math.max(0,alvo-ja);
+      txt='🎯 Guardando <strong>'+fmt(falta/meses)+'/mês</strong> por '+meses+' '+(meses>1?'meses':'mês')+' você chega em '+fmt(alvo)+' até '+_mesLabel(prazo)+(ja>0?' (já considera os '+fmt(ja)+' que estão na conta).':'.');
     }
-    var saldoEl=document.getElementById('metaSaldoAtual');
-    if(saldoEl) saldoEl.value='';
-  }
-}
-
-// Ao selecionar uma conta na meta, preenche automaticamente o saldo atual com o saldo da conta
-function metaContaChange(){
-  var contaId=document.getElementById('metaConta').value;
-  var saldoEl=document.getElementById('metaSaldoAtual');
-  if(!saldoEl)return;
-  if(!contaId){saldoEl.value='';return;}
-  saldoEl.value=saldoConta(contaId).toFixed(2);
-}
-
-function calcPreviewMeta(){
-  var valor=parseFloat(document.getElementById('metaValor').value)||0;
-  var prev=document.getElementById('metaPreview');
-  if(!prev)return;
-  var modeEl=document.querySelector('input[name="metaMode"]:checked');
-  var mode=modeEl?modeEl.value:'aporte';
-  if(mode==='aporte'){
-    var aporte=parseFloat(document.getElementById('metaAporte').value)||0;
-    if(valor>0&&aporte>0){
-      var meses=Math.ceil(valor/aporte);
-      var nd=new Date(cY,cM+meses,1);
-      var chegaEm=MN[nd.getMonth()]+' '+nd.getFullYear();
-      prev.style.display='block';
-      prev.textContent='Chega em '+meses+' mês(es) — '+chegaEm;
-    } else {prev.style.display='none';}
   } else {
-    var prazo=parseInt(document.getElementById('metaPrazo').value)||0;
-    if(valor>0&&prazo>0){
-      var aporteCalc=valor/prazo;
-      prev.style.display='block';
-      prev.textContent='Aporte necessário: '+fmt(aporteCalc)+'/mês';
-    } else {prev.style.display='none';}
+    var media=objMediaGastos(), n=parseInt(document.getElementById('objMesesRes').value)||6;
+    var proprio=parseFloat(document.getElementById('objAlvoRes').value)||0;
+    if(media>0) txt='🛡️ Sua média de despesas dos últimos 6 meses é <strong>'+fmt(media)+'/mês</strong>. Reserva sugerida para '+n+' meses: <strong>'+fmt(media*n)+'</strong>'+(proprio>0?' — você definiu '+fmt(proprio)+'.':'.');
+    else txt='🛡️ Ainda não há despesas suficientes para sugerir um valor — defina um valor alvo próprio se quiser.';
   }
+  box.innerHTML=txt; box.style.display=txt?'block':'none';
 }
-
-function switchMetaMode(mode){
-  var aw=document.getElementById('metaAporteWrap');
-  var pw=document.getElementById('metaPrazoWrap');
-  if(aw)aw.style.display=mode==='aporte'?'':'none';
-  if(pw)pw.style.display=mode==='prazo'?'':'none';
-  if(mode==='aporte'){var p=document.getElementById('metaPrazo');if(p)p.value='';}
-  else{var a=document.getElementById('metaAporte');if(a)a.value='';}
-  calcPreviewMeta();
-}
-
-function addMeta(){
-  var nome=document.getElementById('metaNome').value.trim();
-  var valor=parseFloat(document.getElementById('metaValor').value)||0;
-  var conta=document.getElementById('metaConta').value||'';
-  if(!nome||!valor){alert('Informe nome e valor da meta!');return;}
-  var modeEl=document.querySelector('input[name="metaMode"]:checked');
-  var mode=modeEl?modeEl.value:'aporte';
-  var aporte;
-  if(mode==='prazo'){
-    var prazo=parseInt(document.getElementById('metaPrazo').value)||0;
-    aporte=prazo>0?Math.round((valor/prazo)*100)/100:0;
+function objSalvar(){
+  var nome=document.getElementById('objNome').value.trim();
+  var conta=document.getElementById('objConta').value;
+  if(!nome){alert('Dê um nome para a reserva/meta.');return;}
+  if(!conta){alert('Escolha a conta onde o dinheiro fica.');return;}
+  var emUso=metas.find(function(x){return x.conta===conta&&x.id!==_objEditId;});
+  if(emUso){alert('Essa conta já está vinculada a "'+emUso.nome+'". Use uma conta separada para cada reserva/meta.');return;}
+  if(_objTipo==='meta'&&(!(parseFloat(document.getElementById('objAlvoMeta').value)>0)||!document.getElementById('objPrazo').value)){
+    alert('Informe o valor da meta e até quando.');return;
+  }
+  var o=_objEditId?metas.find(function(x){return x.id===_objEditId;}):null;
+  var hoje=_hojeLocal();
+  if(!o){
+    o={id:'obj_'+Date.now(),v2:true,criado:hoje,criadoMes:hoje.slice(0,7),saldoInicial:Math.max(0,saldoConta(conta)),pulados:[]};
+    metas.push(o);
+  } else if(o.conta!==conta){
+    o.saldoInicial=Math.max(0,saldoConta(conta));
+  }
+  o.tipo=_objTipo; o.nome=nome; o.conta=conta;
+  if(_objTipo==='meta'){
+    o.alvo=parseFloat(document.getElementById('objAlvoMeta').value)||0;
+    o.prazo=document.getElementById('objPrazo').value;
+    delete o.alvoProprio; delete o.mesesRes; delete o.aporteMensal;
   } else {
-    aporte=parseFloat(document.getElementById('metaAporte').value)||0;
+    o.mesesRes=parseInt(document.getElementById('objMesesRes').value)||6;
+    o.alvoProprio=parseFloat(document.getElementById('objAlvoRes').value)||0;
+    delete o.aporteMensal;
+    delete o.alvo; delete o.prazo;
   }
-  var saldoAtual=parseFloat(document.getElementById('metaSaldoAtual').value)||0;
-  var meta={
-    id:'meta_'+Date.now(),
-    nome:nome,
-    valor:valor,
-    aporte:aporte,
-    conta:conta,
-    atual:saldoAtual,
-    criado:new Date().toISOString().slice(0,10),
-    concluida:saldoAtual>=valor,
-    excedente:saldoAtual>valor?saldoAtual-valor:0
-  };
-  metas.push(meta);
-  saveMetas();
-  document.getElementById('metaNome').value='';
-  document.getElementById('metaValor').value='';
-  document.getElementById('metaAporte').value='';
-  document.getElementById('metaSaldoAtual').value='';
-  var prazoEl=document.getElementById('metaPrazo');
-  if(prazoEl)prazoEl.value='';
-  document.getElementById('metaForm').style.display='none';
+  var rendAtivo=document.getElementById('objRendAtivo').checked;
+  var inicio=document.getElementById('objRendDesde').value||hoje;
+  var antes=o.rend||{};
+  o.rend={ativo:rendAtivo,pct:parseFloat(document.getElementById('objRendPct').value)||100,inicio:inicio,
+    base:(antes.base&&antes.inicio===inicio)?antes.base:inicio};
+  o.lembrete={ativo:document.getElementById('objLembAtivo').checked,dia:Math.min(31,Math.max(1,parseInt(document.getElementById('objLembDia').value)||10))};
+  if(!o.pulados)o.pulados=[];
+  _objRendMemo={};
+  saveMeta(o);
+  objFecharForm();
   renderMetas();
+  if(typeof renderAgenda==='function') renderAgenda();
 }
 
-var _bsAportarMetaId = null;
-
-function aportarMeta(id){
-  var meta=metas.find(function(m){return m.id===id;});
-  if(!meta)return;
-  _bsAportarMetaId=id;
-  document.getElementById('bsAportarMetaTitulo').textContent='Adicionar à meta: '+meta.nome;
-  document.getElementById('bsAportarMetaSub').textContent='Atual: '+fmt(meta.atual)+'  |  Meta: '+fmt(meta.valor);
-  var valInput=document.getElementById('bsAportarMetaVal');
-  var erroEl=document.getElementById('bsAportarMetaErro');
-  valInput.value='';
-  if(erroEl) erroEl.style.display='none';
-  document.getElementById('bsAportarMetaOverlay').style.display='flex';
-  setTimeout(function(){valInput.focus();},300);
-}
-
-function bsAportarMetaClose(){
-  document.getElementById('bsAportarMetaOverlay').style.display='none';
-  _bsAportarMetaId=null;
-}
-
-function bsAportarMetaConfirmar(){
-  var meta=metas.find(function(m){return m.id===_bsAportarMetaId;});
-  if(!meta){bsAportarMetaClose();return;}
-  var val=parseFloat(document.getElementById('bsAportarMetaVal').value);
-  var erroEl=document.getElementById('bsAportarMetaErro');
-  if(isNaN(val)||val<=0){
-    if(erroEl) erroEl.style.display='block';
-    document.getElementById('bsAportarMetaVal').focus();
-    return;
-  }
-  if(erroEl) erroEl.style.display='none';
-  bsAportarMetaClose();
-  if(!meta.concluida){
-    meta.atual+=val;
-    if(meta.atual>=meta.valor){
-      meta.concluida=true;
-      meta.excedente=meta.atual-meta.valor;
-      meta.atual=meta.valor;
-      alert('🎉 Meta "'+meta.nome+'" concluída! Parabéns!');
-    }
-  } else {
-    meta.excedente=(meta.excedente||0)+val;
-  }
-  saveMetas();
-  renderMetas();
-}
-
-var _bsUsarMetaId = null;
-
-function usarMeta(id){
-  var meta=metas.find(function(m){return m.id===id;});
-  if(!meta)return;
-  _bsUsarMetaId=id;
-
-  document.getElementById('bsUsarMetaTitulo').textContent='Usar meta: '+meta.nome;
-  document.getElementById('bsUsarMetaSub').textContent=
-    'Atual: '+fmt(meta.atual)+'  |  Meta: '+fmt(meta.valor);
-
-  var inputWrap=document.getElementById('bsUsarMetaInputWrap');
-  var msgConcluida=document.getElementById('bsUsarMetaMsgConcluida');
-  var valInput=document.getElementById('bsUsarMetaVal');
-
-  if(meta.concluida){
-    inputWrap.style.display='none';
-    msgConcluida.style.display='block';
-  } else {
-    inputWrap.style.display='block';
-    msgConcluida.style.display='none';
-    valInput.value='';
-    var erroEl=document.getElementById('bsUsarMetaErro');
-    if(erroEl) erroEl.style.display='none';
-    setTimeout(function(){valInput.focus();},300);
-  }
-
-  document.getElementById('bsUsarMetaOverlay').style.display='flex';
-}
-
-function bsUsarMetaClose(){
-  document.getElementById('bsUsarMetaOverlay').style.display='none';
-  _bsUsarMetaId=null;
-}
-
-function bsUsarMetaConfirmar(){
-  var meta=metas.find(function(m){return m.id===_bsUsarMetaId;});
-  if(!meta){bsUsarMetaClose();return;}
-
-  if(meta.concluida){
-    meta.atual=0;
-    meta.concluida=false;
-    meta.excedente=0;
-  } else {
-    var usado=parseFloat(document.getElementById('bsUsarMetaVal').value);
-    var erroEl=document.getElementById('bsUsarMetaErro');
-    if(isNaN(usado)||usado<=0){
-      if(erroEl) erroEl.style.display='block';
-      document.getElementById('bsUsarMetaVal').focus();
-      return;
-    }
-    if(erroEl) erroEl.style.display='none';
-    meta.atual=Math.max(0,meta.atual-usado);
-  }
-
-  saveMetas();
-  bsUsarMetaClose();
-  renderMetas();
-}
-
+// ── Remover ──
 var _bsDelMetaId=null;
 function delMeta(id){
-  var m=metas.find(function(x){return x.id===id;});
-  if(!m)return;
+  var o=metas.find(function(x){return x.id===id;});
+  if(!o)return;
   _bsDelMetaId=id;
-  document.getElementById('bsDelMetaSub').textContent='A meta "'+m.nome+'" será removida permanentemente.';
+  document.getElementById('bsDelMetaSub').textContent='"'+o.nome+'" será removida. O dinheiro e os lançamentos continuam na conta '+_nomeConta(o.conta)+'.';
   document.getElementById('bsDelMetaOverlay').style.display='flex';
 }
-function bsDelMetaClose(){
-  document.getElementById('bsDelMetaOverlay').style.display='none';
-  _bsDelMetaId=null;
-}
+function bsDelMetaClose(){document.getElementById('bsDelMetaOverlay').style.display='none';_bsDelMetaId=null;}
 function bsDelMetaConfirmar(){
   var id=_bsDelMetaId;
   bsDelMetaClose();
   metas=metas.filter(function(m){return m.id!==id;});
   deleteMetaFS(id);
-  saveMetas();
+  saveMeta(null);
   renderMetas();
+  if(typeof renderAgenda==='function') renderAgenda();
 }
 
+// ── Aportar / Resgatar / Ajustar saldo (bottom sheet único) ──
+var _objMovId=null, _objMovModo=null;
+function objAbrirMov(id, modo, valorSugerido){
+  var o=metas.find(function(x){return x.id===id;});
+  if(!o)return;
+  if(!contas.find(function(c){return c.id===o.conta;})){alert('A conta vinculada a "'+o.nome+'" não existe mais. Edite e escolha outra conta.');return;}
+  _objMovId=id; _objMovModo=modo;
+  var saldo=objSaldo(o), r=objRendimento(o);
+  var tit={aporte:'🎯 Aportar em '+o.nome, resgate:'↩ Resgatar de '+o.nome, ajuste:'⚖️ Ajustar saldo real — '+o.nome}[modo];
+  document.getElementById('bsObjMovTit').textContent=tit;
+  var sub='Saldo registrado em '+_nomeConta(o.conta)+': '+fmt(saldo);
+  if(r&&r.bruto>0.004) sub+=' · rendimento estimado +'+fmt(r.bruto);
+  document.getElementById('bsObjMovSub').textContent=sub;
+  var contaWrap=document.getElementById('bsObjMovContaWrap');
+  var lblConta=document.getElementById('bsObjMovContaLbl');
+  var lblVal=document.getElementById('bsObjMovValLbl');
+  var dtWrap=document.getElementById('bsObjMovDtWrap');
+  var outras=contas.filter(function(c){return c.id!==o.conta;});
+  document.getElementById('bsObjMovConta').innerHTML=outras.map(function(c){
+    return '<option value="'+c.id+'">'+_oe(c.nome)+' ('+fmt(saldoConta(c.id))+')</option>';
+  }).join('');
+  var valEl=document.getElementById('bsObjMovVal');
+  if(modo==='ajuste'){
+    contaWrap.style.display='none'; dtWrap.style.display='none';
+    lblVal.textContent='Saldo que aparece hoje no app do banco (R$)';
+    valEl.value=(Math.round((saldo+(r?r.bruto:0))*100)/100).toFixed(2);
+  } else {
+    contaWrap.style.display=''; dtWrap.style.display='';
+    lblConta.textContent=modo==='aporte'?'Tirar o dinheiro de qual conta?':'Mandar o dinheiro para qual conta?';
+    lblVal.textContent=modo==='aporte'?'Quanto aportar? (R$)':'Quanto resgatar? (R$)';
+    valEl.value=valorSugerido>0?(Math.round(valorSugerido*100)/100).toFixed(2):'';
+    document.getElementById('bsObjMovDt').value=_hojeLocal();
+  }
+  document.getElementById('bsObjMovErro').style.display='none';
+  objMovPreview();
+  document.getElementById('bsObjMovOverlay').style.display='flex';
+  setTimeout(function(){valEl.focus();valEl.select&&valEl.select();},250);
+}
+function bsObjMovClose(){document.getElementById('bsObjMovOverlay').style.display='none';_objMovId=null;}
+function objMovPreview(){
+  var o=metas.find(function(x){return x.id===_objMovId;});
+  var el=document.getElementById('bsObjMovPrev');
+  if(!o||!el)return;
+  var v=parseFloat(document.getElementById('bsObjMovVal').value)||0;
+  var saldo=objSaldo(o);
+  if(_objMovModo==='ajuste'){
+    var dif=v-saldo;
+    el.innerHTML=Math.abs(dif)<0.005?'Saldo já está igual ao registrado.':
+      (dif>0?'Será registrado <strong style="color:var(--green)">+'+fmt(dif)+'</strong> de rendimento em '+_oe(_nomeConta(o.conta))+'.':
+             'Será registrado um ajuste de <strong style="color:var(--red)">−'+fmt(-dif)+'</strong> em '+_oe(_nomeConta(o.conta))+'.')+
+      ' A estimativa de rendimento recomeça a partir de hoje.';
+    return;
+  }
+  var cId=document.getElementById('bsObjMovConta').value;
+  if(!v||!cId){el.innerHTML='';return;}
+  var sC=saldoConta(cId);
+  if(_objMovModo==='aporte'){
+    el.innerHTML='<strong>'+_oe(_nomeConta(cId))+':</strong> '+fmt(sC)+' → '+fmt(sC-v)+' · <strong>'+_oe(_nomeConta(o.conta))+':</strong> '+fmt(saldo)+' → '+fmt(saldo+v);
+  } else {
+    el.innerHTML='<strong>'+_oe(_nomeConta(o.conta))+':</strong> '+fmt(saldo)+' → '+fmt(saldo-v)+' · <strong>'+_oe(_nomeConta(cId))+':</strong> '+fmt(sC)+' → '+fmt(sC+v);
+  }
+}
+function bsObjMovConfirmar(){
+  var o=metas.find(function(x){return x.id===_objMovId;});
+  if(!o){bsObjMovClose();return;}
+  var v=Math.round((parseFloat(document.getElementById('bsObjMovVal').value)||0)*100)/100;
+  var erro=document.getElementById('bsObjMovErro');
+  var hoje=_hojeLocal();
+  if(_objMovModo==='ajuste'){
+    if(v<0||isNaN(v)){erro.textContent='Informe o saldo.';erro.style.display='block';return;}
+    var dif=Math.round((v-objSaldo(o))*100)/100;
+    if(Math.abs(dif)>=0.01){
+      var l={id:String(Date.now()+Math.random()),v:Math.abs(dif),dt:hoje,rec:false,conta:o.conta,objetivoId:o.id,
+        t:dif>0?'e':'s',cat:dif>0?'Rendimento':'Ajuste',desc:(dif>0?'Rendimento — ':'Ajuste de saldo — ')+o.nome,rendimento:dif>0};
+      lancamentos.push(l); saveLanc(l);
+    }
+    if(o.rend) o.rend.base=hoje;
+    _objRendMemo={};
+    saveMeta(o);
+  } else {
+    var cId=document.getElementById('bsObjMovConta').value;
+    var dt=document.getElementById('bsObjMovDt').value||hoje;
+    if(!(v>0)){erro.textContent='Informe um valor válido.';erro.style.display='block';return;}
+    if(!cId){erro.textContent='Escolha a conta.';erro.style.display='block';return;}
+    if(_objMovModo==='resgate'&&v>objSaldo(o)+0.005){
+      erro.textContent='Valor maior que o saldo registrado ('+fmt(objSaldo(o))+'). Se tiver rendimento, use "Ajustar saldo" antes.';
+      erro.style.display='block';return;
+    }
+    if(_objMovModo==='aporte') criarTransferencia(cId,o.conta,v,dt,'Aporte → '+o.nome,{objetivoId:o.id,objMov:'aporte'});
+    else criarTransferencia(o.conta,cId,v,dt,'Resgate ← '+o.nome,{objetivoId:o.id,objMov:'resgate'});
+    var ym=dt.slice(0,7);
+    if(o.pulados&&o.pulados.indexOf(ym)!==-1){o.pulados=o.pulados.filter(function(x){return x!==ym;});saveMeta(o);}
+    _objRendMemo={};
+  }
+  bsObjMovClose();
+  render();
+  renderMetas();
+  if(typeof renderAgenda==='function') renderAgenda();
+}
+
+// Agenda: pular o lembrete de aporte de um mês
+function objPularMes(id, ym){
+  var o=metas.find(function(x){return x.id===id;});
+  if(!o)return;
+  if(!o.pulados)o.pulados=[];
+  var i=o.pulados.indexOf(ym);
+  if(i===-1)o.pulados.push(ym); else o.pulados.splice(i,1);
+  saveMeta(o);
+  renderAgenda();
+}
+// Agenda: itens de lembrete de aporte do mês m/y
+function objItensAgenda(m, y){
+  var ym=y+'-'+('0'+(m+1)).slice(-2);
+  var ult=new Date(y,m+1,0).getDate();
+  var out=[];
+  metas.forEach(function(o){
+    if(!o.lembrete||!o.lembrete.ativo) return;
+    if(o.criadoMes&&_mesIdx(ym)<_mesIdx(o.criadoMes)) return;
+    if(o.tipo==='meta'&&o.prazo&&_mesIdx(ym)>_mesIdx(o.prazo)) return;
+    var aportado=objMovMes(o, ym, 'aporte');
+    var pulado=o.pulados&&o.pulados.indexOf(ym)!==-1;
+    var sug=objSugestaoMes(o, ym);
+    if(o.tipo==='meta'&&!aportado&&!pulado&&objSaldo(o)>=objAlvo(o)) return; // meta já atingida
+    out.push({day:Math.min(o.lembrete.dia||10,ult),desc:'🎯 Aportar: '+o.nome,v:aportado>0?aportado:sug,t:'aporte',tipo:'aporte',
+      id:o.id,ym:ym,paid:aportado>0||pulado,pulado:pulado&&!(aportado>0),aportado:aportado,sug:sug,conta:o.conta});
+  });
+  return out;
+}
+function objAgendaItemHtml(it){
+  var h='<div style="background:var(--surf);border:1px solid '+(it.paid?'#22c55e44':'#3b82f644')+';border-radius:12px;padding:.6rem .875rem;margin-bottom:.35rem;display:flex;align-items:flex-start;gap:.7rem;">';
+  h+='<div style="width:38px;height:38px;border-radius:50%;background:#3b82f622;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.05rem;">🎯</div>';
+  h+='<div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;">';
+  h+='<span style="font-weight:600;font-size:.88rem;color:'+(it.paid?'var(--muted)':'var(--txt)')+';'+(it.paid?'text-decoration:line-through;':'')+'">'+_oe(it.desc)+'</span>';
+  if(it.aportado>0) h+='<span style="font-size:.64rem;background:#22c55e22;color:#16a34a;border-radius:6px;padding:1px 6px;font-weight:600;">✅ Aportado</span>';
+  else if(it.pulado) h+='<span style="font-size:.64rem;background:var(--surf2);color:var(--muted);border-radius:6px;padding:1px 6px;font-weight:600;">⏭ Pulado</span>';
+  else h+='<span style="font-size:.64rem;background:#3b82f622;color:#3b82f6;border-radius:6px;padding:1px 6px;font-weight:600;">Aporte · valor livre</span>';
+  h+='</div><div style="display:flex;gap:.35rem;margin-top:.4rem;flex-wrap:wrap;">';
+  if(!it.pulado) h+='<button onclick="objAbrirMov(\''+it.id+'\',\'aporte\','+(it.aportado>0?0:it.sug)+')" style="font-size:.72rem;padding:.2rem .6rem;border-radius:8px;background:#3b82f622;color:#3b82f6;border:1px solid #3b82f644;cursor:pointer;font-weight:600;">'+(it.aportado>0?'+ Aportar mais':'🎯 Aportar')+'</button>';
+  if(!(it.aportado>0)) h+='<button onclick="objPularMes(\''+it.id+'\',\''+it.ym+'\')" style="font-size:.72rem;padding:.2rem .55rem;border-radius:8px;background:var(--wlight);color:var(--muted);border:1px solid var(--div);cursor:pointer;">'+(it.pulado?'↺ Desfazer pulo':'⏭ Pular este mês')+'</button>';
+  h+='</div></div>';
+  h+='<div style="font-size:.95rem;font-weight:700;color:'+(it.paid?'var(--muted)':'#3b82f6')+';flex-shrink:0;margin-top:.1rem;text-align:right;">'+(it.aportado>0?fmt(it.v):it.pulado?'':it.sug>0?'<span style="font-size:.62rem;font-weight:600;display:block;color:var(--muted);">sugerido</span>'+fmt(it.v):'<span style="font-size:.72rem;color:var(--muted);">valor livre</span>')+'</div>';
+  h+='</div>';
+  return h;
+}
+
+// ── Lista ──
 function renderMetas(){
   var el=document.getElementById('metasLista');
   if(!el)return;
+  var resumo=document.getElementById('objResumo');
   if(!metas.length){
-    el.innerHTML='<div style="text-align:center;color:var(--faint);font-size:.8rem;padding:1.5rem;">Nenhuma meta criada. Clique em "+ Nova Meta" para começar.</div>';
+    if(resumo)resumo.innerHTML='';
+    el.innerHTML='<div class="obj-vazio">Nenhuma reserva ou meta ainda. Clique em <strong>+ Nova</strong> para criar.</div>';
     return;
   }
+  // Busca o CDI desde a data mais antiga necessária
+  var bases=metas.filter(function(o){return o.rend&&o.rend.ativo;}).map(function(o){return o.rend.base||o.rend.inicio||o.criado;}).sort();
+  if(bases.length) cdiGarantir(bases[0]);
+
+  var totalGuardado=0, totalRend=0;
   var h='';
-  metas.forEach(function(meta){
-    var pct=meta.concluida?100:Math.min(100,Math.round((meta.atual/meta.valor)*100));
-    var cor=meta.concluida?'var(--green)':pct>=80?'var(--warn)':'var(--p)';
-    var meses=meta.aporte>0?Math.ceil(Math.max(0,meta.valor-meta.atual)/meta.aporte):null;
-    var chegaEm='';
-    if(meses&&meses>0){
-      var nd=new Date(cY,cM+meses,1);
-      chegaEm=MN[nd.getMonth()]+' '+nd.getFullYear();
-    }
-    h+='<div style="border:1px solid '+(meta.concluida?'var(--green)':'var(--border)')+';border-radius:.75rem;padding:.875rem 1rem;margin-bottom:.5rem;background:'+(meta.concluida?'var(--glight)':'var(--surf2)')+';">';
-    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;">';
-    h+='<div style="font-weight:700;font-size:.9rem;">'+(meta.concluida?'✅ ':'')+''+meta.nome+'</div>';
-    h+='<span style="font-size:.72rem;font-weight:700;padding:.1rem .5rem;border-radius:9999px;background:'+(meta.concluida?'var(--glight)':'var(--plight)')+';color:'+(meta.concluida?'var(--green)':'var(--p)')+';">'+pct+'%</span>';
-    h+='</div>';
-    h+='<div style="height:8px;background:var(--surf3);border-radius:9999px;overflow:hidden;margin-bottom:.375rem;">';
-    h+='<div style="width:'+pct+'%;height:100%;border-radius:9999px;background:'+cor+';transition:width .5s;"></div></div>';
-    h+='<div style="display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);margin-bottom:.5rem;">';
-    if(meta.concluida){
-      h+='<span style="color:var(--green);font-weight:600;">Meta atingida! '+fmt(meta.valor)+'</span>';
-      if(meta.excedente>0) h+='<span>Excedente: <strong style="color:var(--green);">'+fmt(meta.excedente)+'</strong></span>';
+  metas.slice().sort(function(a,b){return (a.tipo===b.tipo?0:a.tipo==='reserva'?-1:1)||(a.criado<b.criado?-1:1);}).forEach(function(o){
+    var saldo=objSaldo(o), r=objRendimento(o), rb=r?r.bruto:0;
+    var total=saldo+rb, alvo=objAlvo(o);
+    totalGuardado+=total; totalRend+=rb;
+    var pct=alvo>0?Math.min(100,Math.round(total/alvo*100)):0;
+    var atingiu=alvo>0&&total>=alvo-0.005;
+    var isMeta=o.tipo==='meta';
+    var cor=atingiu?'var(--green)':isMeta?'#3b82f6':'var(--p)';
+    h+='<div class="obj-card'+(atingiu?' ok':'')+'">';
+    h+='<div class="obj-head"><div class="obj-ico">'+(isMeta?'🎯':'🛡️')+'</div><div style="flex:1;min-width:0;">';
+    h+='<div class="obj-nome">'+_oe(o.nome)+(atingiu?' <span class="obj-tag ok">'+(isMeta?'🎉 Meta atingida':'✅ Reserva completa')+'</span>':'')+'</div>';
+    h+='<div class="obj-sub">'+(isMeta?'Meta':'Reserva')+' · '+_oe(_nomeConta(o.conta))+'</div></div>';
+    h+='<div class="obj-acts-top"><button title="Editar" onclick="objAbrirForm(\''+o.id+'\')">✎</button><button title="Remover" onclick="delMeta(\''+o.id+'\')">🗑</button></div></div>';
+
+    h+='<div class="obj-valores"><div><div class="obj-l">Guardado</div><div class="obj-v">'+fmt(total)+'</div></div>';
+    h+='<div style="text-align:right;"><div class="obj-l">'+(isMeta?'Meta':'Alvo')+'</div><div class="obj-v2">'+(alvo>0?fmt(alvo):'—')+'</div></div></div>';
+    h+='<div class="obj-bar"><div style="width:'+pct+'%;background:'+cor+';"></div></div>';
+    h+='<div class="obj-linha"><span>'+pct+'%</span><span>'+(alvo>0&&!atingiu?'Faltam '+fmt(alvo-total):'')+'</span></div>';
+
+    // Detalhes
+    h+='<div class="obj-info">';
+    if(isMeta){
+      var hojeYm=_hojeLocal().slice(0,7);
+      var restantes=o.prazo?_mesIdx(o.prazo)-_mesIdx(hojeYm)+1:0;
+      var sug=objSugestaoMes(o), apMes=objMovMes(o,hojeYm,'aporte');
+      h+='<div>📅 Prazo: <strong>'+(o.prazo?_mesLabel(o.prazo):'—')+'</strong>'+(restantes>0?' ('+restantes+' '+(restantes>1?'meses':'mês')+')':restantes<=0&&o.prazo?' <span style="color:var(--red)">— prazo passou</span>':'')+'</div>';
+      if(!atingiu){
+        h+='<div>💡 Para chegar no prazo: <strong>'+fmt(sug)+'</strong> este mês'+(apMes>0?' · já aportou '+fmt(apMes)+(apMes>=sug?' ✅':' (faltam '+fmt(sug-apMes)+')'):'')+'</div>';
+        var st=objStatusMeta(o);
+        if(st) h+='<div>'+(st.emDia?'<span style="color:var(--green)">✅ Em dia com o plano</span>':'<span style="color:var(--warn)">⚠️ '+fmt(st.atraso)+' atrás do plano</span>')+'</div>';
+      }
     } else {
-      h+='<span>'+fmt(meta.atual)+' / '+fmt(meta.valor)+'</span>';
-      h+='<span>'+(chegaEm?'Chega em: '+chegaEm:'—')+'</span>';
+      var media=objMediaGastos();
+      if(!o.alvoProprio) h+='<div>💡 Alvo sugerido: '+(o.mesesRes||6)+' × sua média de despesas ('+fmt(media)+'/mês)</div>';
+      if(media>0){
+        var meses=total/media;
+        var cob=meses>=1?(Math.floor(meses)+' '+(Math.floor(meses)>1?'meses':'mês')+(Math.round((meses%1)*30)>0?' e '+Math.round((meses%1)*30)+' dias':'')):(Math.round(meses*30)+' dias');
+        h+='<div>🛟 Hoje cobre <strong>'+cob+'</strong> dos seus gastos</div>';
+      }
+      var apM=objMovMes(o,_hojeLocal().slice(0,7),'aporte');
+      if(apM>0) h+='<div>📆 Aportado este mês: '+fmt(apM)+'</div>';
+    }
+    if(r){
+      var _br=function(n,c){return n.toFixed(c==null?2:c).replace('.',',');};
+      var ultCdi=_cdiCache&&_cdiCache.serie.length?_cdiCache.serie[_cdiCache.serie.length-1]:null;
+      var cdiAA=ultCdi?(Math.pow(1+ultCdi.r/100,252)-1)*100:CDI_FALLBACK_AA;
+      var fonte=r.carregando?'buscando a taxa no Banco Central…':
+        r.fallback?'não deu para consultar o Banco Central agora; estimando com CDI de '+_br(CDI_FALLBACK_AA)+'% a.a.':
+        'CDI atual '+_br(cdiAA)+'% a.a. (Banco Central'+(ultCdi?', '+fmtDt(ultCdi.d):'')+')';
+      h+='<div class="obj-rend">📈 Rendeu <strong style="color:var(--green)">+'+fmt(rb)+'</strong> desde '+fmtDt(r.desde)+
+        ' · líquido est. <strong>'+fmt(r.liquido)+'</strong> (IR '+_br(r.ir*100,1)+'%)';
+      if(rb<0.005) h+='<div class="obj-mini">O rendimento começa a aparecer a partir do próximo dia útil.</div>';
+      h+='<div class="obj-mini">Rende '+(o.rend.pct||100)+'% do CDI · '+fonte+'. É uma estimativa: use "Ajustar saldo" de vez em quando para igualar ao app do banco.</div></div>';
     }
     h+='</div>';
-    h+='<div style="display:flex;gap:.375rem;flex-wrap:wrap;">';
-    h+='<button onclick="aportarMeta(\''+meta.id+'\')" style="font-size:.72rem;padding:.2rem .6rem;border-radius:8px;background:var(--plight);color:var(--p);border:1px solid var(--p);cursor:pointer;">+ Adicionar</button>';
-    if(!meta.concluida||meta.excedente>0)
-      h+='<button onclick="usarMeta(\''+meta.id+'\')" style="font-size:.72rem;padding:.2rem .6rem;border-radius:8px;background:var(--wlight);color:var(--warn);border:1px solid var(--warn);cursor:pointer;">Usar</button>';
-    h+='<button onclick="delMeta(\''+meta.id+'\')" style="font-size:.72rem;padding:.2rem .6rem;border-radius:8px;background:none;color:var(--faint);border:1px solid var(--border);cursor:pointer;margin-left:auto;">Remover</button>';
+
+    h+='<div class="obj-btns">';
+    h+='<button class="obj-b ap" onclick="objAbrirMov(\''+o.id+'\',\'aporte\','+(isMeta?objSugestaoMes(o)-objMovMes(o,_hojeLocal().slice(0,7),'aporte'):0)+')">+ Aportar</button>';
+    h+='<button class="obj-b rs" onclick="objAbrirMov(\''+o.id+'\',\'resgate\')">↩ Resgatar</button>';
+    h+='<button class="obj-b aj" onclick="objAbrirMov(\''+o.id+'\',\'ajuste\')">⚖️ Ajustar saldo</button>';
     h+='</div></div>';
   });
   el.innerHTML=h;
+  if(resumo){
+    resumo.innerHTML='<div class="obj-resumo"><div><div class="obj-l">Total guardado</div><div class="obj-v">'+fmt(totalGuardado)+'</div></div>'+
+      (totalRend>0.004?'<div><div class="obj-l">Rendimento estimado</div><div class="obj-v" style="color:var(--green)">+'+fmt(totalRend)+'</div></div>':'')+
+      '<div><div class="obj-l">Reservas / Metas</div><div class="obj-v">'+metas.length+'</div></div></div>';
+  }
 }
 
 // ── INDEPENDÊNCIA FINANCEIRA ──
@@ -5370,6 +6053,14 @@ function renderRanking(m, y, ls, cm){
 }
 function selCen(i){cenSel=i;calcR();}
 // ── TABELAS ──
+// Entrada avulsa: liga/desliga "mostrar na Agenda do Mês"
+function toggleLancAgenda(id){
+  var l=lancamentos.find(function(x){return String(x.id)===String(id);});
+  if(!l)return;
+  if(l.agenda) delete l.agenda; else l.agenda=true;
+  saveLanc(l);
+  render();
+}
 function renderTbls(){
   var ls=groupTransfPairs(getLMFull(cM,cY)).sort(function(a,b){return b.dt.localeCompare(a.dt);});
   function row(l){return'<tr><td>'+fmtDt(l.dt)+'</td><td>'+l.desc+(l.rec?'<span style="font-size:.58rem;color:var(--faint);margin-left:3px;">↺</span>':"")+(l.parc?'<span style="font-size:.58rem;color:var(--warn);margin-left:3px;">✂</span>':"")+'</td><td><span class="cc">'+l.cat+'</span></td><td>'+lancContaCellHTML(l)+'</td><td>'+lancBadgeHTML(l)+'</td>'+lancValorCellHTML(l);}
@@ -5379,6 +6070,7 @@ function renderTbls(){
     var isTransf=(l.t==='transf');
     var delId=isTransf?(l._saidaId||l._entradaId):l.id;
     return row(l)+'<td style="display:flex;gap:.3rem;justify-content:flex-end;">'+
+      ((l.t==='e'&&!l.rec&&!l.origemRecId)?'<button class="btn" title="'+(l.agenda?'Tirar da Agenda':'Mostrar na Agenda do Mês')+'" style="padding:.2rem .45rem;font-size:.75rem;border-radius:8px;'+(l.agenda?'background:var(--plight);border:1px solid var(--p);':'background:var(--surf2);border:1px solid var(--border);opacity:.55;')+'" onclick="toggleLancAgenda(\''+l.id+'\')">📅</button>':'')+
       (isTransf?'':'<button class="btn" style="padding:.2rem .5rem;font-size:.75rem;background:var(--surf2);border:1px solid var(--border);color:var(--txt);border-radius:8px;" onclick="abrirEditarLanc(\''+l.id+'\')">✏️</button>')+
       '<button class="btn bd" onclick="delLanc(\''+delId+'\')">✕</button>'+
     '</td></tr>';
@@ -5738,7 +6430,8 @@ function toggleTipoFields(){
   var mw=document.getElementById("mensalWrap");
   var rmw=document.getElementById("recMensalWrap");
   if(pw)pw.style.display=(tl==="parc")?"block":"none";
-  if(rw)rw.style.display="none";
+  // "↺ Recorrente" é a opção das ENTRADAS (saídas usam o select de Tipo) — antes ficava escondida ao carregar a página
+  if(rw)rw.style.display=(typeof tipoAtual!=='undefined'&&tipoAtual==='e')?"flex":"none";
   if(mw)mw.style.display=(tl==="mensal")?"block":"none";
   if(rmw)rmw.style.display=(tl==="recmensal")?"flex":"none";
   var dtBase=document.getElementById("iDt").value||new Date().toISOString().slice(0,10);
@@ -6516,36 +7209,6 @@ function renderHistDia(ls, dia){
     </div>
   </div>
 </div>
-
-<!-- Bottom Sheet Usar Meta -->
-<div id="bsUsarMetaOverlay" class="bs-overlay" style="display:none;" onclick="if(event.target===this)bsUsarMetaClose()">
-  <div class="bs-sheet" onclick="event.stopPropagation()">
-    <div class="bs-handle"></div>
-    <div class="bs-title" id="bsUsarMetaTitulo">Usar meta</div>
-    <div class="bs-sub" id="bsUsarMetaSub"></div>
-    <!-- Modo normal: input de valor -->
-    <div id="bsUsarMetaInputWrap" style="margin-bottom:1rem;">
-      <div class="fg">
-        <label>Quanto foi usado? (R$)</label>
-        <input type="number" id="bsUsarMetaVal" placeholder="Ex: 800,00" min="0" step="0.01"
-          style="font-size:1rem;padding:.55rem .75rem;"
-          onkeydown="if(event.key==='Enter')bsUsarMetaConfirmar()">
-        <span id="bsUsarMetaErro" style="display:none;font-size:.75rem;color:var(--red);margin-top:.25rem;">Informe um valor válido</span>
-      </div>
-    </div>
-    <!-- Modo concluída: só mensagem -->
-    <div id="bsUsarMetaMsgConcluida" style="display:none;margin-bottom:1rem;padding:.75rem;background:var(--wlight);border:1px solid rgba(217,119,6,.25);border-radius:.75rem;font-size:.84rem;color:var(--warn);line-height:1.5;">
-      Você utilizou esta meta. Ela voltará do zero.
-    </div>
-    <div class="bs-actions">
-      <button class="bs-btn confirm" id="bsUsarMetaBtnConfirmar"
-        style="background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;"
-        onclick="bsUsarMetaConfirmar()">✔ Confirmar</button>
-      <button class="bs-btn cancel" onclick="bsUsarMetaClose()">Cancelar</button>
-    </div>
-  </div>
-</div>
-
 <!-- Bottom Sheet Remover Conta -->
 <div id="bsDelContaOverlay" class="bs-overlay" style="display:none;" onclick="if(event.target===this)bsDelContaClose()">
   <div class="bs-sheet" onclick="event.stopPropagation()">
@@ -6602,26 +7265,32 @@ function renderHistDia(ls, dia){
   </div>
 </div>
 
-<!-- Bottom Sheet Aportar Meta -->
-<div id="bsAportarMetaOverlay" class="bs-overlay" style="display:none;" onclick="if(event.target===this)bsAportarMetaClose()">
+<!-- Bottom Sheet Reserva/Meta: Aportar · Resgatar · Ajustar saldo -->
+<div id="bsObjMovOverlay" class="bs-overlay" style="display:none;" onclick="if(event.target===this)bsObjMovClose()">
   <div class="bs-sheet" onclick="event.stopPropagation()">
     <div class="bs-handle"></div>
-    <div class="bs-title" id="bsAportarMetaTitulo">Adicionar à meta</div>
-    <div class="bs-sub" id="bsAportarMetaSub"></div>
-    <div style="margin-bottom:1rem;">
-      <div class="fg">
-        <label>Quanto deseja adicionar? (R$)</label>
-        <input type="number" id="bsAportarMetaVal" placeholder="Ex: 300.00" min="0" step="0.01"
-          style="font-size:1rem;padding:.55rem .75rem;"
-          onkeydown="if(event.key==='Enter')bsAportarMetaConfirmar()">
-        <span id="bsAportarMetaErro" style="display:none;font-size:.75rem;color:var(--red);margin-top:.25rem;">Informe um valor válido</span>
+    <div class="bs-title" id="bsObjMovTit">Aportar</div>
+    <div class="bs-sub" id="bsObjMovSub"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.5rem;">
+      <div class="fg" style="grid-column:1/-1;">
+        <label id="bsObjMovValLbl">Quanto? (R$)</label>
+        <input type="number" id="bsObjMovVal" min="0" step="0.01" style="font-size:1rem;padding:.55rem .75rem;"
+          oninput="objMovPreview()" onkeydown="if(event.key==='Enter')bsObjMovConfirmar()">
+      </div>
+      <div class="fg" id="bsObjMovContaWrap">
+        <label id="bsObjMovContaLbl">Conta</label>
+        <select id="bsObjMovConta" onchange="objMovPreview()"></select>
+      </div>
+      <div class="fg" id="bsObjMovDtWrap">
+        <label>Data</label>
+        <input type="date" id="bsObjMovDt">
       </div>
     </div>
+    <div id="bsObjMovPrev" style="font-size:.75rem;color:var(--muted);padding:.4rem .6rem;background:var(--surf2);border-radius:8px;margin-bottom:.5rem;line-height:1.5;"></div>
+    <span id="bsObjMovErro" style="display:none;font-size:.75rem;color:var(--red);margin-bottom:.5rem;"></span>
     <div class="bs-actions">
-      <button class="bs-btn confirm"
-        style="background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;"
-        onclick="bsAportarMetaConfirmar()">✓ Adicionar</button>
-      <button class="bs-btn cancel" onclick="bsAportarMetaClose()">Cancelar</button>
+      <button class="bs-btn confirm" style="background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;" onclick="bsObjMovConfirmar()">✓ Confirmar</button>
+      <button class="bs-btn cancel" onclick="bsObjMovClose()">Cancelar</button>
     </div>
   </div>
 </div>
