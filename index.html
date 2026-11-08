@@ -512,6 +512,8 @@ input:focus, select:focus {
 }
 
 /* CARD PRINCIPAL */
+.orc-resta{margin-top:4px;font-size:.74rem;color:var(--muted);}
+.orc-resta strong{color:var(--txt);font-weight:700;}
 .orc-item {
   background: var(--surf2);
   padding: 12px;
@@ -1723,6 +1725,48 @@ select.cs-native{display:none!important;}
 .ckr label{flex:1;padding:.1rem 0;}
 @media(max-width:768px){#undoToast{bottom:84px;}}
 #lancCalPopover{position:fixed;z-index:9999;width:260px;max-width:calc(100vw - 2rem);box-shadow:0 8px 24px rgba(0,0,0,.3);border-radius:14px;}
+/* ===== Detalhe da Projeção: de onde vem o saldo previsto ===== */
+.ptd-saldo{grid-column:1/-1;display:flex;flex-direction:column;gap:.2rem;padding:.55rem .7rem;background:var(--surf2);border:1px solid var(--border);border-radius:.5rem;}
+.ptd-saldo>div{display:flex;justify-content:space-between;gap:.75rem;}
+.ptd-saldo>div span:last-child{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;}
+.ptd-saldo .tot{border-top:1px dashed var(--border);padding-top:.3rem;margin-top:.15rem;font-weight:800;}
+.pt-wrap{min-width:620px;}
+
+/* ===== CELULAR: tabelas viram cartões, Projeção empilhada (sem arrastar para o lado) ===== */
+@media(max-width:700px){
+  /* Tabelas de lançamentos (Dashboard, Lançamentos, Histórico) */
+  .tw{overflow-x:visible!important;border:none!important;}
+  .tw table{min-width:0!important;width:100%;border-collapse:separate;border-spacing:0;}
+  .tw thead{display:none;}
+  .tw tbody tr{display:flex;flex-wrap:wrap;align-items:center;column-gap:.5rem;row-gap:.15rem;padding:.6rem .75rem;margin-bottom:.45rem;background:var(--surf2);border:1px solid var(--border);border-radius:.75rem;}
+  .tw tbody td{border:none!important;padding:0!important;background:none!important;}
+  .tw tbody td[colspan]{flex:1 1 100%;}
+  .tw tbody td:nth-child(2){order:1;flex:1 1 0;min-width:0;font-weight:600;font-size:.9rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .tw tbody td:nth-child(6){order:2;font-weight:800;font-size:.92rem;white-space:nowrap;text-align:right;}
+  .tw tbody td:nth-child(1),.tw tbody td:nth-child(3),.tw tbody td:nth-child(4){order:3;font-size:.72rem;color:var(--muted);white-space:nowrap;}
+  .tw tbody td:nth-child(1)::after,.tw tbody td:nth-child(4)::after{content:"·";margin-left:.5rem;color:var(--faint);}
+  .tw tbody td:nth-child(1){flex-basis:auto;}
+  .tw tbody td:nth-child(3){order:5;} .tw tbody td:nth-child(4){order:4;}
+  .tw tbody td:nth-child(5){display:none;}
+  .tw tbody td:nth-child(7){order:6;margin-left:auto;display:flex;gap:.3rem;}
+  .tw tbody td:nth-child(7):empty{display:none;}
+
+  /* Projeção */
+  .pt-wrap{min-width:0;}
+  .pt-head{display:none!important;}
+  .pt-row{grid-template-columns:1fr 1fr!important;grid-template-areas:"mes det" "sob sal" "bar bar";row-gap:.35rem!important;padding:.6rem .75rem!important;}
+  .pt-row>:nth-child(1){grid-area:mes;font-size:.8rem;}
+  .pt-row>:nth-child(2){grid-area:bar;}
+  .pt-row>:nth-child(3){grid-area:sob;text-align:left;}
+  .pt-row>:nth-child(4){grid-area:sal;text-align:right;}
+  .pt-row>:nth-child(5){grid-area:det;}
+  .pt-row>:nth-child(3)::before,.pt-row>:nth-child(4)::before{display:block;font-family:inherit;font-size:.6rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--faint);margin-bottom:.1rem;}
+  .pt-row>:nth-child(3)::before{content:"Sobra do mês";}
+  .pt-row>:nth-child(4)::before{content:"Saldo previsto";}
+  .pt-base{line-height:1.7;}
+  .ctit{flex-wrap:wrap;}
+  .ctit small{flex-basis:100%;}
+}
 </style>
 <script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
 </head>
@@ -1945,6 +1989,7 @@ select.cs-native{display:none!important;}
     </div>
   </div>
   <div id="transferenciaPreview" style="background:var(--glight);border:1px solid var(--green);border-radius:.5rem;padding:.5rem .75rem;font-size:.75rem;color:var(--green);display:none;"></div>
+  <div class="ckr" id="transfObjWrap" style="display:none;margin-top:.5rem;"><input type="checkbox" id="iTransfObj" checked><label for="iTransfObj" id="transfObjLbl"></label></div>
 </div>
 
       <!-- GRID RESPONSIVO -->
@@ -2011,8 +2056,8 @@ select.cs-native{display:none!important;}
 </div>
         <!-- Recorrente -->
         <div id="recWrap" style="display:flex;flex-direction:column;gap:.5rem;">
-          <div class="ckr"><input type="checkbox" id="iRec" onchange="toggleDiaFixo();document.getElementById('agendaAvWrap').style.display=this.checked?'none':''"><label for="iRec">↺ Recorrente (repete todo mês indefinidamente)</label></div>
-          <div class="ckr" id="agendaAvWrap"><input type="checkbox" id="iAgendaAv"><label for="iAgendaAv">📅 Mostrar na Agenda do Mês (entrada que não se repete)</label></div>
+          <div class="ckr"><input type="checkbox" id="iRec" onchange="toggleDiaFixo();document.getElementById('agendaAvWrap').style.display=this.checked?'none':''"><label for="iRec">↺ Recorrente</label></div>
+          <div class="ckr" id="agendaAvWrap"><input type="checkbox" id="iAgendaAv"><label for="iAgendaAv">📅 Mostrar na Agenda do Mês</label></div>
           <div id="diaFixoWrap" style="display:none;flex-direction:column;gap:.5rem;margin-top:.3rem;">
             <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;">
               <label style="font-size:.8rem;color:var(--muted);white-space:nowrap;">Tipo de recorrência:</label>
@@ -2047,7 +2092,7 @@ select.cs-native{display:none!important;}
       <div class="ctit">Linha do tempo <small>* = previsão · usa os mesmos itens da Agenda do Mês · clique num mês para ver o detalhe</small></div>
       <div id="simLabel" style="display:none;align-items:center;gap:.4rem;font-size:.78rem;font-weight:700;color:#111;background:#f5c518;padding:.4rem .75rem;border-radius:8px;margin-bottom:.75rem;">⚡ Simulação ativa</div>
       <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
-        <div style="min-width:620px;">
+        <div class="pt-wrap">
           <div class="pt-head"><span>Mês</span><span>Barra</span><span>Sobra do mês</span><span>Saldo previsto</span><span></span></div>
           <div id="projTL"></div>
         </div>
@@ -2999,6 +3044,7 @@ function setTipo(t){
     ['iTransfDe','iTransfPara'].forEach(function(id){
       document.getElementById(id).onchange=atualizarPreviewTransf;
     });
+    atualizarTransfObj();
     // Atualiza preview quando o valor muda
     var iVal=document.getElementById('iVal');
     if(iVal) iVal.oninput=function(){updateParcInfo();atualizarPreviewTransf();};
@@ -3842,7 +3888,31 @@ function getDiaFixoConfig(){
   return{tipo:tipo,diaNum:num,dtCal:dtCal};
 }
 
+// Interruptor "Contar como aporte/resgate" quando a conta de destino (ou origem) é de uma Reserva/Meta
+var _transfObjPar='';
+function _transfObjInfo(deId,paraId){
+  if(!deId||!paraId||deId===paraId||typeof metas==='undefined')return null;
+  var oPara=metas.find(function(o){return o.conta===paraId;});
+  var oDe=metas.find(function(o){return o.conta===deId;});
+  if(oPara&&oDe)return null; // de uma reserva/meta para outra: só remaneja, não é dinheiro novo guardado
+  if(oPara)return {o:oPara,mov:'aporte'};
+  if(oDe)return {o:oDe,mov:'resgate'};
+  return null;
+}
+function atualizarTransfObj(){
+  var wrap=document.getElementById('transfObjWrap');
+  if(!wrap)return;
+  var deId=document.getElementById('iTransfDe').value, paraId=document.getElementById('iTransfPara').value;
+  var inf=_transfObjInfo(deId,paraId);
+  if(!inf){wrap.style.display='none';_transfObjPar='';return;}
+  var par=deId+'>'+paraId;
+  if(par!==_transfObjPar){document.getElementById('iTransfObj').checked=true;_transfObjPar=par;} // novo par → volta ligado
+  var ico=inf.o.tipo==='meta'?'🎯':'🛡️';
+  document.getElementById('transfObjLbl').textContent=ico+' Contar como '+(inf.mov==='aporte'?'aporte na':'resgate da')+' '+(inf.o.tipo==='meta'?'meta':'reserva')+' "'+inf.o.nome+'"';
+  wrap.style.display='';
+}
 function atualizarPreviewTransf(){
+  atualizarTransfObj();
   var deId=document.getElementById('iTransfDe').value;
   var paraId=document.getElementById('iTransfPara').value;
   var v=parseFloat(document.getElementById('iVal').value)||0;
@@ -3875,16 +3945,18 @@ function addTransferencia(){
   var cDeT=contas.find(function(c){return c.id===deId;});
   var cParaT=contas.find(function(c){return c.id===paraId;});
   var desc='Transferência '+(cDeT?cDeT.nome:'?')+' → '+(cParaT?cParaT.nome:'?');
-  // Se a conta for de uma reserva/meta, a transferência conta como aporte/resgate dela
-  var objPara=metas.find(function(o){return o.conta===paraId;});
-  var objDe=metas.find(function(o){return o.conta===deId;});
-  var extra=objPara?{objetivoId:objPara.id,objMov:'aporte'}:objDe?{objetivoId:objDe.id,objMov:'resgate'}:null;
+  // Conta como aporte/resgate da Reserva/Meta só se o interruptor estiver ligado
+  var objInf=_transfObjInfo(deId,paraId);
+  var objCk=document.getElementById('iTransfObj');
+  var extra=(objInf&&objCk&&objCk.checked)?{objetivoId:objInf.o.id,objMov:objInf.mov}:null;
+  if(extra) desc=(objInf.mov==='aporte'?'Aporte → ':'Resgate ← ')+objInf.o.nome;
   criarTransferencia(deId,paraId,v,dt,desc,extra);
   document.getElementById('iDesc').value='';
   document.getElementById('iVal').value='';
   document.getElementById('iTransfDe').value='';
   document.getElementById('iTransfPara').value='';
   document.getElementById('transferenciaPreview').style.display='none';
+  atualizarTransfObj();
   render();
   if(extra) renderMetas();
 }
@@ -5035,9 +5107,10 @@ function getProj(extraEntrada,extraGasto,duracaoMeses){
     var dentro=i>0&&temExtra&&((duracaoMeses==null)||(i<=duracaoMeses));
     var extra=dentro?(extraEntrada||0)-(extraGasto||0):0;
     var sal=r.sobra+extra;
+    var accAnt=acc;
     if(i===0) acc=saldoHoje+r.entradasPend-r.saidasPend;
     else acc+=sal;
-    res.push({m:m,y:y,lbl:MN[m]+'/'+String(y).slice(2),sal:sal,acc:acc,proj:i>0,simAplicada:dentro,resumo:r,extra:extra,saldoHoje:i===0?saldoHoje:null});
+    res.push({m:m,y:y,lbl:MN[m]+'/'+String(y).slice(2),sal:sal,acc:acc,accAnt:i>0?accAnt:null,proj:i>0,simAplicada:dentro,resumo:r,extra:extra,saldoHoje:i===0?saldoHoje:null});
   }
   return res;
 }
@@ -5094,6 +5167,18 @@ function projDetalheHtml(p,atual){
   h+='</div>';
   h+='<div class="ptd-conta">Sobra do mês: '+fmt(r.entradas)+' − '+fmt(r.saidas)+(p.extra?(p.extra>0?' + ':' − ')+fmt(Math.abs(p.extra))+' (simulação)':'')+' = <strong>'+fmt(p.sal)+'</strong>'+
      (atual?'<br>Mesmo valor da "Sobra" na Agenda do Mês.':'')+'</div>';
+  // De onde vem o "Saldo previsto"
+  var mesAnt=MF[(p.m+11)%12], mesAt=MF[p.m];
+  h+='<div class="ptd-saldo">';
+  if(atual){
+    h+='<div><span>Saldo hoje nas contas</span><span>'+fmt(p.saldoHoje)+'</span></div>'+
+       '<div><span>+ Ainda vai entrar em '+mesAt+'</span><span class="ap">+'+fmt(r.entradasPend)+'</span></div>'+
+       '<div><span>− Ainda vai sair em '+mesAt+'</span><span class="an">−'+fmt(r.saidasPend)+'</span></div>';
+  } else {
+    h+='<div><span>Saldo previsto no fim de '+mesAnt+'</span><span>'+fmt(p.accAnt)+'</span></div>'+
+       '<div><span>'+(p.sal>=0?'+':'−')+' Sobra de '+mesAt+'</span><span class="'+(p.sal>=0?'ap':'an')+'">'+(p.sal>=0?'+':'−')+fmt(Math.abs(p.sal))+'</span></div>';
+  }
+  h+='<div class="tot"><span>= Saldo previsto no fim de '+mesAt+'</span><span>'+fmt(p.acc)+'</span></div></div>';
   h+='</div>';
   return h;
 }
@@ -6779,10 +6864,19 @@ function renderOrc(){
     var h='';
     nomes.forEach(function(nome,index){
       var info=dados[nome]||{gasto:0,limite:0};
+      info={gasto:Math.max(0,info.gasto||0),limite:info.limite||0};
       var perc=info.limite>0?(info.gasto/info.limite)*100:0;
+      var resta=info.limite-info.gasto;
+      var restaTxt=nome==='Reserva'
+        ?(resta>0.004?'Faltam guardar <strong>'+fmt(resta)+'</strong>':'<strong style="color:var(--green)">Meta do mês atingida'+(resta<-0.004?' (+'+fmt(-resta)+')':'')+'</strong>')
+        :(resta>=0?'Restam <strong style="color:var(--green)">'+fmt(resta)+'</strong>':'Passou <strong style="color:var(--red)">'+fmt(-resta)+'</strong>');
       var excesso=perc>100?perc-100:0;
       var status=perc>100?('🔴 +'+excesso.toFixed(0)+'%'):perc>=80?'🟡 Atenção':'🟢 Ok';
       var cor=perc>=100?'var(--red)':perc>=80?'var(--warn)':'var(--green)';
+      if(nome==='Reserva'){ // na Reserva, chegar a 100% é bom (é o quanto você guardou)
+        cor=perc>=100?'var(--green)':'#60a5fa';
+        status=perc>=100?'🟢 Ok':'⏳ Guardando';
+      }
       var emoji=emojis[nome]||'📊';
       var pct=preset[index]||0;
       h+='<div class="orc-item">';
@@ -6797,6 +6891,7 @@ function renderOrc(){
       h+='<div style="margin-top:6px;font-size:.75rem;color:var(--muted);display:flex;justify-content:space-between;">';
       h+='<span>'+fmt(info.gasto)+' / '+fmt(info.limite)+'</span>';
       h+='<span>'+status+'</span></div>';
+      if(info.limite>0) h+='<div class="orc-resta">'+restaTxt+'</div>';
       h+='</div>';
     });
     grid.innerHTML=h;
@@ -6904,6 +6999,12 @@ function getGastosPorCategoria(){
   lancamentos
     .filter(l => l.dt && l.dt.startsWith(k) && !(l.rec && _temAdiantadoMes(l, k)))
     .forEach(l => {
+      // Reservas/Metas: aporte (botão "+ Aportar") soma no pote Reserva; resgate desconta.
+      if (l.objetivoId) {
+        if (l.t === 'transf_s' && l.objMov === 'aporte')  res['Reserva'] = (res['Reserva'] || 0) + l.v;
+        if (l.t === 'transf_s' && l.objMov === 'resgate') res['Reserva'] = (res['Reserva'] || 0) - l.v;
+        return; // rendimento/ajuste de saldo não são gasto
+      }
       const grupo = mapCategoriaOrc(l.cat);
       if (!grupo) return; // categorias mapeadas para null (ex: Renda) não entram no orçamento de gastos
 
