@@ -839,7 +839,11 @@ input:focus, select:focus {
 .ag-panel-compact .agp-val input{width:110px;}
 .ag-panel-compact .agp-btns{display:flex;gap:6px;}
 .ag-panel-compact .agp-btns button{height:32px;color:#fff;font-size:.78rem;padding:0 .8rem;border-radius:8px;font-weight:700;border:none;cursor:pointer;white-space:nowrap;}
-.ag-panel-compact .agp-btns .agp-cancel{background:transparent;color:var(--muted);border:1px solid var(--div);padding:0 .65rem;}
+.ag-panel-compact .agp-btns .agp-cancel{display:inline-flex;align-items:center;justify-content:center;width:32px;padding:0!important;background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.35);}
+.ag-panel-compact .agp-btns .agp-cancel:hover{background:rgba(239,68,68,.2);}
+.ag-panel-compact .agp-btns .agp-cancel i{font-size:16px;line-height:1;}
+.ag-panel-compact .agp-btns .agp-ok{display:inline-flex;align-items:center;justify-content:center;gap:.35rem;}
+.ag-panel-compact .agp-btns .agp-ok i{font-size:15px;line-height:1;}
 .ag-panel-compact .agp-dif{flex-basis:100%;font-size:.7rem;color:var(--muted);}
 .ag-panel-compact .agp-dif:empty{display:none;}
 @media(max-width:600px){
@@ -1842,20 +1846,21 @@ button.ag-det{display:inline-flex;align-items:center;gap:.25rem;margin-top:.2rem
 .pl-resumo span{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);}
 .pl-resumo strong{font-size:.92rem;font-variant-numeric:tabular-nums;white-space:nowrap;}
 .pl-lista{display:flex;flex-direction:column;gap:.3rem;padding-bottom:.25rem;}
-.pl-it{display:grid;grid-template-columns:42px 58px 1fr auto auto;align-items:center;gap:.5rem;padding:.45rem .6rem;border:1px solid var(--border);border-radius:.6rem;background:var(--surf2);font-size:.8rem;}
+.pl-it{display:grid;grid-template-columns:40px 64px 1fr auto auto;align-items:center;gap:.5rem;padding:.45rem .6rem;border:1px solid var(--border);border-radius:.6rem;background:var(--surf2);font-size:.8rem;}
 .pl-it.ok{opacity:.6;}
 .pl-it.atual{border-color:var(--muted);}
 .pl-n{font-weight:700;font-variant-numeric:tabular-nums;}
 .pl-mes{color:var(--muted);font-size:.74rem;}
 .pl-st{font-size:.72rem;color:var(--muted);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .pl-v{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;}
-.pl-btn{font-size:.72rem;font-weight:700;padding:.25rem .6rem;border-radius:7px;border:1px solid #d9770666;background:#d9770622;color:#f59e0b;cursor:pointer;white-space:nowrap;}
+.pl-btn{font-size:.72rem;font-weight:700;padding:.25rem .6rem;border-radius:7px;border:1px solid #16a34a66;background:#16a34a22;color:#22c55e;cursor:pointer;white-space:nowrap;}
+html:not([data-theme="dark"]) .pl-btn{color:#15803d;border-color:#16a34a55;}
 .pl-it.ok .pl-v{grid-column:4/6;text-align:right;}
 .pl-it:not(.ok):not(:has(.pl-btn)) .pl-v{grid-column:4/6;text-align:right;}
 .pl-panel{margin:-.1rem 0 .3rem;}
 .pl-panel .ag-panel{max-width:none;}
 .pl-dica{font-size:.68rem;color:var(--muted);margin-top:.3rem;}
-@media(max-width:420px){.pl-it{grid-template-columns:38px 1fr auto auto;}.pl-mes{display:none;}}
+@media(max-width:420px){.pl-it{grid-template-columns:36px 60px 1fr auto auto;gap:.4rem;padding:.45rem .5rem;}}
 
 /* Lista suspensa moderna (substitui o visual do <select>) */
 select.cs-native{display:none!important;}
@@ -4740,7 +4745,7 @@ function _mkAgPanelHtml(id, t, contaOpts, opts) {
   var dtSel = (st && st.sel) ? st.sel : new Date().toISOString().slice(0,10);
   var l = lancamentos.find(function(x){ return String(x.id)===String(id); });
   var vPadrao = (st && st.v!=null) ? st.v : (l ? l.v : 0);
-  var confirmBg = (t==='e') ? '#16a34a' : '#d97706';
+  var confirmBg = '#16a34a'; // Confirmar sempre verde
   var confirmCall = opts.confirm || ((t==='agenda-item') ? 'confirmAgPanelAgendaItem(\''+id+'\')' : 'confirmAgPanelFixo(\''+id+'\',\''+t+'\')');
   var cancelCall = opts.cancel || ('closeAgPanel(\''+id+'\')');
   var h = '<div class="ag-panel ag-panel-compact">';
@@ -4748,8 +4753,8 @@ function _mkAgPanelHtml(id, t, contaOpts, opts) {
   h += '<div class="agp-f agp-conta"><label>Conta</label><select id="agpanelconta_'+id+'">'+contaOpts+'</select></div>';
   h += '<div class="agp-f agp-val"><label>Valor (R$)</label><input type="number" step="0.01" min="0" id="agpanelval_'+id+'" value="'+(Math.round(vPadrao*100)/100)+'" oninput="agPanelSetVal(\''+id+'\',this.value)"></div>';
   h += '<div class="agp-btns">';
-  h += '<button onclick="'+confirmCall+'" style="background:'+confirmBg+';">✅ Confirmar</button>';
-  h += '<button onclick="'+cancelCall+'" class="agp-cancel">✗</button>';
+  h += '<button onclick="'+confirmCall+'" style="background:'+confirmBg+';" class="agp-ok"><i class="ti ti-check"></i> Confirmar</button>';
+  h += '<button onclick="'+cancelCall+'" class="agp-cancel" aria-label="Cancelar" title="Cancelar"><i class="ti ti-x"></i></button>';
   h += '</div>';
   h += '<div class="agp-dif" id="agpaneldif_'+id+'">'+_agPanelDifHtml(l, vPadrao)+'</div>';
   h += '</div>';
@@ -5000,7 +5005,7 @@ function renderPlano(){
   h+='<div class="pl-lista">';
   var coOpts=function(sel){return contas.map(function(c){return '<option value="'+c.id+'"'+(c.id===sel?' selected':'')+'>'+_oe(c.nome)+'</option>';}).join('');};
   its.forEach(function(l){
-    var mes=MN[parseInt(l.dt.slice(5,7))-1]+'/'+l.dt.slice(2,4);
+    var mes=l.dt.slice(8,10)+'/'+l.dt.slice(5,7)+'/'+l.dt.slice(2,4); // data de vencimento da parcela
     var atual=l.dt.slice(0,7)===hojeYm;
     h+='<div class="pl-it'+(l.paid?' ok':'')+(atual?' atual':'')+'">';
     h+='<span class="pl-n">'+(l.pn?l.pn+'/'+l.pt:'—')+'</span><span class="pl-mes">'+mes+'</span>';
@@ -5009,7 +5014,7 @@ function renderPlano(){
       var antes=l.dtPago&&l.dtPago.slice(0,7)<l.dt.slice(0,7);
       h+='<span class="pl-st">✅ '+(antes?'adiantada':'paga')+(l.dtPago?' em '+fmtDt(l.dtPago).slice(0,5):'')+'</span><span class="pl-v">'+fmt(vp)+'</span>';
     } else {
-      h+='<span class="pl-st">'+(l.dt.slice(0,7)<hojeYm?'⚠️ atrasada':'⏳')+'</span><span class="pl-v">'+fmt(l.v)+'</span>';
+      h+='<span class="pl-st">'+(l.dt.slice(0,7)<hojeYm?'⚠️ atrasada':'')+'</span><span class="pl-v">'+fmt(l.v)+'</span>';
       if(_planoAdId!==l.id) h+='<button class="pl-btn" onclick="planoAdiantar(\''+l.id+'\')">'+(l.dt.slice(0,7)>hojeYm?'Adiantar':'Pagar')+'</button>';
     }
     h+='</div>';
