@@ -108,7 +108,7 @@ input[type="number"]{-moz-appearance:textfield;appearance:textfield;}
 .cc-add{background:var(--plight);border:1.5px dashed var(--p);border-radius:1rem;padding:1rem;display:flex;align-items:center;justify-content:center;gap:.5rem;cursor:pointer;color:var(--p);font-weight:700;font-size:.8rem;transition:background .15s,color .15s;}
 .cc-add:hover{background:var(--p);color:#fff;}
 /* PROJEÇÃO */
-.pt-head{display:grid;grid-template-columns:72px 1fr 140px 130px 95px;align-items:end;gap:.5rem;padding:.2rem .75rem;font-size:.62rem;font-weight:700;color:var(--faint);letter-spacing:.04em;text-transform:uppercase;}
+.pt-head{display:grid;grid-template-columns:72px 1fr 140px 130px 95px;align-items:start;gap:.5rem;padding:.2rem .75rem;font-size:.62rem;font-weight:700;color:var(--faint);letter-spacing:.04em;text-transform:uppercase;}
 .pt-head .pt-h2{display:flex;flex-direction:column;line-height:1.2;}.pt-head .pt-h2 small{font-size:.56rem;font-weight:500;text-transform:none;letter-spacing:0;opacity:.8;}
 .pt-head .pt-h2{align-items:flex-end;text-align:right;white-space:nowrap;}
 .pt-mlbl{display:none;flex-direction:column;align-items:flex-end;line-height:1.2;margin-bottom:.15rem;font-family:inherit;font-size:.6rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--faint);white-space:nowrap;}
@@ -1800,6 +1800,7 @@ button.plan-b.ok{color:#16a34a;border-color:#16a34a55;}
 .plan-rod .plan-fim{font-size:.74rem;}
 @media(max-width:700px){
   .plan-form{grid-template-columns:1fr 1fr;}
+.plan-rod small{display:block;white-space:nowrap;} /* "contas fixas" inteiro na linha de baixo */
   .plan-form .pf-nome,.plan-form .pf-btn{grid-column:1/-1;}
   .plan-form .pf-btn label{display:none;}
   .plan-it{grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"seta info v" "foot foot foot";row-gap:.45rem;}
@@ -5527,7 +5528,7 @@ function renderProj(){try{
      '<div class="tot"><span>= Fim de '+MF[p0.m]+'</span><strong>'+fmt(p0.acc)+'</strong></div>'+
      '<div class="pt-base-guard"><span>🛡️ Guardado (reservas e metas)</span><strong>'+fmt(p0.guard)+'</strong></div></div>';
   // Cabeçalho das colunas logo acima do 1º mês (no celular cada cartão tem o próprio rótulo)
-  h+='<div class="pt-head"><span>Mês</span><span></span><span class="pt-h2">Provável sobra do mês<small>contas fixas</small></span><span class="pt-h2">Saldo final do mês<small>disponível, sem reserva</small></span><span></span></div>';
+  h+='<div class="pt-head"><span>Mês</span><span></span><span class="pt-h2">Provável sobra do mês<small>contas fixas</small></span><span class="pt-h2">Saldo atual do mês</span><span></span></div>';
   for(var i=0;i<projTabela.length;i++){
     var p=projTabela[i];var pct=Math.min(100,Math.abs(p.acc)/maxAbs*100);var cor=p.acc>=0?"#437a22":"#c0392b";
     var aberto=!!_projAberto[p.lbl];
@@ -5535,7 +5536,7 @@ function renderProj(){try{
        '<div class="pt-mes">'+p.lbl+(p.proj?"*":"")+'</div>'+
        '<div class="pt-bw"><div class="pt-bf" style="width:'+pct+'%;background:'+cor+';"></div></div>'+
        '<div class="pt-v '+(p.sal>=0?"ap":"an")+'"><span class="pt-mlbl esq">Provável sobra do mês<small>contas fixas</small></span>'+(p.sal>=0?'+':'−')+fmt(Math.abs(p.sal))+'</div>'+
-       '<div class="pt-v '+(p.acc>=0?"ap":"an")+'"><span class="pt-mlbl">Saldo final do mês<small>disponível, sem reserva</small></span>'+fmt(p.acc)+'</div>'+
+       '<div class="pt-v '+(p.acc>=0?"ap":"an")+'"><span class="pt-mlbl">Saldo atual do mês</span>'+fmt(p.acc)+'</div>'+
        '<div class="pt-d">'+(aberto?'▴ fechar':'▾ detalhes')+'</div></div>';
     if(aberto) h+=projDetalheHtml(p,i===0);
   }
@@ -5716,7 +5717,7 @@ function renderPlan(){
     (sim.ent?'<div><span>+ Entradas simuladas</span><strong class="ap">+'+fmt(sim.ent)+'</strong></div>':'')+
     (sim.sai?'<div><span>− Saídas simuladas</span><strong class="an">−'+fmt(sim.sai)+'</strong></div>':'')+
     '<div class="tot'+(simSobra<0?' neg':'')+'"><span>= Sobra com a simulação</span><strong>'+(simSobra>=0?'+':'−')+fmt(Math.abs(simSobra))+'</strong></div>'+
-    (proj?'<div class="plan-fim"><span>Saldo final do mês com a simulação <small>disponível, sem reserva</small></span><strong class="'+(proj.acc<0?'an':'')+'">'+fmt(proj.acc)+'</strong></div>':'')+
+    (proj?'<div class="plan-fim"><span>Saldo atual do mês com a simulação</span><strong class="'+(proj.acc<0?'an':'')+'">'+fmt(proj.acc)+'</strong></div>':'')+
     '</div>';
   document.getElementById('planRodape').innerHTML=f;
 }
