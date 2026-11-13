@@ -108,8 +108,12 @@ input[type="number"]{-moz-appearance:textfield;appearance:textfield;}
 .cc-add{background:var(--plight);border:1.5px dashed var(--p);border-radius:1rem;padding:1rem;display:flex;align-items:center;justify-content:center;gap:.5rem;cursor:pointer;color:var(--p);font-weight:700;font-size:.8rem;transition:background .15s,color .15s;}
 .cc-add:hover{background:var(--p);color:#fff;}
 /* PROJEÇÃO */
-.pt-head{display:grid;grid-template-columns:72px 1fr 105px 105px 95px;gap:.5rem;padding:.2rem .75rem;font-size:.62rem;font-weight:700;color:var(--faint);letter-spacing:.04em;text-transform:uppercase;}
-.pt-row{display:grid;grid-template-columns:72px 1fr 105px 105px 95px;gap:.5rem;align-items:center;padding:.45rem .75rem;border-radius:.5rem;border:1px solid var(--border);background:var(--surf2);font-size:.8rem;margin-bottom:.3rem;}
+.pt-head{display:grid;grid-template-columns:72px 1fr 140px 130px 95px;align-items:end;gap:.5rem;padding:.2rem .75rem;font-size:.62rem;font-weight:700;color:var(--faint);letter-spacing:.04em;text-transform:uppercase;}
+.pt-head .pt-h2{display:flex;flex-direction:column;line-height:1.2;}.pt-head .pt-h2 small{font-size:.56rem;font-weight:500;text-transform:none;letter-spacing:0;opacity:.8;}
+.pt-head .pt-h2{align-items:flex-end;text-align:right;white-space:nowrap;}
+.pt-mlbl{display:none;flex-direction:column;align-items:flex-end;line-height:1.2;margin-bottom:.15rem;font-family:inherit;font-size:.6rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--faint);white-space:nowrap;}
+.pt-mlbl small{font-size:.56rem;font-weight:500;text-transform:none;letter-spacing:0;}
+.pt-row{display:grid;grid-template-columns:72px 1fr 140px 130px 95px;gap:.5rem;align-items:center;padding:.45rem .75rem;border-radius:.5rem;border:1px solid var(--border);background:var(--surf2);font-size:.8rem;margin-bottom:.3rem;}
 .pt-row.atual{background:var(--plight);border-color:var(--p);}
 .pt-row.neg{background:var(--rlight);border-color:var(--red);}
 .pt-mes{font-weight:700;font-size:.74rem;color:var(--muted);text-transform:uppercase;}
@@ -123,6 +127,7 @@ input[type="number"]{-moz-appearance:textfield;appearance:textfield;}
 .pt-base>div{display:flex;justify-content:space-between;gap:1rem;}
 .pt-base strong{font-variant-numeric:tabular-nums;white-space:nowrap;}
 .pt-base .tot{border-top:1px dashed var(--border);padding-top:.3rem;margin-top:.1rem;color:var(--txt);font-weight:700;}
+.pt-base .pt-base-nm{font-size:.68rem;color:var(--faint);}.pt-base .pt-base-guard{margin-top:.35rem;padding-top:.35rem;border-top:1px solid var(--border);color:var(--muted);}.pt-base .pt-base-guard strong{color:#60a5fa;}.ptd-saldo .ptd-guard{margin-top:.2rem;color:var(--muted);font-size:.72rem;}.ptd-saldo .ptd-guard span:last-child{color:#60a5fa;}
 .pt-base strong{color:var(--txt);}
 .ptd{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;padding:.7rem .85rem;margin:-.1rem 0 .45rem;border:1px solid var(--border);border-top:none;border-radius:0 0 .5rem .5rem;background:var(--surf);font-size:.76rem;}
 .ptd-tit{font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);display:flex;justify-content:space-between;margin-bottom:.3rem;}
@@ -1760,6 +1765,52 @@ input:focus, select:focus {
 .b2-bar>div{height:100%;background:#ef4444;border-radius:999px;transition:width .2s ease;}
 .b2-ft{font-size:11px;color:#8a8f98;margin-top:4px;}
 
+/* Planejamento (simulações) */
+.ttog.ttog-tipo.plan-tog{max-width:420px!important;margin-left:auto!important;margin-right:auto!important;}
+.ttog.ttog-tipo.plan-tog button{height:42px!important;font-size:.88rem!important;}
+.plan-form{display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:.6rem;align-items:end;}
+.pf-rep{display:flex;gap:6px;}.pf-rep>*{min-width:0;}.pf-rep .cs-btn{flex:1;}.pf-rep #planVezesN{width:72px;flex-shrink:0;}
+.plan-nav{display:flex;align-items:center;justify-content:center;gap:.75rem;margin-bottom:.85rem;}
+.plan-nav strong{font-size:.95rem;min-width:140px;text-align:center;}
+.plan-vazio{text-align:center;color:var(--faint);font-size:.82rem;padding:1.25rem .5rem;line-height:1.6;}
+.plan-it{display:grid;grid-template-columns:auto 1fr auto auto auto;align-items:center;gap:.6rem;padding:.6rem .75rem;margin-bottom:.4rem;border:1px solid var(--border);border-radius:.7rem;background:var(--surf2);}
+.plan-it:not(.on){opacity:.6;}
+.plan-seta{font-weight:800;font-size:1rem;width:18px;text-align:center;}
+.plan-info{min-width:0;}
+.plan-nm{font-weight:600;font-size:.88rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.plan-it.on .plan-nm{color:#eab308;}
+.plan-sub{font-size:.7rem;color:var(--muted);}
+.plan-v{font-weight:800;font-size:.9rem;white-space:nowrap;font-variant-numeric:tabular-nums;}
+.plan-sim{display:flex;align-items:center;gap:6px;cursor:pointer;text-transform:none!important;letter-spacing:0!important;margin:0!important;font-weight:400!important;}
+.plan-sim>span{font-size:.7rem;color:var(--muted);}
+.plan-acts{display:flex;align-items:center;gap:.35rem;}
+.plan-foot{display:contents;}
+button.plan-b{font-size:.72rem;font-weight:600;padding:.3rem .55rem;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;white-space:nowrap;}
+button.plan-b:hover{color:var(--txt);border-color:var(--muted);}
+button.plan-b.ok{color:#16a34a;border-color:#16a34a55;}
+.plan-bx{margin:-.15rem 0 .5rem;max-width:none;}
+.plan-it .ap,.plan-rod .ap{color:var(--green);} .plan-it .an,.plan-rod .an{color:var(--red);}
+.plan-rod{display:flex;flex-direction:column;gap:.25rem;margin-top:.6rem;padding:.7rem .85rem;border:1px dashed var(--border);border-radius:.7rem;font-size:.82rem;color:var(--muted);}
+.plan-rod>div{display:flex;justify-content:space-between;gap:.75rem;}
+.plan-rod small{font-size:.66rem;color:var(--faint);}
+.plan-rod strong{color:var(--txt);font-variant-numeric:tabular-nums;white-space:nowrap;}
+.plan-rod .tot{border-top:1px dashed var(--border);padding-top:.35rem;margin-top:.1rem;color:var(--txt);font-weight:700;}
+.plan-rod .tot strong{color:var(--green);}
+.plan-rod .tot.neg strong{color:var(--red);}
+.plan-rod .plan-fim{font-size:.74rem;}
+@media(max-width:700px){
+  .plan-form{grid-template-columns:1fr 1fr;}
+  .plan-form .pf-nome,.plan-form .pf-btn{grid-column:1/-1;}
+  .plan-form .pf-btn label{display:none;}
+  .plan-it{grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"seta info v" "foot foot foot";row-gap:.45rem;}
+  .plan-foot{grid-area:foot;display:flex!important;align-items:center;justify-content:space-between;gap:.5rem;}
+  .plan-seta{grid-area:seta;} .plan-info{grid-area:info;} .plan-v{grid-area:v;}
+  .plan-acts{justify-content:flex-end;}
+}
+/* Projeção: itens simulados do Planejamento em amarelo */
+.ptd-simnm{color:#eab308;font-weight:600;}
+.ptd-sim .ptd-dia{color:#eab308;opacity:.75;}
+
 /* Botão-ícone de editar (engrenagem) — usado em todo o app */
 button.btn-gear{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;padding:0;flex-shrink:0;border-radius:8px;background:transparent;border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:color .15s,border-color .15s,background .15s;}
 button.btn-gear i{font-size:16px;line-height:1;}
@@ -1938,9 +1989,12 @@ select.cs-native{display:none!important;}
   .pt-row>:nth-child(3){grid-area:sob;text-align:left;}
   .pt-row>:nth-child(4){grid-area:sal;text-align:right;}
   .pt-row>:nth-child(5){grid-area:det;}
-  .pt-row>:nth-child(3)::before,.pt-row>:nth-child(4)::before{display:block;font-family:inherit;font-size:.6rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--faint);margin-bottom:.1rem;}
-  .pt-row>:nth-child(3)::before{content:"Sobra do mês";}
-  .pt-row>:nth-child(4)::before{content:"Saldo previsto";}
+  .pt-row>:nth-child(3)::before,.pt-row>:nth-child(4)::before{display:none;font-family:inherit;font-size:.6rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--faint);margin-bottom:.1rem;}
+  .pt-row>:nth-child(3)::before{content:none;}
+  .pt-mlbl.esq{align-items:flex-start!important;}
+  .pt-row>:nth-child(4)::before{content:none;}
+  .pt-mlbl{display:flex!important;flex-direction:column;align-items:flex-end;line-height:1.2;margin-bottom:.1rem;font-family:inherit;font-size:.6rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--faint);}
+  .pt-mlbl small{font-size:.56rem;font-weight:500;text-transform:none;letter-spacing:0;}
   .pt-base{line-height:1.7;}
   .ctit{flex-wrap:wrap;}
   .ctit small{flex-basis:100%;}
@@ -2005,6 +2059,7 @@ select.cs-native{display:none!important;}
     <button class="ni" onclick="nav('contas')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Carteiras / Bancos</button>
     <button class="ni" onclick="nav('lanc')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Lançamentos</button>
     <button class="ni" onclick="nav('proj')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Projeção Futura</button>
+    <button class="ni" onclick="nav('plan')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Planejamento</button>
     <button class="ni" onclick="nav('agenda')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Agenda do Mês</button>
     <button class="ni" onclick="nav('reserva')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Reserva / Metas</button>
     <button class="ni" onclick="nav('hist')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span>Histórico</span></button>
@@ -2271,43 +2326,54 @@ select.cs-native{display:none!important;}
       <div id="simLabel" style="display:none;align-items:center;gap:.4rem;font-size:.78rem;font-weight:700;color:#111;background:#f5c518;padding:.4rem .75rem;border-radius:8px;margin-bottom:.75rem;">⚡ Simulação ativa</div>
       <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
         <div class="pt-wrap">
-          <div class="pt-head"><span>Mês</span><span>Barra</span><span>Sobra do mês</span><span>Saldo previsto</span><span></span></div>
           <div id="projTL"></div>
         </div>
       </div>
     </div>
-    <div class="card"><div class="ctit">Evolução do saldo acumulado</div><div style="overflow-x:auto;-webkit-overflow-scrolling:touch;"><div style="min-width:500px;max-width:800px;height:220px;position:relative;"><canvas id="cProj"></canvas></div></div></div>
-    <div class="simbox">
-      <div class="simtit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Simulador "E se?" — veja como um valor extra por mês afeta sua projeção</div>
-      <div class="ttog sim-tipo-ttog" style="margin-bottom:.75rem;">
-        <button id="simBtnEntrada" class="sim-entrada-on" onclick="setSimTipo('entrada')">↑ Entrada extra</button>
-        <button id="simBtnGasto" onclick="setSimTipo('gasto')">↓ Gasto extra</button>
+    <div class="card"><div class="ctit">Evolução do saldo disponível <small>sem reserva</small></div><div style="overflow-x:auto;-webkit-overflow-scrolling:touch;"><div style="min-width:500px;max-width:800px;height:220px;position:relative;"><canvas id="cProj"></canvas></div></div></div>
+    <div class="simbox" id="projSimBox">
+      <div class="simtit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Simulações "E se?"</div>
+      <div id="projSimResumo" style="font-size:.82rem;color:var(--muted);line-height:1.5;"></div>
+      <div style="margin-top:.75rem;"><button class="btn bp" onclick="nav('plan')" style="height:36px;padding:0 1rem;">Abrir Planejamento ›</button></div>
+    </div>
+</div>
+</section>
+
+<!-- PLANEJAMENTO (simulações de entradas e saídas futuras) -->
+<section class="page" id="p-plan">
+  <div class="phdr"><h1>Planejamento</h1><p>Anote compras e entradas futuras e simule o efeito no mês</p></div>
+  <div class="pcnt">
+    <div class="card">
+      <div class="ctit">Novo item</div>
+      <div class="ttog ttog-tipo plan-tog" style="margin-bottom:.75rem;">
+        <button id="planBtnE" type="button" onclick="planSetTipo('e')">↑ Entrada</button>
+        <button id="planBtnS" type="button" class="os" onclick="planSetTipo('s')">↓ Saída</button>
       </div>
-      <div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-bottom:.6rem;">
-        <span style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-right:.2rem;">Começa em</span>
-        <button type="button" class="sim-pill sim-ini" data-ini="atual" onclick="setSimInicio('atual')">Este mês</button>
-        <button type="button" class="sim-pill sim-ini active" data-ini="prox" onclick="setSimInicio('prox')">Próximo mês</button>
+      <div class="plan-form">
+        <div class="fg pf-nome"><label>Descrição</label><input type="text" id="planNome" placeholder="Ex: Cama, 13º salário, Freela…"></div>
+        <div class="fg"><label>Valor (R$)</label><input type="number" id="planValor" placeholder="0,00" step="0.01" min="0"></div>
+        <div class="fg"><label>Mês</label><input type="month" id="planMes"></div>
+        <div class="fg"><label>Repete</label>
+          <div class="pf-rep">
+            <select id="planVezes" onchange="planRepeteChange()">
+              <option value="1">Uma vez</option>
+              <option value="0">Todo mês</option>
+              <option value="n">Por X meses</option>
+            </select>
+            <input type="number" id="planVezesN" min="2" max="120" step="1" value="3" aria-label="Quantos meses" style="display:none;">
+          </div>
+        </div>
+        <div class="fg pf-btn"><label style="visibility:hidden;">.</label><button class="btn bp" onclick="planAdicionar()" style="width:100%;height:40px;">＋ Adicionar</button></div>
       </div>
-      <div id="simFormGrid" class="fgrid" style="grid-template-columns:1fr 1fr;align-items:end;gap:.75rem;flex-wrap:wrap;">
-        <div class="fg"><label>Valor (R$) <span style="text-transform:none;font-weight:400;color:var(--faint);">— a cada mês</span></label><input type="number" id="simValor" placeholder="Ex: 300" step="0.01" oninput="onSimInputChange()" style="height:36px;"></div>
-        <div class="fg"><label>Por quantos meses?</label><input type="number" id="simMeses" placeholder="Ex: 6" min="1" max="24" oninput="onSimInputChange()" style="height:36px;"></div>
+    </div>
+    <div class="card">
+      <div class="plan-nav">
+        <button class="icb" type="button" onclick="planNavMes(-1)" aria-label="Mês anterior">‹</button>
+        <strong id="planMesLbl">—</strong>
+        <button class="icb" type="button" onclick="planNavMes(1)" aria-label="Próximo mês">›</button>
       </div>
-      <div id="simDuracaoPills" style="display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.5rem;">
-        <button type="button" class="sim-pill" data-meses="1" onclick="setSimDuracao(1,this)">Uma vez só</button>
-        <button type="button" class="sim-pill" data-meses="" onclick="setSimDuracao(null,this)">Todo mês</button>
-        <button type="button" class="sim-pill" data-meses="3" onclick="setSimDuracao(3,this)">3 meses</button>
-        <button type="button" class="sim-pill" data-meses="6" onclick="setSimDuracao(6,this)">6 meses</button>
-        <button type="button" class="sim-pill" data-meses="12" onclick="setSimDuracao(12,this)">12 meses</button>
-        <button type="button" class="sim-pill" data-meses="24" onclick="setSimDuracao(24,this)">24 meses</button>
-      </div>
-      <div id="simResultado" style="display:none;margin-top:.875rem;padding:.75rem .875rem;border-radius:10px;background:var(--surf2);">
-        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);">Impacto em 12 meses</div>
-        <div id="simResumoTxt" style="font-size:.78rem;color:var(--muted);margin-top:.15rem;"></div>
-        <div id="simImpactoVal" style="font-family:'Sora',sans-serif;font-size:1.2rem;font-weight:800;margin-top:.3rem;"></div>
-      </div>
-      <div id="simFormBtns" style="margin-top:.75rem;display:flex;gap:.75rem;flex-wrap:wrap;align-items:center;">
-        <button class="btn" onclick="limparSimulacao()" style="height:36px;padding:0 1rem;background:var(--surf2);color:var(--muted);border:1px solid var(--border);">✕ Limpar simulação</button>
-      </div>
+      <div id="planLista"></div>
+      <div id="planRodape"></div>
     </div>
   </div>
 </section>
@@ -2550,6 +2616,7 @@ select.cs-native{display:none!important;}
       <button class="nbs-item" data-page="lanc" onclick="navFromSheet('lanc')"><i class="ti ti-plus"></i><span>Lançar</span></button>
       <button class="nbs-item" data-page="agenda" onclick="navFromSheet('agenda')"><i class="ti ti-calendar"></i><span>Agenda</span></button>
       <button class="nbs-item" data-page="proj" onclick="navFromSheet('proj')"><i class="ti ti-chart-line"></i><span>Projeção</span></button>
+      <button class="nbs-item" data-page="plan" onclick="navFromSheet('plan')"><i class="ti ti-checklist"></i><span>Planejamento</span></button>
       <button class="nbs-item" data-page="hist" onclick="navFromSheet('hist')"><i class="ti ti-history"></i><span>Histórico</span></button>
       <button class="nbs-item" data-page="reserva" onclick="navFromSheet('reserva')"><i class="ti ti-shield"></i><span>Reserva / Metas</span></button>
       <button class="nbs-item" onclick="logout()"><i class="ti ti-logout"></i><span>Sair</span></button>
@@ -2695,6 +2762,15 @@ function initFirestore(){
       renderOrc();
     }, function(e){setSyncStatus("error");console.error(e);});
   // Listen metas (reservas) — sincroniza entre dispositivos
+  // Listen planejamento (simulações de entradas/saídas futuras)
+  db.collection("users").doc(currentUser.uid).collection("planejamento")
+    .onSnapshot(function(snap){
+      planItens=[];
+      snap.forEach(function(d){planItens.push(Object.assign({id:d.id},d.data()));});
+      try{ localStorage.setItem('plan_v1', JSON.stringify(planItens)); }catch(e){}
+      if(typeof renderPlan==='function') renderPlan();
+      if(typeof renderProj==='function') renderProj();
+    }, function(e){console.error("Planejamento: verifique as regras do Firestore para users/{uid}/planejamento",e);});
   unsubMetas=db.collection("users").doc(currentUser.uid).collection("metas")
     .onSnapshot(function(snap){
       metas=[];
@@ -3093,6 +3169,7 @@ var NAV_PAGES={
   lanc:{label:"Lançar"},
   agenda:{label:"Agenda"},
   proj:{label:"Projeção"},
+  plan:{label:"Planejamento"},
   hist:{label:"Histórico"},
   reserva:{label:"Reserva / Metas"}
 };
@@ -3102,6 +3179,7 @@ var MTB_TITLES={
   lanc:"Lançamentos",
   agenda:"Agenda do Mês",
   proj:"Projeção Futura",
+  plan:"Planejamento",
   hist:"Histórico",
   reserva:"Reserva / Metas"
 };
@@ -3140,7 +3218,7 @@ function toggleNavSheet(){
 // Barra flutuante (pílula) do celular: 4 atalhos + "Mais" (abre o bottom sheet).
 // Se a página atual estiver só no "Mais", ele fica ativo mostrando o nome dela.
 var PILL_MAIN=['dash','agenda','lanc','contas'];
-var PILL_MAIS_NOME={proj:'Projeção',hist:'Histórico',reserva:'Reserva'};
+var PILL_MAIS_NOME={proj:'Projeção',plan:'Planejamento',hist:'Histórico',reserva:'Reserva'};
 function updatePillNav(v){
   var noMais=PILL_MAIN.indexOf(v)===-1;
   document.querySelectorAll('#pillNav .pn-it').forEach(function(b){
@@ -5331,65 +5409,41 @@ function agendaNav(dir){
 }
 
 // Projeção mês a mês usando a MESMA regra da Agenda (agendaItensMes + agendaResumo):
-// - Sobra do mês = entradas do mês − saídas do mês (igual à "Sobra" da Agenda).
-// - Saldo previsto no fim do mês atual = saldo de hoje nas contas + o que ainda vai entrar − o que ainda vai sair.
-// - Meses seguintes: saldo anterior + sobra daquele mês (cada parcela só conta no mês em que cai).
-// duracaoMeses limita quantos meses futuros recebem o extra do simulador (null = todos).
-function getProj(extraEntrada,extraGasto,duracaoMeses){
-  var temExtra=!!(extraEntrada||extraGasto);
-  var saldoHoje=saldoTotal();
-  var res=[], acc=saldoHoje;
+// - Sobra do mês = entradas do mês − saídas do mês (igual à "Sobra" da Agenda); cada parcela só conta no mês em que cai.
+// Conta "guardada" = Reserva/Investimento ou ligada a uma Reserva/Meta. O resto é dinheiro do dia a dia (disponível).
+function contaGuardada(c){
+  if(!c)return false;
+  if(c.tipo==='reserva'||c.tipo==='invest')return true;
+  return typeof metas!=='undefined'&&metas.some(function(o){return o.conta===c.id;});
+}
+function saldoDisponivel(){return contas.filter(function(c){return !contaGuardada(c);}).reduce(function(s,c){return s+saldoConta(c.id);},0);}
+function saldoGuardado(){return contas.filter(contaGuardada).reduce(function(s,c){return s+saldoConta(c.id);},0);}
+// Projeção separada em DISPONÍVEL (o que dá pra gastar) e GUARDADO (reservas/metas):
+// - Disponível no fim do mês atual = disponível hoje + o que ainda entra − o que ainda sai − aportes programados ainda não feitos.
+// - Meses seguintes: disponível anterior + sobra do mês − aportes programados (lembretes de Reserva/Meta).
+// - Guardado: guardado de hoje + aportes programados (rendimento não entra na projeção).
+// usarSim=true soma os itens do Planejamento com "Simular" ligado (entradas/saídas simuladas).
+function getProj(usarSim){
+  var saldoHoje=saldoDisponivel(), guardHoje=saldoGuardado();
+  var res=[], acc=saldoHoje, guard=guardHoje;
   for(var i=0;i<12;i++){
     var m=cM+i,y=cY;while(m>11){m-=12;y++;}
-    var r=agendaResumo(agendaItensMes(m,y,{projetar:i>0}));
-    var ini=(typeof SIM_INICIO!=='undefined'&&SIM_INICIO==='atual')?0:1; // simulação começa neste mês ou no próximo
-    var dentro=temExtra&&i>=ini&&((duracaoMeses==null)||(i<ini+duracaoMeses));
-    var extra=dentro?(extraEntrada||0)-(extraGasto||0):0;
+    var itens=agendaItensMes(m,y,{projetar:i>0});
+    var r=agendaResumo(itens);
+    // aportes programados: no mês atual só os que ainda não foram feitos (os feitos já estão nos saldos)
+    var aporte=itens.filter(function(x){return x.tipo==='aporte'&&!x.pulado&&!(x.aportado>0);}).reduce(function(s,x){return s+(x.sug||0);},0);
+    var sim=usarSim?planSimMes(y+'-'+('0'+(m+1)).slice(-2)):{ent:0,sai:0,itens:[]};
+    var dentro=sim.itens.length>0;
+    var extra=sim.ent-sim.sai;
     var sal=r.sobra+extra;
     var accAnt=acc;
-    if(i===0) acc=saldoHoje+r.entradasPend-r.saidasPend+extra;
-    else acc+=sal;
-    res.push({m:m,y:y,lbl:MN[m]+'/'+String(y).slice(2),sal:sal,acc:acc,accAnt:i>0?accAnt:null,proj:i>0,simAplicada:dentro,resumo:r,extra:extra,saldoHoje:i===0?saldoHoje:null});
+    if(i===0) acc=saldoHoje+r.entradasPend-r.saidasPend+extra-aporte;
+    else acc+=sal-aporte;
+    guard+=aporte;
+    res.push({m:m,y:y,lbl:MN[m]+'/'+String(y).slice(2),sal:sal,acc:acc,accAnt:i>0?accAnt:null,proj:i>0,simAplicada:dentro,resumo:r,extra:extra,
+      saldoHoje:i===0?saldoHoje:null,aporte:aporte,guard:guard,guardHoje:i===0?guardHoje:null,simItens:sim.itens});
   }
   return res;
-}
-var SIM_TIPO='entrada'; // 'entrada' | 'gasto'
-var SIM_DURACAO=null;   // null = todo mês (resto da janela de 12 meses) ou nº de meses (1 = uma vez só)
-var SIM_INICIO='prox';  // 'atual' = começa neste mês · 'prox' = começa no próximo
-function setSimInicio(v){
-  SIM_INICIO=v;
-  document.querySelectorAll('.sim-ini').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-ini')===v);});
-  renderProj();
-}
-
-function setSimTipo(tipo){
-  SIM_TIPO=tipo;
-  var be=document.getElementById('simBtnEntrada'),bg=document.getElementById('simBtnGasto');
-  if(be)be.className=tipo==='entrada'?'sim-entrada-on':'';
-  if(bg)bg.className=tipo==='gasto'?'sim-gasto-on':'';
-  renderProj();
-}
-function syncSimDuracaoPills(){
-  document.querySelectorAll('.sim-pill[data-meses]').forEach(function(b){
-    var raw=b.getAttribute('data-meses');
-    var isMatch=(raw===''&&SIM_DURACAO==null)||(raw!==''&&parseInt(raw)===SIM_DURACAO);
-    b.classList.toggle('active',isMatch);
-  });
-}
-function setSimDuracao(n,btn){
-  SIM_DURACAO=n;
-  var mEl=document.getElementById('simMeses');
-  if(mEl)mEl.value=n==null?'':n;
-  syncSimDuracaoPills();
-  renderProj();
-}
-function onSimInputChange(){
-  var mEl=document.getElementById('simMeses');
-  var raw=mEl?mEl.value:'';
-  if(raw===''){SIM_DURACAO=null;}
-  else{var v=parseInt(raw);if(!isNaN(v)&&v>0)SIM_DURACAO=v;}
-  syncSimDuracaoPills();
-  renderProj();
 }
 
 // Detalhe de um mês da Projeção: de onde vem cada número
@@ -5403,65 +5457,61 @@ function projDetalheHtml(p,atual){
     return '<div class="ptd-it"><span>'+(it.day?'<span class="ptd-dia">dia '+('0'+it.day).slice(-2)+'</span>':'')+_oe(it.desc)+tag+'</span><span class="'+(sinal>0?'ap':'an')+'">'+(sinal>0?'+':'−')+fmt(it.v)+'</span></div>';
   };
   var ord=function(a,b){return (a.day||0)-(b.day||0);};
+  // Itens simulados do Planejamento: nome em amarelo, valor verde (entrada) ou vermelho (saída)
+  var sims=p.simItens||[];
+  var simE=sims.filter(function(x){return x.tipo==='e';}), simS=sims.filter(function(x){return x.tipo==='s';});
+  var linhaSim=function(x,sinal){
+    return '<div class="ptd-it ptd-sim"><span><span class="ptd-dia">simul.</span><span class="ptd-simnm">'+_oe(x.nome)+'</span></span><span class="'+(sinal>0?'ap':'an')+'">'+(sinal>0?'+':'−')+fmt(x.v)+'</span></div>';
+  };
+  var totE=r.entradas+simE.reduce(function(s,x){return s+x.v;},0), totS=r.saidas+simS.reduce(function(s,x){return s+x.v;},0);
   var h='<div class="ptd">';
-  h+='<div class="ptd-col"><div class="ptd-tit">Entradas <span class="ap">+'+fmt(r.entradas)+'</span></div>';
-  h+=r.itensEntrada.length?r.itensEntrada.slice().sort(ord).map(function(it){return linha(it,1);}).join(''):'<div class="ptd-vazio">Nenhuma entrada programada</div>';
+  h+='<div class="ptd-col"><div class="ptd-tit">Entradas <span class="ap">+'+fmt(totE)+'</span></div>';
+  h+=(r.itensEntrada.length||simE.length)?r.itensEntrada.slice().sort(ord).map(function(it){return linha(it,1);}).join('')+simE.map(function(x){return linhaSim(x,1);}).join(''):'<div class="ptd-vazio">Nenhuma entrada programada</div>';
   h+='</div>';
-  h+='<div class="ptd-col"><div class="ptd-tit">Saídas <span class="an">−'+fmt(r.saidas)+'</span></div>';
-  h+=r.itensSaida.length?r.itensSaida.slice().sort(ord).map(function(it){return linha(it,-1);}).join(''):'<div class="ptd-vazio">Nenhuma saída programada</div>';
+  h+='<div class="ptd-col"><div class="ptd-tit">Saídas <span class="an">−'+fmt(totS)+'</span></div>';
+  h+=(r.itensSaida.length||simS.length)?r.itensSaida.slice().sort(ord).map(function(it){return linha(it,-1);}).join('')+simS.map(function(x){return linhaSim(x,-1);}).join(''):'<div class="ptd-vazio">Nenhuma saída programada</div>';
   h+='</div>';
-  h+='<div class="ptd-conta">Sobra do mês: '+fmt(r.entradas)+' − '+fmt(r.saidas)+(p.extra?(p.extra>0?' + ':' − ')+fmt(Math.abs(p.extra))+' (simulação)':'')+' = <strong>'+fmt(p.sal)+'</strong>'+
-     (atual?'<br>Mesmo valor da "Sobra" na Agenda do Mês.':'')+'</div>';
+  h+='<div class="ptd-conta">Sobra do mês: '+fmt(totE)+' − '+fmt(totS)+' = <strong>'+fmt(p.sal)+'</strong>'+
+     (sims.length?'<br><span class="ptd-simnm">Nomes em amarelo</span> = simulação do Planejamento.':'')+
+     (atual&&!sims.length?'<br>Mesmo valor da "Sobra" na Agenda do Mês.':'')+'</div>';
   // De onde vem o "Saldo previsto"
   var mesAnt=MF[(p.m+11)%12], mesAt=MF[p.m];
   h+='<div class="ptd-saldo">';
   if(atual){
-    h+='<div><span>Saldo hoje nas contas</span><span>'+fmt(p.saldoHoje)+'</span></div>'+
+    h+='<div><span>Disponível hoje (sem reserva)</span><span>'+fmt(p.saldoHoje)+'</span></div>'+
        '<div><span>+ Ainda vai entrar em '+mesAt+'</span><span class="ap">+'+fmt(r.entradasPend)+'</span></div>'+
        '<div><span>− Ainda vai sair em '+mesAt+'</span><span class="an">−'+fmt(r.saidasPend)+'</span></div>'+
        (p.extra?'<div><span>'+(p.extra>0?'+':'−')+' Simulação</span><span class="'+(p.extra>0?'ap':'an')+'">'+(p.extra>0?'+':'−')+fmt(Math.abs(p.extra))+'</span></div>':'');
   } else {
-    h+='<div><span>Saldo previsto no fim de '+mesAnt+'</span><span>'+fmt(p.accAnt)+'</span></div>'+
+    h+='<div><span>Disponível no fim de '+mesAnt+'</span><span>'+fmt(p.accAnt)+'</span></div>'+
        '<div><span>'+(p.sal>=0?'+':'−')+' Sobra de '+mesAt+'</span><span class="'+(p.sal>=0?'ap':'an')+'">'+(p.sal>=0?'+':'−')+fmt(Math.abs(p.sal))+'</span></div>';
   }
-  h+='<div class="tot"><span>= Saldo previsto no fim de '+mesAt+'</span><span>'+fmt(p.acc)+'</span></div></div>';
+  if(p.aporte) h+='<div><span>− Vai para reservas/metas</span><span style="color:#60a5fa">−'+fmt(p.aporte)+'</span></div>';
+  h+='<div class="tot"><span>= Disponível no fim de '+mesAt+'</span><span>'+fmt(p.acc)+'</span></div>';
+  h+='<div class="ptd-guard"><span>🛡️ Guardado no fim de '+mesAt+'</span><span>'+fmt(p.guard)+'</span></div></div>';
   h+='</div>';
   return h;
 }
 
 function renderProj(){try{
-  var valEl=document.getElementById('simValor');
-  var valor=valEl?(parseFloat(valEl.value)||0):0;
-  var simAtivo=valor>0;
-  var extraEntrada=simAtivo&&SIM_TIPO==='entrada'?valor:0;
-  var extraGasto=simAtivo&&SIM_TIPO==='gasto'?valor:0;
-
-  var projReal=getProj(0,0,null);
-  var projSim=simAtivo?getProj(extraEntrada,extraGasto,SIM_DURACAO):null;
+  var projReal=getProj(false);
+  var projSim=getProj(true);
+  var simAtivo=projSim.some(function(p){return p.simItens&&p.simItens.length;});
   var projTabela=simAtivo?projSim:projReal;
 
   var lbl=document.getElementById('simLabel');
-  if(lbl)lbl.style.display=simAtivo?'flex':'none';
+  if(lbl){lbl.style.display=simAtivo?'flex':'none';lbl.textContent='⚡ Simulação ativa — itens do Planejamento incluídos (nomes em amarelo)';}
 
-  var resBox=document.getElementById('simResultado');
-  if(resBox){
-    if(simAtivo){
-      resBox.style.display='block';
-      var ultimoReal=projReal[projReal.length-1].acc;
-      var ultimoSim=projSim[projSim.length-1].acc;
-      var impacto=ultimoSim-ultimoReal;
-      var _iniTxt=SIM_INICIO==='atual'?('a partir de '+MF[cM]):('a partir de '+MF[(cM+1)%12]);
-      var duracaoTxt=SIM_DURACAO===1?('uma vez só, em '+(SIM_INICIO==='atual'?MF[cM]:MF[(cM+1)%12])):SIM_DURACAO==null?('todo mês, '+_iniTxt):('por '+SIM_DURACAO+' meses, '+_iniTxt);
-      var sinalTxt=SIM_TIPO==='entrada'?'+':'−';
-      var resumoEl=document.getElementById('simResumoTxt');
-      if(resumoEl)resumoEl.textContent=sinalTxt+'R$ '+valor.toLocaleString('pt-BR',{minimumFractionDigits:2})+(SIM_DURACAO===1?' ':'/mês ')+duracaoTxt;
-      var impactoEl=document.getElementById('simImpactoVal');
-      if(impactoEl){
-        impactoEl.textContent=(impacto>=0?'+':'−')+'R$ '+Math.abs(impacto).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+' no acumulado';
-        impactoEl.style.color=SIM_TIPO==='entrada'?'var(--green)':'var(--red)';
-      }
+  // Resumo das simulações (quadro "Simulações E se?")
+  var resumo=document.getElementById('projSimResumo');
+  if(resumo){
+    var ativos=(typeof planItens!=='undefined'?planItens:[]).filter(function(x){return x.ativo;});
+    if(!ativos.length){
+      resumo.innerHTML='Nenhuma simulação ligada. Cadastre entradas e saídas na aba <strong>Planejamento</strong> e ligue <strong>Simular</strong> para ver o efeito aqui.';
     } else {
-      resBox.style.display='none';
+      var imp=projSim[projSim.length-1].acc-projReal[projReal.length-1].acc;
+      resumo.innerHTML=ativos.length+' '+(ativos.length>1?'itens simulados':'item simulado')+' · impacto em 12 meses: '+
+        '<strong style="color:'+(imp>=0?'var(--green)':'var(--red)')+'">'+(imp>=0?'+':'−')+fmt(Math.abs(imp))+'</strong>';
     }
   }
 
@@ -5469,19 +5519,23 @@ function renderProj(){try{
   var h="";
   var p0=projTabela[0];
   h+='<div class="pt-base">'+
-     '<div><span>💼 Saldo hoje nas contas</span><strong>'+fmt(p0.saldoHoje)+'</strong></div>'+
+     '<div><span>💼 Disponível hoje <small class="pt-base-nm">sem reserva</small></span><strong>'+fmt(p0.saldoHoje)+'</strong></div>'+
      '<div><span>Vai entrar em '+MF[p0.m]+'</span><strong style="color:var(--green)">+'+fmt(p0.resumo.entradasPend)+'</strong></div>'+
      '<div><span>Vai sair em '+MF[p0.m]+'</span><strong style="color:var(--red)">−'+fmt(p0.resumo.saidasPend)+'</strong></div>'+
+     (p0.aporte?'<div><span>Vai para reservas/metas</span><strong style="color:#60a5fa">−'+fmt(p0.aporte)+'</strong></div>':'')+
      (p0.extra?'<div><span>⚡ Simulação</span><strong style="color:'+(p0.extra>0?'var(--green)':'var(--red)')+'">'+(p0.extra>0?'+':'−')+fmt(Math.abs(p0.extra))+'</strong></div>':'')+
-     '<div class="tot"><span>= Fim de '+MF[p0.m]+'</span><strong>'+fmt(p0.acc)+'</strong></div></div>';
+     '<div class="tot"><span>= Fim de '+MF[p0.m]+'</span><strong>'+fmt(p0.acc)+'</strong></div>'+
+     '<div class="pt-base-guard"><span>🛡️ Guardado (reservas e metas)</span><strong>'+fmt(p0.guard)+'</strong></div></div>';
+  // Cabeçalho das colunas logo acima do 1º mês (no celular cada cartão tem o próprio rótulo)
+  h+='<div class="pt-head"><span>Mês</span><span></span><span class="pt-h2">Provável sobra do mês<small>contas fixas</small></span><span class="pt-h2">Saldo final do mês<small>disponível, sem reserva</small></span><span></span></div>';
   for(var i=0;i<projTabela.length;i++){
     var p=projTabela[i];var pct=Math.min(100,Math.abs(p.acc)/maxAbs*100);var cor=p.acc>=0?"#437a22":"#c0392b";
     var aberto=!!_projAberto[p.lbl];
     h+='<div class="pt-row pt-click'+(p.acc<0?" neg":"")+(i===0?" atual":"")+'" onclick="projToggle(\''+p.lbl+'\')">'+
        '<div class="pt-mes">'+p.lbl+(p.proj?"*":"")+'</div>'+
        '<div class="pt-bw"><div class="pt-bf" style="width:'+pct+'%;background:'+cor+';"></div></div>'+
-       '<div class="pt-v '+(p.sal>=0?"ap":"an")+'">'+(p.sal>=0?'+':'−')+fmt(Math.abs(p.sal))+'</div>'+
-       '<div class="pt-v '+(p.acc>=0?"ap":"an")+'">'+fmt(p.acc)+'</div>'+
+       '<div class="pt-v '+(p.sal>=0?"ap":"an")+'"><span class="pt-mlbl esq">Provável sobra do mês<small>contas fixas</small></span>'+(p.sal>=0?'+':'−')+fmt(Math.abs(p.sal))+'</div>'+
+       '<div class="pt-v '+(p.acc>=0?"ap":"an")+'"><span class="pt-mlbl">Saldo final do mês<small>disponível, sem reserva</small></span>'+fmt(p.acc)+'</div>'+
        '<div class="pt-d">'+(aberto?'▴ fechar':'▾ detalhes')+'</div></div>';
     if(aberto) h+=projDetalheHtml(p,i===0);
   }
@@ -5492,28 +5546,180 @@ function renderProj(){try{
   var labels=projReal.map(function(p){return p.lbl;});
   var datasets;
   if(simAtivo){
-    var simColor=SIM_TIPO==='entrada'?'#22c55e':'#e53935';
+    var simColor='#eab308'; // amarelo = simulação
     datasets=[
       {label:"Sem simulação",data:projReal.map(function(p){return p.acc;}),borderColor:gc('--muted')||'#999',borderDash:[6,4],borderWidth:2,pointRadius:2,pointHoverRadius:5,fill:false,tension:.35},
       {label:"Com simulação",data:projSim.map(function(p){return p.acc;}),borderColor:simColor,backgroundColor:hexToRgba(simColor,.08),borderWidth:2.5,
         pointRadius:projSim.map(function(p){return p.simAplicada?5:3;}),
-        pointBackgroundColor:projSim.map(function(p){return p.simAplicada?"#eab308":simColor;}),
+        pointBackgroundColor:projSim.map(function(p){return p.simAplicada?"#eab308":"#a16207";}),
         pointBorderColor:"#fff",pointBorderWidth:2,pointHoverRadius:7,fill:true,tension:.35}
     ];
   } else {
-    datasets=[{label:"Saldo acumulado",data:projReal.map(function(p){return p.acc;}),borderColor:"#01696f",backgroundColor:"rgba(1,105,111,.07)",borderWidth:2.5,pointRadius:5,pointHoverRadius:8,pointBorderWidth:2,pointBorderColor:"#fff",pointBackgroundColor:projReal.map(function(p){return p.acc>=0?"#437a22":"#c0392b";}),fill:true,tension:.35}];
+    datasets=[{label:"Disponível",data:projReal.map(function(p){return p.acc;}),borderColor:"#01696f",backgroundColor:"rgba(1,105,111,.07)",borderWidth:2.5,pointRadius:5,pointHoverRadius:8,pointBorderWidth:2,pointBorderColor:"#fff",pointBackgroundColor:projReal.map(function(p){return p.acc>=0?"#437a22":"#c0392b";}),fill:true,tension:.35}];
   }
   CH.proj=new Chart(ctx,{type:"line",data:{labels:labels,datasets:datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:simAtivo,labels:{color:gc("--muted"),font:{size:10}}},tooltip:{callbacks:{label:function(c){return c.dataset.label+": "+fmt(c.raw);}}}},scales:{x:{ticks:{color:gc("--muted"),font:{size:9},maxRotation:45},grid:{display:false}},y:{ticks:{color:gc("--muted"),font:{size:9},callback:function(v){return "R$"+Number(v).toLocaleString("pt-BR");}},grid:{color:gc("--div")}}}}});
 }catch(e){console.warn("proj err",e);}}
-function limparSimulacao(){
-  var vEl=document.getElementById('simValor'),mEl=document.getElementById('simMeses');
-  if(vEl)vEl.value='';
-  if(mEl)mEl.value='';
-  SIM_DURACAO=null;
-  syncSimDuracaoPills();
-  renderProj();
-}
 
+// ══════════════════════════════════════════════════════════════════
+// PLANEJAMENTO — entradas/saídas futuras que você anota e liga "Simular"
+// Item: {id, tipo:'e'|'s', nome, v, mes:'YYYY-MM', vezes:1|n|0 (0 = todo mês), ativo:bool, feitos:['YYYY-MM'], criado}
+// Itens com "Simular" ligado entram na Projeção Futura (nomes em amarelo) e no rodapé desta aba.
+// ══════════════════════════════════════════════════════════════════
+var planItens=[];
+try{ planItens=JSON.parse(localStorage.getItem('plan_v1')||'[]'); }catch(e){ planItens=[]; }
+var _planTipo='s', _planYm=null, _planBaixa=null;
+function _planCache(){ try{ localStorage.setItem('plan_v1', JSON.stringify(planItens)); }catch(e){} }
+function savePlanItem(x){
+  _planCache();
+  if(!currentUser||!db||!x)return;
+  setSyncStatus("syncing");
+  userDoc().collection("planejamento").doc(String(x.id)).set(x)
+    .then(function(){setSyncStatus("ok");})
+    .catch(function(e){setSyncStatus("error");console.error("Falha ao salvar item do planejamento (verifique as regras do Firestore para users/{uid}/planejamento):",e);});
+}
+function deletePlanItemFS(id){
+  _planCache();
+  if(!currentUser||!db)return;
+  userDoc().collection("planejamento").doc(String(id)).delete().catch(function(e){console.error(e);});
+}
+function _ymIdx(ym){return parseInt(ym.slice(0,4))*12+parseInt(ym.slice(5,7))-1;}
+function _ymDe(idx){var y=Math.floor(idx/12),m=idx%12;return y+'-'+('0'+(m+1)).slice(-2);}
+function _ymLabel(ym,curto){var i=_ymIdx(ym);return (curto?MN:MF)[i%12]+(curto?'/'+String(Math.floor(i/12)).slice(2):' '+Math.floor(i/12));}
+// O item acontece no mês ym?
+function planOcorre(x, ym){
+  var a=_ymIdx(x.mes), b=_ymIdx(ym);
+  if(b<a)return false;
+  if(x.vezes>0&&b>a+x.vezes-1)return false;
+  return !(x.feitos&&x.feitos.indexOf(ym)!==-1);
+}
+// Simulações ligadas de um mês (usado pela Projeção)
+function planSimMes(ym){
+  var itens=planItens.filter(function(x){return x.ativo&&planOcorre(x,ym);})
+    .map(function(x){return {id:x.id,nome:x.nome,v:x.v,tipo:x.tipo};});
+  var ent=itens.filter(function(x){return x.tipo==='e';}).reduce(function(s,x){return s+x.v;},0);
+  var sai=itens.filter(function(x){return x.tipo==='s';}).reduce(function(s,x){return s+x.v;},0);
+  return {ent:ent,sai:sai,itens:itens};
+}
+function planSetTipo(t){
+  _planTipo=t;
+  document.getElementById('planBtnE').className=t==='e'?'oe':'';
+  document.getElementById('planBtnS').className=t==='s'?'os':'';
+}
+function planAdicionar(){
+  var nome=document.getElementById('planNome').value.trim();
+  var v=Math.round((parseFloat(document.getElementById('planValor').value)||0)*100)/100;
+  var mes=document.getElementById('planMes').value||_planYm;
+  var rep=document.getElementById('planVezes').value;
+  var vezes=rep==='n'?parseInt(document.getElementById('planVezesN').value):parseInt(rep);
+  if(!nome){alert('Dê um nome ao item.');return;}
+  if(rep==='n'&&!(vezes>=2)){alert('Informe por quantos meses (2 ou mais).');return;}
+  if(!(v>0)){alert('Informe o valor.');return;}
+  var x={id:'plan_'+Date.now(),tipo:_planTipo,nome:nome,v:v,mes:mes,vezes:isNaN(vezes)?1:vezes,ativo:true,feitos:[],criado:_hojeLocal()};
+  planItens.push(x); savePlanItem(x);
+  document.getElementById('planNome').value=''; document.getElementById('planValor').value='';
+  _planYm=mes;
+  renderPlan(); renderProj();
+}
+// "Repete": Uma vez / Todo mês / Por X meses (mostra o campo para digitar quantos meses)
+function planRepeteChange(){
+  var n=document.getElementById('planVezesN');
+  if(n) n.style.display=document.getElementById('planVezes').value==='n'?'':'none';
+}
+function planNavMes(d){ _planYm=_ymDe(_ymIdx(_planYm)+d); _planBaixa=null; renderPlan(); }
+function planToggle(id){
+  var x=planItens.find(function(i){return i.id===id;}); if(!x)return;
+  x.ativo=!x.ativo; savePlanItem(x); renderPlan(); renderProj();
+}
+// Adiar: joga o item (a partir deste mês) para o mês seguinte
+function planAdiar(id){
+  var x=planItens.find(function(i){return i.id===id;}); if(!x)return;
+  if(x.vezes===1||_ymIdx(x.mes)===_ymIdx(_planYm)){ x.mes=_ymDe(_ymIdx(x.mes)+1); }
+  else { // recorrente já em andamento: pula só este mês
+    if(!x.feitos)x.feitos=[]; x.feitos.push(_planYm);
+    var novo=Object.assign({},x,{id:'plan_'+Date.now(),mes:_ymDe(_ymIdx(_planYm)+1),vezes:1,feitos:[]});
+    planItens.push(novo); savePlanItem(novo);
+  }
+  savePlanItem(x); renderPlan(); renderProj();
+}
+function planExcluir(id){
+  var x=planItens.find(function(i){return i.id===id;}); if(!x)return;
+  if(!confirm('Excluir "'+x.nome+'" do planejamento?'))return;
+  planItens=planItens.filter(function(i){return i.id!==id;}); deletePlanItemFS(id);
+  renderPlan(); renderProj();
+}
+// Comprei / Recebi: vira lançamento de verdade (com data, conta e valor reais) e sai do planejamento
+function planAbrirBaixa(id){ _planBaixa=(_planBaixa===id)?null:id; renderPlan(); }
+function planConfirmarBaixa(id){
+  var x=planItens.find(function(i){return i.id===id;}); if(!x)return;
+  var dt=document.getElementById('planBxDt').value||_hojeLocal();
+  var conta=document.getElementById('planBxConta').value||'';
+  var cat=document.getElementById('planBxCat').value||(x.tipo==='e'?'Renda':'Outros');
+  var v=Math.round((parseFloat(document.getElementById('planBxVal').value)||x.v)*100)/100;
+  var l={id:String(Date.now()+Math.random()),desc:x.nome,v:v,cat:cat,t:x.tipo,dt:dt,rec:false,conta:conta,origemPlanId:x.id};
+  lancamentos.push(l); saveLanc(l);
+  if(x.vezes===1){ planItens=planItens.filter(function(i){return i.id!==id;}); deletePlanItemFS(id); }
+  else { if(!x.feitos)x.feitos=[]; x.feitos.push(_planYm); savePlanItem(x); }
+  _planBaixa=null;
+  render();
+}
+function _planRepeteTxt(x){
+  if(x.vezes===1)return 'uma vez';
+  if(x.vezes===0)return 'todo mês desde '+_ymLabel(x.mes,true);
+  return x.vezes+'× · '+_ymLabel(x.mes,true)+' a '+_ymLabel(_ymDe(_ymIdx(x.mes)+x.vezes-1),true);
+}
+function renderPlan(){
+  var lista=document.getElementById('planLista'); if(!lista)return;
+  var hoje=_hojeLocal().slice(0,7);
+  if(!_planYm) _planYm=cY+'-'+('0'+(cM+1)).slice(-2);
+  var inp=document.getElementById('planMes'); if(inp&&!inp.value) inp.value=_planYm;
+  var ym=_planYm, mi=_ymIdx(ym);
+  document.getElementById('planMesLbl').textContent=_ymLabel(ym);
+  var doMes=planItens.filter(function(x){return planOcorre(x,ym);})
+    .sort(function(a,b){return (a.tipo===b.tipo?0:a.tipo==='e'?-1:1)||(b.v-a.v);});
+  var h='';
+  if(!doMes.length){
+    h='<div class="plan-vazio">Nada planejado para '+_ymLabel(ym)+'.<br>Use "Novo item" acima para anotar uma compra ou uma entrada.</div>';
+  } else {
+    var contaOpts=contas.map(function(c){return '<option value="'+c.id+'">'+_oe(c.nome)+'</option>';}).join('');
+    doMes.forEach(function(x){
+      var e=x.tipo==='e';
+      h+='<div class="plan-it'+(x.ativo?' on':'')+'">'+
+        '<span class="plan-seta '+(e?'ap':'an')+'">'+(e?'↑':'↓')+'</span>'+
+        '<div class="plan-info"><div class="plan-nm">'+_oe(x.nome)+'</div><div class="plan-sub">'+_planRepeteTxt(x)+'</div></div>'+
+        '<div class="plan-v '+(e?'ap':'an')+'">'+(e?'+':'−')+fmt(x.v)+'</div>'+
+        '<div class="plan-foot"><label class="plan-sim" title="Simular"><span>Simular</span><button type="button" class="orce-sw'+(x.ativo?' on':'')+'" role="switch" aria-checked="'+x.ativo+'" aria-label="Simular '+_oe(x.nome)+'" onclick="this.classList.toggle(\'on\');setTimeout(function(){planToggle(\''+x.id+'\');},150)"><span></span></button></label>'+
+        '<div class="plan-acts">'+
+          '<button type="button" class="plan-b" onclick="planAdiar(\''+x.id+'\')" title="Jogar para o mês seguinte">Adiar ›</button>'+
+          '<button type="button" class="plan-b ok" onclick="planAbrirBaixa(\''+x.id+'\')" title="Virar lançamento de verdade">✓ '+(e?'Recebi':'Comprei')+'</button>'+
+          '<button type="button" class="btn-gear del" onclick="planExcluir(\''+x.id+'\')" title="Excluir" aria-label="Excluir"><i class="ti ti-trash"></i></button>'+
+        '</div></div></div>'; // fecha plan-acts, plan-foot e plan-it
+      if(_planBaixa===x.id){
+        var catOpts=Object.keys(CATS).map(function(c){return '<option'+(c===(e?'Renda':'Outros')?' selected':'')+'>'+c+'</option>';}).join('');
+        h+='<div class="ag-panel ag-panel-compact plan-bx">'+
+          '<div class="agp-f"><label>Data</label><input type="date" id="planBxDt" value="'+(ym===hoje?_hojeLocal():ym+'-01')+'"></div>'+
+          '<div class="agp-f agp-conta"><label>Conta</label><select id="planBxConta">'+contaOpts+'</select></div>'+
+          '<div class="agp-f agp-conta"><label>Categoria</label><select id="planBxCat">'+catOpts+'</select></div>'+
+          '<div class="agp-f agp-val"><label>Valor (R$)</label><input type="number" step="0.01" min="0" id="planBxVal" value="'+x.v+'"></div>'+
+          '<div class="agp-btns"><button class="agp-ok" style="background:#16a34a;" onclick="planConfirmarBaixa(\''+x.id+'\')"><i class="ti ti-check"></i> Confirmar</button>'+
+          '<button class="agp-cancel" onclick="planAbrirBaixa(\''+x.id+'\')" aria-label="Cancelar"><i class="ti ti-x"></i></button></div></div>';
+      }
+    });
+  }
+  lista.innerHTML=h;
+  // Rodapé: sobra do mês (contas fixas) ± simulações ligadas
+  var r=agendaResumo(agendaItensMes(mi%12,Math.floor(mi/12),{projetar:mi>_ymIdx(hoje)}));
+  var sim=planSimMes(ym);
+  var simSobra=r.sobra+sim.ent-sim.sai;
+  var proj=getProj(true).find(function(p){return p.y===Math.floor(mi/12)&&p.m===mi%12;});
+  var f='<div class="plan-rod">'+
+    '<div><span>Provável sobra do mês <small>contas fixas</small></span><strong>'+(r.sobra>=0?'+':'−')+fmt(Math.abs(r.sobra))+'</strong></div>'+
+    (sim.ent?'<div><span>+ Entradas simuladas</span><strong class="ap">+'+fmt(sim.ent)+'</strong></div>':'')+
+    (sim.sai?'<div><span>− Saídas simuladas</span><strong class="an">−'+fmt(sim.sai)+'</strong></div>':'')+
+    '<div class="tot'+(simSobra<0?' neg':'')+'"><span>= Sobra com a simulação</span><strong>'+(simSobra>=0?'+':'−')+fmt(Math.abs(simSobra))+'</strong></div>'+
+    (proj?'<div class="plan-fim"><span>Saldo final do mês com a simulação <small>disponível, sem reserva</small></span><strong class="'+(proj.acc<0?'an':'')+'">'+fmt(proj.acc)+'</strong></div>':'')+
+    '</div>';
+  document.getElementById('planRodape').innerHTML=f;
+}
 // ── RESERVA & METAS ──
 var metas = []; // array de metas do usuário
 
@@ -6797,6 +7003,7 @@ if(mlm) mlm.textContent = document.getElementById('mLbl').textContent;
   var ksCard=document.getElementById("k-s-card");
   if(ksCard)ksCard.className="kpi "+(cm.sal>=0?"g":"r");
   renderTbls();renderCharts();renderProj();renderContas();renderAgenda();refreshContaSelect();renderOrc();
+  if(typeof renderPlan==='function')renderPlan();
   renderGastoDia();
   renderHero();
 }
