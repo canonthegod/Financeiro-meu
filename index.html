@@ -5644,9 +5644,11 @@ function planAdiar(id){
 }
 function planExcluir(id){
   var x=planItens.find(function(i){return i.id===id;}); if(!x)return;
-  if(!confirm('Excluir "'+x.nome+'" do planejamento?'))return;
-  planItens=planItens.filter(function(i){return i.id!==id;}); deletePlanItemFS(id);
-  renderPlan(); renderProj();
+  // Mesma janela de confirmação usada em Lançamentos
+  bsShow('Excluir do planejamento?','"'+x.nome+'" será removido do planejamento.',function(){
+    planItens=planItens.filter(function(i){return i.id!==id;}); deletePlanItemFS(id);
+    renderPlan(); renderProj();
+  });
 }
 // Comprei / Recebi: vira lançamento de verdade (com data, conta e valor reais) e sai do planejamento
 function planAbrirBaixa(id){ _planBaixa=(_planBaixa===id)?null:id; renderPlan(); }
@@ -7246,19 +7248,49 @@ function saveEditConta(){
   c.cor=_editCorSel[id]||c.cor;
   c.banco=_editBancoSel[id]||c.banco;
   if(nmEl&&nmEl.value.trim())c.nome=nmEl.value.trim();
+  var diff=0, saldoAtual=saldoConta(id);
   if(siEl){
     var saldoDesejado=parseFloat(siEl.value);
-    if(!isNaN(saldoDesejado)){
-      var saldoAtual=saldoConta(id);
-      var diff=Math.round((saldoDesejado-saldoAtual)*100)/100;
-      if(diff!==0){
-        c.si=Math.round((c.si+diff)*100)/100;
-      }
-    }
+    if(!isNaN(saldoDesejado)) diff=Math.round((saldoDesejado-saldoAtual)*100)/100;
   }
   saveConta(c);
   bsEditContaClose();
+  if(diff!==0){ perguntarAjusteSaldo(c, saldoAtual, diff); return; }
   render();
+}
+
+// Saldo da conta mudou na edição: registrar a diferença como lançamento (entra no mês)
+// ou só corrigir o saldo inicial (não mexe em receitas/despesas do mês)?
+function perguntarAjusteSaldo(c, saldoAntes, diff){
+  var ov=document.getElementById('bsAjusteSaldoOv');
+  if(!ov){
+    ov=document.createElement('div'); ov.id='bsAjusteSaldoOv'; ov.className='bs-overlay';
+    document.body.appendChild(ov);
+  }
+  var pos=diff>0;
+  ov.innerHTML='<div class="bs-sheet" onclick="event.stopPropagation()"><div class="bs-handle"></div>'+
+    '<div class="bs-title">Saldo do '+_oe(c.nome)+' mudou</div>'+
+    '<div class="bs-sub">De '+fmt(saldoAntes)+' para '+fmt(saldoAntes+diff)+' (<strong style="color:'+(pos?'var(--green)':'var(--red)')+'">'+(pos?'+':'−')+fmt(Math.abs(diff))+'</strong>). Como registrar essa diferença?</div>'+
+    '<div class="bs-actions" style="flex-direction:column;gap:.5rem;margin-top:1rem;">'+
+      '<button class="bs-btn confirm" id="bsAjLanc" style="background:#16a34a;color:#fff;">Registrar como lançamento de ajuste<br><small style="font-weight:400;opacity:.85;">'+(pos?'Entrada':'Saída')+' "Ajuste de saldo" hoje — entra no Saldo do mês</small></button>'+
+      '<button class="bs-btn cancel" id="bsAjSaldo">Só corrigir o saldo<br><small style="font-weight:400;opacity:.8;">Não mexe em receitas, despesas nem no Saldo do mês</small></button>'+
+    '</div></div>';
+  ov.onclick=function(e){ if(e.target===ov){ aplicar('saldo'); } }; // fechar = só corrigir (comportamento antigo)
+  function aplicar(modo){
+    ov.style.display='none';
+    if(modo==='lanc'){
+      var l={id:String(Date.now()+Math.random()),desc:'Ajuste de saldo — '+c.nome,v:Math.abs(diff),cat:'Ajuste',t:pos?'e':'s',
+        dt:_hojeLocal(),rec:false,conta:c.id,ajusteSaldo:true};
+      lancamentos.push(l); saveLanc(l);
+    } else {
+      c.si=Math.round(((c.si||0)+diff)*100)/100;
+      saveConta(c);
+    }
+    render();
+  }
+  document.getElementById('bsAjLanc').onclick=function(){aplicar('lanc');};
+  document.getElementById('bsAjSaldo').onclick=function(){aplicar('saldo');};
+  ov.style.display='flex';
 }
 
 function closeEditConta(id){bsEditContaClose();}
@@ -7612,6 +7644,7 @@ function getGastosPorCategoria(){
         if (l.t === 'transf_s' && l.objMov === 'resgate') res['Reserva'] = (res['Reserva'] || 0) - l.v;
         return; // rendimento/ajuste de saldo não são gasto
       }
+      if (l.ajusteSaldo) return; // ajuste de saldo da conta não é gasto do orçamento
       const grupo = mapCategoriaOrc(l.cat);
       if (!grupo) return; // categorias mapeadas para null (ex: Renda) não entram no orçamento de gastos
 
