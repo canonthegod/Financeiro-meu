@@ -5871,6 +5871,18 @@ function objRendimento(o){
   var dias=[], fallback=false;
   if(_cdiCache&&_cdiCache.from<=base){
     dias=_cdiCache.serie.filter(function(x){return x.d>=base&&x.d<hoje;});
+    // O Banco Central publica o CDI com 1–2 dias úteis de atraso: os dias úteis ainda não publicados
+    // (até ontem) usam a última taxa conhecida, senão a estimativa fica "um dia atrás" do banco.
+    var ult=_cdiCache.serie.length?_cdiCache.serie[_cdiCache.serie.length-1]:null;
+    if(ult){
+      var dd=new Date(ult.d+'T12:00:00'), fimE=new Date(hoje+'T12:00:00');
+      dd.setDate(dd.getDate()+1);
+      while(dd<fimE){
+        var wd2=dd.getDay(), iso=dd.getFullYear()+'-'+('0'+(dd.getMonth()+1)).slice(-2)+'-'+('0'+dd.getDate()).slice(-2);
+        if(wd2!==0&&wd2!==6&&iso>=base) dias.push({d:iso,r:ult.r,extrapolado:true});
+        dd.setDate(dd.getDate()+1);
+      }
+    }
   } else {
     fallback=true;
     var rDia=(Math.pow(1+CDI_FALLBACK_AA/100,1/252)-1)*100;
@@ -6175,7 +6187,11 @@ function renderMetas(){
   metas.slice().sort(function(a,b){return (a.tipo===b.tipo?0:a.tipo==='reserva'?-1:1)||(a.criado<b.criado?-1:1);}).forEach(function(o){
     var saldo=objSaldo(o), r=objRendimento(o), rb=r?r.bruto:0;
     var total=saldo+rb, alvo=objAlvo(o);
-    totalGuardado+=total; totalRend+=rb;
+    // Rendimento já confirmado nos "Ajustar saldo" (lançamentos de Rendimento/Ajuste desta reserva)
+    var rendConf=lancamentos.filter(function(l){return l.objetivoId===o.id&&!l.objMov&&(l.t==='e'||l.t==='s');})
+      .reduce(function(s,l){return s+(l.t==='e'?l.v:-l.v);},0);
+    var rendTotal=rendConf+rb;
+    totalGuardado+=total; totalRend+=rendTotal;
     var pct=alvo>0?Math.min(100,Math.round(total/alvo*100)):0;
     var atingiu=alvo>0&&total>=alvo-0.005;
     var isMeta=o.tipo==='meta';
@@ -6216,9 +6232,11 @@ function renderMetas(){
       var fonte=r.carregando?'buscando a taxa no Banco Central…':
         r.fallback?'não deu para consultar o Banco Central agora; estimando com CDI de '+_br(CDI_FALLBACK_AA)+'% a.a.':
         'CDI atual '+_br(cdiAA)+'% a.a. (Banco Central'+(ultCdi?', '+fmtDt(ultCdi.d):'')+')';
-      h+='<div class="obj-rend">📈 Rendeu <strong style="color:var(--green)">+'+fmt(rb)+'</strong> desde '+fmtDt(r.desde)+
-        ' · líquido est. <strong>'+fmt(r.liquido)+'</strong> (IR '+_br(r.ir*100,1)+'%)';
-      if(rb<0.005) h+='<div class="obj-mini">O rendimento começa a aparecer a partir do próximo dia útil.</div>';
+      var liqTotal=rendTotal*(1-r.ir);
+      var _ini=(o.rend&&o.rend.inicio)||r.desde;
+      // Total = rendimento confirmado nos ajustes + estimado depois do último ajuste; a data é sempre o início
+      h+='<div class="obj-rend">📈 Rendeu <strong style="color:var(--green)">'+(rendTotal>=0?'+':'−')+fmt(Math.abs(rendTotal))+'</strong> desde '+fmtDt(_ini)+
+        ' · líquido est. <strong>'+fmt(liqTotal)+'</strong> (IR '+_br(r.ir*100,1)+'%)';
       h+='<div class="obj-mini">Rende '+(o.rend.pct||100)+'% do CDI · '+fonte+'. É uma estimativa: use "Ajustar saldo" de vez em quando para igualar ao app do banco.</div></div>';
     }
     h+='</div>';
@@ -6232,7 +6250,7 @@ function renderMetas(){
   el.innerHTML=h;
   if(resumo){
     resumo.innerHTML='<div class="obj-resumo"><div><div class="obj-l">Total guardado</div><div class="obj-v">'+fmt(totalGuardado)+'</div></div>'+
-      (totalRend>0.004?'<div><div class="obj-l">Rendimento estimado</div><div class="obj-v" style="color:var(--green)">+'+fmt(totalRend)+'</div></div>':'')+
+      (totalRend>0.004?'<div><div class="obj-l">Rendimento total</div><div class="obj-v" style="color:var(--green)">+'+fmt(totalRend)+'</div></div>':'')+
       '<div><div class="obj-l">Reservas / Metas</div><div class="obj-v">'+metas.length+'</div></div></div>';
   }
 }
