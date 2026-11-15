@@ -5489,7 +5489,7 @@ function projDetalheHtml(p,atual){
   }
   if(p.aporte) h+='<div><span>− Vai para reservas/metas</span><span style="color:#60a5fa">−'+fmt(p.aporte)+'</span></div>';
   h+='<div class="tot"><span>= Disponível no fim de '+mesAt+'</span><span>'+fmt(p.acc)+'</span></div>';
-  h+='<div class="ptd-guard"><span>🛡️ Guardado no fim de '+mesAt+'</span><span>'+fmt(p.guard)+'</span></div></div>';
+  h+='<div class="ptd-guard"><span>🛡️ Reserva até o momento</span><span>'+fmt(p.guard)+'</span></div></div>';
   h+='</div>';
   return h;
 }
