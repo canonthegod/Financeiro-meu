@@ -4899,6 +4899,20 @@ function confirmAgPanelFixo(id, t) {
   renderAgenda();
 }
 
+// Entrada avulsa da Agenda recebida: o próprio lançamento passa a ter a data, a conta e o valor reais
+function confirmEntradaAvulsaAgenda(id){
+  var st=_agPanelCalState[id];
+  var l=lancamentos.find(function(x){return String(x.id)===String(id);});
+  if(!l)return;
+  var dt=(st&&st.sel)||_hojeLocal();
+  var contaEl=document.getElementById('agpanelconta_'+id);
+  l.v=_agPanelValor(id,l.v);
+  l.dt=dt;
+  if(contaEl&&contaEl.value) l.conta=contaEl.value;
+  saveLanc(l);
+  delete _agPanelOpen[id]; delete _agPanelCalState[id];
+  render(); renderAgenda();
+}
 function confirmAgPanelAgendaItem(id) {
   var st = _agPanelCalState[id];
   if(!st || !st.sel) { alert('Selecione uma data'); return; }
@@ -5269,8 +5283,15 @@ function renderAgenda(m,y){
           }
         }
       } else if(it.tipo==='entrada'&&!isPaid){
+        // Entrada avulsa marcada "📅 Mostrar na Agenda" ainda por vir: mesmo botão das entradas fixas
         tipoTag='<span style="font-size:.64rem;background:#22c55e11;color:#16a34a99;border-radius:6px;padding:1px 6px;font-weight:600;">⏰ Previsto dia '+day+'</span>';
         borderColor='#22c55e22';
+        var coAv=contas.map(function(c){return '<option value="'+c.id+'"'+(c.id===it.conta?' selected':'')+'>'+c.nome+'</option>';}).join('');
+        if(_agPanelOpen[it.id]){
+          tipoBtn='<div style="margin-top:.4rem;">'+_mkAgPanelHtml(it.id,'e',coAv,{confirm:'confirmEntradaAvulsaAgenda(\''+it.id+'\')'})+'</div>';
+        } else {
+          tipoBtn='<div style="margin-top:.4rem;"><button onclick="openAgPanel(\''+it.id+'\',\''+_hojeLocal()+'\')" style="font-size:.72rem;padding:.2rem .6rem;border-radius:8px;" class="btn-recebi-antes">✅ Recebi antes</button></div>';
+        }
       } else if(it.tipo==='entrada'){
         tipoTag='<span style="font-size:.64rem;background:#22c55e22;color:#16a34a;border-radius:6px;padding:1px 6px;font-weight:600;">💰 Recebido</span>';
         borderColor='#22c55e44';
