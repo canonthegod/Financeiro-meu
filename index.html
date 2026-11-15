@@ -3838,6 +3838,9 @@ function toggleLancCal(e){
 document.addEventListener('click',function(e){
   var pop=document.getElementById('lancCalPopover');
   if(!pop||pop.style.display!=='block')return;
+  // As setas ‹ › redesenham o calendário: o botão clicado já saiu da página quando este clique chega aqui.
+  // Clique em elemento que não está mais no documento = clique de dentro do calendário → não fecha.
+  if(!document.documentElement.contains(e.target))return;
   if(pop.contains(e.target)||e.target.id==='iDtDisplay')return;
   pop.style.display='none';
 });
