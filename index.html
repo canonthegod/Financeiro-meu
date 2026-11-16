@@ -7297,42 +7297,14 @@ function saveEditConta(){
   }
   saveConta(c);
   bsEditContaClose();
-  if(diff!==0){ perguntarAjusteSaldo(c, saldoAtual, diff); return; }
+  // Saldo mudou: a diferença vira um lançamento "Ajuste de saldo" (entrada ou saída, data de hoje),
+  // para Receitas/Despesas e o Saldo do mês acompanharem o saldo real da conta.
+  if(diff!==0){
+    var l={id:String(Date.now()+Math.random()),desc:'Ajuste de saldo — '+c.nome,v:Math.abs(diff),cat:'Ajuste',t:diff>0?'e':'s',
+      dt:_hojeLocal(),rec:false,conta:c.id,ajusteSaldo:true};
+    lancamentos.push(l); saveLanc(l);
+  }
   render();
-}
-
-// Saldo da conta mudou na edição: registrar a diferença como lançamento (entra no mês)
-// ou só corrigir o saldo inicial (não mexe em receitas/despesas do mês)?
-function perguntarAjusteSaldo(c, saldoAntes, diff){
-  var ov=document.getElementById('bsAjusteSaldoOv');
-  if(!ov){
-    ov=document.createElement('div'); ov.id='bsAjusteSaldoOv'; ov.className='bs-overlay';
-    document.body.appendChild(ov);
-  }
-  var pos=diff>0;
-  ov.innerHTML='<div class="bs-sheet" onclick="event.stopPropagation()"><div class="bs-handle"></div>'+
-    '<div class="bs-title">Saldo do '+_oe(c.nome)+' mudou</div>'+
-    '<div class="bs-sub">De '+fmt(saldoAntes)+' para '+fmt(saldoAntes+diff)+' (<strong style="color:'+(pos?'var(--green)':'var(--red)')+'">'+(pos?'+':'−')+fmt(Math.abs(diff))+'</strong>). Como registrar essa diferença?</div>'+
-    '<div class="bs-actions" style="flex-direction:column;gap:.5rem;margin-top:1rem;">'+
-      '<button class="bs-btn confirm" id="bsAjLanc" style="background:#16a34a;color:#fff;">Registrar como lançamento de ajuste<br><small style="font-weight:400;opacity:.85;">'+(pos?'Entrada':'Saída')+' "Ajuste de saldo" hoje — entra no Saldo do mês</small></button>'+
-      '<button class="bs-btn cancel" id="bsAjSaldo">Só corrigir o saldo<br><small style="font-weight:400;opacity:.8;">Não mexe em receitas, despesas nem no Saldo do mês</small></button>'+
-    '</div></div>';
-  ov.onclick=function(e){ if(e.target===ov){ aplicar('saldo'); } }; // fechar = só corrigir (comportamento antigo)
-  function aplicar(modo){
-    ov.style.display='none';
-    if(modo==='lanc'){
-      var l={id:String(Date.now()+Math.random()),desc:'Ajuste de saldo — '+c.nome,v:Math.abs(diff),cat:'Ajuste',t:pos?'e':'s',
-        dt:_hojeLocal(),rec:false,conta:c.id,ajusteSaldo:true};
-      lancamentos.push(l); saveLanc(l);
-    } else {
-      c.si=Math.round(((c.si||0)+diff)*100)/100;
-      saveConta(c);
-    }
-    render();
-  }
-  document.getElementById('bsAjLanc').onclick=function(){aplicar('lanc');};
-  document.getElementById('bsAjSaldo').onclick=function(){aplicar('saldo');};
-  ov.style.display='flex';
 }
 
 function closeEditConta(id){bsEditContaClose();}
